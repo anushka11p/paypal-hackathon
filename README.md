@@ -208,7 +208,7 @@ Leash extends **Covenant**, our earlier prototype of a deterministic gate for AI
 
 ## Team
 
-Anushka Prasad · Anika
+Anushka · Anika
 
 ## License
 
