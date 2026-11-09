@@ -123,6 +123,8 @@ def run_shopping_agent(*, task: str, catalog: list[dict], model: str | None = No
             )
         except anthropic.AnthropicError as e:
             raise AgentError(f"Claude call failed: {e}") from e
+        except TypeError as e:  # raised by the SDK when no credentials are configured
+            raise AgentError(f"Claude is not configured: {e}") from e
         if response.stop_reason == "refusal":
             raise AgentError("agent model declined the task")
 

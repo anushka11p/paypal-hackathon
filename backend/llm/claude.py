@@ -59,6 +59,9 @@ def parse(*, role: str, system: str, user: str, output_model: type[T],
         raise LLMUnavailable(f"Claude API error {e.status_code}: {e.message}") from e
     except anthropic.AnthropicError as e:
         raise LLMUnavailable(str(e)) from e
+    except TypeError as e:
+        # The SDK raises TypeError when no credentials are configured at all.
+        raise LLMUnavailable(f"Claude is not configured: {e}") from e
     if response.stop_reason == "refusal":
         raise LLMUnavailable("Claude declined the request")
     if response.stop_reason == "max_tokens" or response.parsed_output is None:

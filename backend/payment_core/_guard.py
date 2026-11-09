@@ -30,5 +30,5 @@ def verify_caller() -> None:
     if not any(caller_file.endswith(suffix) for suffix in ALLOWED_CALLER_SUFFIXES):
         raise PaymentAccessDenied(
             "Permission denied – only PolicyEngine may access payment client "
-            f"(blocked caller: {caller_file})"
+            f"(blocked caller: {os.path.join(*caller_file.split(os.sep)[-2:])})"
         )
