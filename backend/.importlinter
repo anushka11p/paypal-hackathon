@@ -1,0 +1,28 @@
+[importlinter]
+root_packages =
+    agents
+    api
+    llm
+    models
+    payment_core
+    policy
+
+[importlinter:contract:agent-has-no-payment-path]
+name = The shopping agent cannot reach payments, policy, the API or the database
+type = forbidden
+source_modules =
+    agents
+forbidden_modules =
+    payment_core
+    policy
+    api
+    models
+
+[importlinter:contract:llm-has-no-payment-path]
+name = Shared Claude helpers cannot reach payments
+type = forbidden
+source_modules =
+    llm
+forbidden_modules =
+    payment_core
+    policy
