@@ -61,6 +61,7 @@ export default function EscrowWidget({ mandate, cart, payments, revealedApproved
 
       {mandate?.paypal?.authorization_id && (
         <dl className="mt-5 space-y-1.5 border-t border-line pt-4 text-[11px]">
+          {payments !== "sandbox" && <div className="pb-1 text-ink-3">Simulated references</div>}
           {[["Order", mandate.paypal.order_id], ["Authorization", mandate.paypal.authorization_id],
             ...(done && cart.paypal.capture_id ? [["Capture", cart.paypal.capture_id]] : []),
             ["Status", mandate.paypal.authorization_status]].map(([k, v]) => (

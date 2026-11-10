@@ -187,12 +187,14 @@ export default function App() {
             </div>
             <p className="mt-8 border-t border-line pt-5 text-sm leading-relaxed text-ink-2">
               In <span className="num text-ink">20</span> of <span className="num text-ink">20</span> live runs the agent fell for both injected instructions.
-              Bad items approved: <span className="num text-ok">$0.00</span>. Verified against the PayPal sandbox: capture <span className="num text-ink">6LX40761XE0335641</span>, completed.
+              Bad items approved: <span className="num text-ok">$0.00</span>.
+              Separately, one live PayPal sandbox run captured <span className="num text-ink">$80.00</span>: capture <span className="num text-ink">6LX40761XE0335641</span>.
             </p>
           </div>
           <figure className="order-first min-w-0 md:order-none">
             <HoldObject theme={theme} className="mx-auto aspect-square w-full max-w-[260px] md:mr-0 md:max-w-[540px]" />
             <figcaption className="mx-auto mt-2 flex max-w-[540px] flex-wrap justify-center gap-x-5 gap-y-1 border-t border-line pt-3 text-xs text-ink-2 md:mr-0">
+              <span className="text-ink-3">Example run</span>
               <span>Held <span className="num ml-1 text-accent">$80.00</span></span>
               <span className="flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-ok" />Captured <span className="num text-ok">$62.00</span></span>
               <span className="flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-accent" />Released <span className="num text-accent">$18.00</span></span>
@@ -222,7 +224,7 @@ export default function App() {
 
           {cart && mandate && (
             <div className="mt-10">
-              <FirewallPanel key={cart.cart_id} cart={cart} policy={mandate.policy} theme={theme} animate={animateCart} onProgress={onProgress} onDone={onDone} />
+              <FirewallPanel key={cart.cart_id} cart={cart} policy={mandate.policy} theme={theme} payments={health?.payments} animate={animateCart} onProgress={onProgress} onDone={onDone} />
             </div>
           )}
         </section>

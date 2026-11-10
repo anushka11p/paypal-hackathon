@@ -32,7 +32,7 @@ function Verdict({ shown, ok, okText, children }) {
 }
 
 /** Replays the engine's real decisions one stage at a time; reports the running approved total. */
-export default function FirewallPanel({ cart, policy, theme, animate, onProgress, onDone }) {
+export default function FirewallPanel({ cart, policy, theme, payments, animate, onProgress, onDone }) {
   const total = cart.lines.length * 3;
   const [stage, setStage] = useState(animate ? 0 : total);
 
@@ -94,25 +94,27 @@ export default function FirewallPanel({ cart, policy, theme, animate, onProgress
       </div>
 
       {complete && (
-        <div className="mt-2 grid items-center gap-x-8 gap-y-4 border-t border-line-strong pt-5 animate-rise md:grid-cols-[1fr_200px]">
-          <div>
-          <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2 text-sm">
-            <span className="text-ink-2">Proposed <span className="num ml-1 text-ink">{usd(cart.proposed_total_cents)}</span></span>
-            <span className="text-ink-3">−</span>
-            <span className="text-ink-2">Blocked <span className="num ml-1 text-bad">{usd(blocked)}</span></span>
-            <span className="text-ink-3">=</span>
-            <span className="text-ink-2">Captured <span className="num ml-1 text-2xl text-ok">{usd(cart.captured_cents)}</span></span>
-            <span className="text-ink-2 sm:ml-auto">Released to you <span className="num ml-1 text-2xl text-accent">{usd(cart.released_cents)}</span></span>
+        <div className="grid items-center gap-x-6 gap-y-3 border-t border-line-strong py-4 animate-rise sm:grid-cols-[1fr_auto_auto]">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm">
+              <span className="text-ink-2">Proposed <span className="num ml-1 text-ink">{usd(cart.proposed_total_cents)}</span></span>
+              <span className="text-ink-3">−</span>
+              <span className="text-ink-2">Blocked <span className="num ml-1 text-bad">{usd(blocked)}</span></span>
+              <span className="text-ink-3">=</span>
+              <span className="text-ink-2">Captured <span className="num ml-1 text-2xl text-ok">{usd(cart.captured_cents)}</span></span>
+            </div>
+            <p className="mt-1.5 text-xs leading-relaxed text-ink-3">
+              {cart.paypal.capture_id
+                ? (payments === "sandbox"
+                  ? <>PayPal sandbox capture <span className="num">{cart.paypal.capture_id}</span> {cart.paypal.capture_status?.toLowerCase()} with final_capture, which released the rest. Authorization read back as {cart.paypal.authorization_status_after}.</>
+                  : <>Simulated capture <span className="num">{cart.paypal.capture_id}</span>, same rules as the PayPal sandbox: final_capture released the rest; authorization read back as {cart.paypal.authorization_status_after}.</>)
+                : cart.status === "blocked" ? "Nothing passed, so the whole authorization was voided." : "No capture was made."}
+            </p>
           </div>
-          <p className="mt-2 text-xs text-ink-3">
-            {cart.paypal.capture_id
-              ? <>PayPal capture <span className="num">{cart.paypal.capture_id}</span> {cart.paypal.capture_status?.toLowerCase()} with final_capture, which released the rest. Authorization read back as {cart.paypal.authorization_status_after}.</>
-              : cart.status === "blocked" ? "Nothing passed, so the whole authorization was voided." : "No capture was made."}
-          </p>
-          </div>
-          <HoldObject theme={theme} mode="settle" className="order-first mx-auto aspect-square w-40 md:order-none md:w-[200px]"
+          <HoldObject theme={theme} mode="settle" className="size-28 shrink-0 justify-self-start sm:justify-self-auto"
             releasedCoins={Math.round((cart.released_cents / Math.max(1, cart.captured_cents + cart.released_cents)) * 8)}
             label={`Settled: ${usd(cart.captured_cents)} captured stays in the strap, ${usd(cart.released_cents)} released lifts out.`} />
+          <div className="text-sm text-ink-2">Released to you<div className="num text-2xl text-accent">{usd(cart.released_cents)}</div></div>
         </div>
       )}
     </section>
