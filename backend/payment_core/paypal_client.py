@@ -40,6 +40,8 @@ class PaymentError(Exception):
 
 
 def using_sandbox() -> bool:
+    if os.environ.get("LEASH_PAYMENTS") == "simulator":
+        return False
     return bool(os.environ.get("PAYPAL_CLIENT_ID") and os.environ.get("PAYPAL_CLIENT_SECRET"))
 
 

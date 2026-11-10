@@ -184,6 +184,7 @@ PYTHONPATH=. python3 trials/run_trials.py --runs 20
 | `GROQ_MODEL`, `LEASH_AGENT_MODEL`, `LEASH_EVALUATOR_MODEL`, `LEASH_COMPILER_MODEL` | Model (default `openai/gpt-oss-120b`), optionally per role |
 | `CHANNEL3_API_KEY` | Agent only: live market-price search |
 | `MANDATE_SIGNING_SECRET` | Signs mandates (tamper-evidence). Leash service only. |
+| `LEASH_PAYMENTS` | Set to `simulator` to use the built-in payment simulator even when PayPal keys are set |
 | `PUBLIC_BASE_URL` | Where PayPal returns the buyer after approval (this backend's URL) |
 | `FRONTEND_URL` | Where the buyer lands afterwards (defaults to `PUBLIC_BASE_URL`; `http://localhost:5173` in dev) |
 
