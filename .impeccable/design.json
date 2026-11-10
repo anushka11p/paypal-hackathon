@@ -1,0 +1,758 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-10T16:35:33.545067+00:00",
+  "title": "Design System: Leash",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Cool Paper",
+        "canonical": "#f6f7f9",
+        "oklch": "oklch(97.6% 0.003 264.5)",
+        "tonalRamp": [
+          "oklch(15% 0.003 264.5)",
+          "oklch(25% 0.003 264.5)",
+          "oklch(35% 0.003 264.5)",
+          "oklch(48% 0.003 264.5)",
+          "oklch(60% 0.003 264.5)",
+          "oklch(72% 0.003 264.5)",
+          "oklch(84% 0.003 264.5)",
+          "oklch(95% 0.003 264.5)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Card White",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(25% 0.000 89.9)",
+          "oklch(35% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(60% 0.000 89.9)",
+          "oklch(72% 0.000 89.9)",
+          "oklch(84% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Hover Grey",
+        "canonical": "#f1f2f5",
+        "oklch": "oklch(96.1% 0.004 271.4)",
+        "tonalRamp": [
+          "oklch(15% 0.004 271.4)",
+          "oklch(25% 0.004 271.4)",
+          "oklch(35% 0.004 271.4)",
+          "oklch(48% 0.004 271.4)",
+          "oklch(60% 0.004 271.4)",
+          "oklch(72% 0.004 271.4)",
+          "oklch(84% 0.004 271.4)",
+          "oklch(95% 0.004 271.4)"
+        ]
+      },
+      "sunken": {
+        "role": "neutral",
+        "displayName": "Sunken Well",
+        "canonical": "#eef0f3",
+        "oklch": "oklch(95.4% 0.005 258.3)",
+        "tonalRamp": [
+          "oklch(15% 0.005 258.3)",
+          "oklch(25% 0.005 258.3)",
+          "oklch(35% 0.005 258.3)",
+          "oklch(48% 0.005 258.3)",
+          "oklch(60% 0.005 258.3)",
+          "oklch(72% 0.005 258.3)",
+          "oklch(84% 0.005 258.3)",
+          "oklch(95% 0.005 258.3)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#0e1014",
+        "oklch": "oklch(17.3% 0.009 264.3)",
+        "tonalRamp": [
+          "oklch(15% 0.009 264.3)",
+          "oklch(25% 0.009 264.3)",
+          "oklch(35% 0.009 264.3)",
+          "oklch(48% 0.009 264.3)",
+          "oklch(60% 0.009 264.3)",
+          "oklch(72% 0.009 264.3)",
+          "oklch(84% 0.009 264.3)",
+          "oklch(95% 0.009 264.3)"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "#4a505c",
+        "oklch": "oklch(43.0% 0.021 264.3)",
+        "tonalRamp": [
+          "oklch(15% 0.021 264.3)",
+          "oklch(25% 0.021 264.3)",
+          "oklch(35% 0.021 264.3)",
+          "oklch(48% 0.021 264.3)",
+          "oklch(60% 0.021 264.3)",
+          "oklch(72% 0.021 264.3)",
+          "oklch(84% 0.021 264.3)",
+          "oklch(95% 0.021 264.3)"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3",
+        "canonical": "#656b77",
+        "oklch": "oklch(52.7% 0.020 264.4)",
+        "tonalRamp": [
+          "oklch(15% 0.020 264.4)",
+          "oklch(25% 0.020 264.4)",
+          "oklch(35% 0.020 264.4)",
+          "oklch(48% 0.020 264.4)",
+          "oklch(60% 0.020 264.4)",
+          "oklch(72% 0.020 264.4)",
+          "oklch(84% 0.020 264.4)",
+          "oklch(95% 0.020 264.4)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#e3e5ea",
+        "oklch": "oklch(92.2% 0.007 268.5)",
+        "tonalRamp": [
+          "oklch(15% 0.007 268.5)",
+          "oklch(25% 0.007 268.5)",
+          "oklch(35% 0.007 268.5)",
+          "oklch(48% 0.007 268.5)",
+          "oklch(60% 0.007 268.5)",
+          "oklch(72% 0.007 268.5)",
+          "oklch(84% 0.007 268.5)",
+          "oklch(95% 0.007 268.5)"
+        ]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Strong Hairline",
+        "canonical": "#d0d4db",
+        "oklch": "oklch(86.9% 0.011 261.8)",
+        "tonalRamp": [
+          "oklch(15% 0.011 261.8)",
+          "oklch(25% 0.011 261.8)",
+          "oklch(35% 0.011 261.8)",
+          "oklch(48% 0.011 261.8)",
+          "oklch(60% 0.011 261.8)",
+          "oklch(72% 0.011 261.8)",
+          "oklch(84% 0.011 261.8)",
+          "oklch(95% 0.011 261.8)"
+        ]
+      },
+      "hold-indigo": {
+        "role": "primary",
+        "displayName": "Hold Indigo",
+        "canonical": "#3d49d6",
+        "oklch": "oklch(49.0% 0.213 271.9)",
+        "tonalRamp": [
+          "oklch(15% 0.200 271.9)",
+          "oklch(25% 0.200 271.9)",
+          "oklch(35% 0.200 271.9)",
+          "oklch(48% 0.200 271.9)",
+          "oklch(60% 0.200 271.9)",
+          "oklch(72% 0.200 271.9)",
+          "oklch(84% 0.200 271.9)",
+          "oklch(95% 0.200 271.9)"
+        ]
+      },
+      "hold-indigo-soft": {
+        "role": "primary",
+        "displayName": "Hold Indigo Soft",
+        "canonical": "#eceefc",
+        "oklch": "oklch(95.2% 0.019 279.5)",
+        "tonalRamp": [
+          "oklch(15% 0.019 279.5)",
+          "oklch(25% 0.019 279.5)",
+          "oklch(35% 0.019 279.5)",
+          "oklch(48% 0.019 279.5)",
+          "oklch(60% 0.019 279.5)",
+          "oklch(72% 0.019 279.5)",
+          "oklch(84% 0.019 279.5)",
+          "oklch(95% 0.019 279.5)"
+        ]
+      },
+      "ok": {
+        "role": "secondary",
+        "displayName": "Captured Green",
+        "canonical": "#0c7a51",
+        "oklch": "oklch(51.3% 0.112 160.6)",
+        "tonalRamp": [
+          "oklch(15% 0.112 160.6)",
+          "oklch(25% 0.112 160.6)",
+          "oklch(35% 0.112 160.6)",
+          "oklch(48% 0.112 160.6)",
+          "oklch(60% 0.112 160.6)",
+          "oklch(72% 0.112 160.6)",
+          "oklch(84% 0.112 160.6)",
+          "oklch(95% 0.112 160.6)"
+        ]
+      },
+      "ok-soft": {
+        "role": "secondary",
+        "displayName": "Captured Green Soft",
+        "canonical": "#e6f3ed",
+        "oklch": "oklch(95.3% 0.016 166.7)",
+        "tonalRamp": [
+          "oklch(15% 0.016 166.7)",
+          "oklch(25% 0.016 166.7)",
+          "oklch(35% 0.016 166.7)",
+          "oklch(48% 0.016 166.7)",
+          "oklch(60% 0.016 166.7)",
+          "oklch(72% 0.016 166.7)",
+          "oklch(84% 0.016 166.7)",
+          "oklch(95% 0.016 166.7)"
+        ]
+      },
+      "bad": {
+        "role": "secondary",
+        "displayName": "Blocked Red",
+        "canonical": "#b5312a",
+        "oklch": "oklch(51.6% 0.170 27.8)",
+        "tonalRamp": [
+          "oklch(15% 0.170 27.8)",
+          "oklch(25% 0.170 27.8)",
+          "oklch(35% 0.170 27.8)",
+          "oklch(48% 0.170 27.8)",
+          "oklch(60% 0.170 27.8)",
+          "oklch(72% 0.170 27.8)",
+          "oklch(84% 0.170 27.8)",
+          "oklch(95% 0.170 27.8)"
+        ]
+      },
+      "bad-soft": {
+        "role": "secondary",
+        "displayName": "Blocked Red Soft",
+        "canonical": "#fbebe9",
+        "oklch": "oklch(95.2% 0.018 26.1)",
+        "tonalRamp": [
+          "oklch(15% 0.018 26.1)",
+          "oklch(25% 0.018 26.1)",
+          "oklch(35% 0.018 26.1)",
+          "oklch(48% 0.018 26.1)",
+          "oklch(60% 0.018 26.1)",
+          "oklch(72% 0.018 26.1)",
+          "oklch(84% 0.018 26.1)",
+          "oklch(95% 0.018 26.1)"
+        ]
+      },
+      "warn": {
+        "role": "tertiary",
+        "displayName": "Warning Amber",
+        "canonical": "#855600",
+        "oklch": "oklch(49.3% 0.105 72.7)",
+        "tonalRamp": [
+          "oklch(15% 0.105 72.7)",
+          "oklch(25% 0.105 72.7)",
+          "oklch(35% 0.105 72.7)",
+          "oklch(48% 0.105 72.7)",
+          "oklch(60% 0.105 72.7)",
+          "oklch(72% 0.105 72.7)",
+          "oklch(84% 0.105 72.7)",
+          "oklch(95% 0.105 72.7)"
+        ]
+      },
+      "warn-soft": {
+        "role": "tertiary",
+        "displayName": "Warning Amber Soft",
+        "canonical": "#faf1dc",
+        "oklch": "oklch(96.0% 0.029 87.5)",
+        "tonalRamp": [
+          "oklch(15% 0.029 87.5)",
+          "oklch(25% 0.029 87.5)",
+          "oklch(35% 0.029 87.5)",
+          "oklch(48% 0.029 87.5)",
+          "oklch(60% 0.029 87.5)",
+          "oklch(72% 0.029 87.5)",
+          "oklch(84% 0.029 87.5)",
+          "oklch(95% 0.029 87.5)"
+        ]
+      },
+      "term": {
+        "role": "neutral",
+        "displayName": "Terminal",
+        "canonical": "#0e1014",
+        "oklch": "oklch(17.3% 0.009 264.3)",
+        "tonalRamp": [
+          "oklch(15% 0.009 264.3)",
+          "oklch(25% 0.009 264.3)",
+          "oklch(35% 0.009 264.3)",
+          "oklch(48% 0.009 264.3)",
+          "oklch(60% 0.009 264.3)",
+          "oklch(72% 0.009 264.3)",
+          "oklch(84% 0.009 264.3)",
+          "oklch(95% 0.009 264.3)"
+        ]
+      },
+      "canvas-dark": {
+        "role": "neutral",
+        "displayName": "Cool Paper (dark)",
+        "canonical": "#0a0b0d",
+        "oklch": "oklch(14.9% 0.005 264.5)",
+        "tonalRamp": [
+          "oklch(15% 0.005 264.5)",
+          "oklch(25% 0.005 264.5)",
+          "oklch(35% 0.005 264.5)",
+          "oklch(48% 0.005 264.5)",
+          "oklch(60% 0.005 264.5)",
+          "oklch(72% 0.005 264.5)",
+          "oklch(84% 0.005 264.5)",
+          "oklch(95% 0.005 264.5)"
+        ]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Card White (dark)",
+        "canonical": "#111317",
+        "oklch": "oklch(18.6% 0.009 264.3)",
+        "tonalRamp": [
+          "oklch(15% 0.009 264.3)",
+          "oklch(25% 0.009 264.3)",
+          "oklch(35% 0.009 264.3)",
+          "oklch(48% 0.009 264.3)",
+          "oklch(60% 0.009 264.3)",
+          "oklch(72% 0.009 264.3)",
+          "oklch(84% 0.009 264.3)",
+          "oklch(95% 0.009 264.3)"
+        ]
+      },
+      "surface-2-dark": {
+        "role": "neutral",
+        "displayName": "Hover Grey (dark)",
+        "canonical": "#181b20",
+        "oklch": "oklch(22.1% 0.011 260.7)",
+        "tonalRamp": [
+          "oklch(15% 0.011 260.7)",
+          "oklch(25% 0.011 260.7)",
+          "oklch(35% 0.011 260.7)",
+          "oklch(48% 0.011 260.7)",
+          "oklch(60% 0.011 260.7)",
+          "oklch(72% 0.011 260.7)",
+          "oklch(84% 0.011 260.7)",
+          "oklch(95% 0.011 260.7)"
+        ]
+      },
+      "sunken-dark": {
+        "role": "neutral",
+        "displayName": "Sunken Well (dark)",
+        "canonical": "#0d0f12",
+        "oklch": "oklch(16.8% 0.007 258.4)",
+        "tonalRamp": [
+          "oklch(15% 0.007 258.4)",
+          "oklch(25% 0.007 258.4)",
+          "oklch(35% 0.007 258.4)",
+          "oklch(48% 0.007 258.4)",
+          "oklch(60% 0.007 258.4)",
+          "oklch(72% 0.007 258.4)",
+          "oklch(84% 0.007 258.4)",
+          "oklch(95% 0.007 258.4)"
+        ]
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Ink (dark)",
+        "canonical": "#eceef1",
+        "oklch": "oklch(94.8% 0.005 258.3)",
+        "tonalRamp": [
+          "oklch(15% 0.005 258.3)",
+          "oklch(25% 0.005 258.3)",
+          "oklch(35% 0.005 258.3)",
+          "oklch(48% 0.005 258.3)",
+          "oklch(60% 0.005 258.3)",
+          "oklch(72% 0.005 258.3)",
+          "oklch(84% 0.005 258.3)",
+          "oklch(95% 0.005 258.3)"
+        ]
+      },
+      "ink-2-dark": {
+        "role": "neutral",
+        "displayName": "Ink 2 (dark)",
+        "canonical": "#a7adb9",
+        "oklch": "oklch(74.7% 0.018 264.5)",
+        "tonalRamp": [
+          "oklch(15% 0.018 264.5)",
+          "oklch(25% 0.018 264.5)",
+          "oklch(35% 0.018 264.5)",
+          "oklch(48% 0.018 264.5)",
+          "oklch(60% 0.018 264.5)",
+          "oklch(72% 0.018 264.5)",
+          "oklch(84% 0.018 264.5)",
+          "oklch(95% 0.018 264.5)"
+        ]
+      },
+      "ink-3-dark": {
+        "role": "neutral",
+        "displayName": "Ink 3 (dark)",
+        "canonical": "#8b919d",
+        "oklch": "oklch(65.6% 0.019 264.4)",
+        "tonalRamp": [
+          "oklch(15% 0.019 264.4)",
+          "oklch(25% 0.019 264.4)",
+          "oklch(35% 0.019 264.4)",
+          "oklch(48% 0.019 264.4)",
+          "oklch(60% 0.019 264.4)",
+          "oklch(72% 0.019 264.4)",
+          "oklch(84% 0.019 264.4)",
+          "oklch(95% 0.019 264.4)"
+        ]
+      },
+      "line-dark": {
+        "role": "neutral",
+        "displayName": "Hairline (dark)",
+        "canonical": "#22262d",
+        "oklch": "oklch(26.8% 0.014 261.7)",
+        "tonalRamp": [
+          "oklch(15% 0.014 261.7)",
+          "oklch(25% 0.014 261.7)",
+          "oklch(35% 0.014 261.7)",
+          "oklch(48% 0.014 261.7)",
+          "oklch(60% 0.014 261.7)",
+          "oklch(72% 0.014 261.7)",
+          "oklch(84% 0.014 261.7)",
+          "oklch(95% 0.014 261.7)"
+        ]
+      },
+      "line-strong-dark": {
+        "role": "neutral",
+        "displayName": "Strong Hairline (dark)",
+        "canonical": "#30353e",
+        "oklch": "oklch(32.8% 0.017 262.3)",
+        "tonalRamp": [
+          "oklch(15% 0.017 262.3)",
+          "oklch(25% 0.017 262.3)",
+          "oklch(35% 0.017 262.3)",
+          "oklch(48% 0.017 262.3)",
+          "oklch(60% 0.017 262.3)",
+          "oklch(72% 0.017 262.3)",
+          "oklch(84% 0.017 262.3)",
+          "oklch(95% 0.017 262.3)"
+        ]
+      },
+      "hold-indigo-dark": {
+        "role": "primary",
+        "displayName": "Hold Indigo (dark)",
+        "canonical": "#8f98ff",
+        "oklch": "oklch(71.7% 0.149 278.1)",
+        "tonalRamp": [
+          "oklch(15% 0.149 278.1)",
+          "oklch(25% 0.149 278.1)",
+          "oklch(35% 0.149 278.1)",
+          "oklch(48% 0.149 278.1)",
+          "oklch(60% 0.149 278.1)",
+          "oklch(72% 0.149 278.1)",
+          "oklch(84% 0.149 278.1)",
+          "oklch(95% 0.149 278.1)"
+        ]
+      },
+      "ok-dark": {
+        "role": "secondary",
+        "displayName": "Captured Green (dark)",
+        "canonical": "#4fc89b",
+        "oklch": "oklch(75.2% 0.127 165.3)",
+        "tonalRamp": [
+          "oklch(15% 0.127 165.3)",
+          "oklch(25% 0.127 165.3)",
+          "oklch(35% 0.127 165.3)",
+          "oklch(48% 0.127 165.3)",
+          "oklch(60% 0.127 165.3)",
+          "oklch(72% 0.127 165.3)",
+          "oklch(84% 0.127 165.3)",
+          "oklch(95% 0.127 165.3)"
+        ]
+      },
+      "bad-dark": {
+        "role": "secondary",
+        "displayName": "Blocked Red (dark)",
+        "canonical": "#f2806f",
+        "oklch": "oklch(72.4% 0.143 29.8)",
+        "tonalRamp": [
+          "oklch(15% 0.143 29.8)",
+          "oklch(25% 0.143 29.8)",
+          "oklch(35% 0.143 29.8)",
+          "oklch(48% 0.143 29.8)",
+          "oklch(60% 0.143 29.8)",
+          "oklch(72% 0.143 29.8)",
+          "oklch(84% 0.143 29.8)",
+          "oklch(95% 0.143 29.8)"
+        ]
+      },
+      "warn-dark": {
+        "role": "tertiary",
+        "displayName": "Warning Amber (dark)",
+        "canonical": "#e9b64c",
+        "oklch": "oklch(80.3% 0.135 82.8)",
+        "tonalRamp": [
+          "oklch(15% 0.135 82.8)",
+          "oklch(25% 0.135 82.8)",
+          "oklch(35% 0.135 82.8)",
+          "oklch(48% 0.135 82.8)",
+          "oklch(60% 0.135 82.8)",
+          "oklch(72% 0.135 82.8)",
+          "oklch(84% 0.135 82.8)",
+          "oklch(95% 0.135 82.8)"
+        ]
+      },
+      "term-dark": {
+        "role": "neutral",
+        "displayName": "Terminal (dark)",
+        "canonical": "#07080a",
+        "oklch": "oklch(13.4% 0.005 262.3)",
+        "tonalRamp": [
+          "oklch(15% 0.005 262.3)",
+          "oklch(25% 0.005 262.3)",
+          "oklch(35% 0.005 262.3)",
+          "oklch(48% 0.005 262.3)",
+          "oklch(60% 0.005 262.3)",
+          "oklch(72% 0.005 262.3)",
+          "oklch(84% 0.005 262.3)",
+          "oklch(95% 0.005 262.3)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The single hero headline; second line in Ink 3."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Panel heads and brand name."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "Hero promise paragraph only."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Document base size."
+      },
+      "body-sm": {
+        "displayName": "Body small",
+        "purpose": "Buttons, fields, ledger values, notices."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Form and ledger labels, verdicts, stepper."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Hints, descriptions, references, column headers (12px and 11px)."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "Every amount, count, ID, hash, and timestamp."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-ambient-light",
+        "value": "0 1px 2px rgb(14 16 20 / 0.04), 0 8px 24px -12px rgb(14 16 20 / 0.08)",
+        "purpose": "Cards and modal, light theme."
+      },
+      {
+        "name": "card-ambient-dark",
+        "value": "0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.6)",
+        "purpose": "Cards and modal, dark theme."
+      },
+      {
+        "name": "focus-ring-field",
+        "value": "0 0 0 4px var(--accent-soft)",
+        "purpose": "Field focus halo."
+      }
+    ],
+    "motion": [
+      {
+        "name": "rise",
+        "value": "rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both (opacity 0 to 1, translateY 6px to 0)",
+        "purpose": "Entrance for revealed rows, badges, panels, modal."
+      },
+      {
+        "name": "control-transition",
+        "value": "150ms (background-color, opacity, transform)",
+        "purpose": "Buttons; 1px press on active."
+      },
+      {
+        "name": "theme-transition",
+        "value": "background-color 0.25s ease, color 0.25s ease",
+        "purpose": "Light/dark swap on body."
+      },
+      {
+        "name": "firewall-step",
+        "value": "420ms per stage, 3 stages per line",
+        "purpose": "Replay of rules, intent, result per cart line."
+      },
+      {
+        "name": "hold-loop",
+        "value": "6s cycle: rest, held release, settle; auto-rotation 0.00012 rad/ms",
+        "purpose": "Hero hold object; settle mode plays once over 1.6s."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "durations forced to 0.01ms; 3D object renders a static pose",
+        "purpose": "prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "container",
+        "value": "1320px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ink pill for the one main action in a context.",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 5v14\"/><path d=\"m19 12-7 7-7-7\"/></svg>Run the live demo</button>",
+      "css": ".ds-btn-primary { display:inline-flex; align-items:center; gap:8px; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size:14px; font-weight:500; padding:10px 16px; border:none; border-radius:9999px; background:var(--ink,#0e1014); color:var(--canvas,#f6f7f9); transition:opacity .15s, transform .15s; } .ds-btn-primary:hover { opacity:.9; } .ds-btn-primary:active { transform:translateY(1px); } .ds-btn-primary:focus-visible { outline:2px solid var(--accent,#3d49d6); outline-offset:2px; } .ds-btn-primary:disabled { opacity:.4; cursor:not-allowed; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Hairline-bordered white pill for the alternate action.",
+      "html": "<button class=\"ds-btn-secondary\">See the audit trail</button>",
+      "css": ".ds-btn-secondary { display:inline-flex; align-items:center; gap:8px; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size:14px; font-weight:500; padding:10px 16px; border:1px solid var(--line-strong,#d0d4db); border-radius:9999px; background:var(--surface,#fff); color:var(--ink,#0e1014); transition:background-color .15s, transform .15s; } .ds-btn-secondary:hover { background:var(--surface-2,#f1f2f5); } .ds-btn-secondary:active { transform:translateY(1px); } .ds-btn-secondary:focus-visible { outline:2px solid var(--accent,#3d49d6); outline-offset:2px; }"
+    },
+    {
+      "name": "Quiet Button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "Borderless header and utility action.",
+      "html": "<button class=\"ds-btn-quiet\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/></svg>Reset</button>",
+      "css": ".ds-btn-quiet { display:inline-flex; align-items:center; gap:8px; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size:14px; font-weight:500; padding:6px 12px; border:none; border-radius:9999px; background:transparent; color:var(--ink-2,#4a505c); transition:background-color .15s, color .15s; } .ds-btn-quiet:hover { background:var(--surface-2,#f1f2f5); color:var(--ink,#0e1014); } .ds-btn-quiet:focus-visible { outline:2px solid var(--accent,#3d49d6); outline-offset:2px; }"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Text and money input with indigo focus ring.",
+      "html": "<label class=\"ds-label\">Task for the agent<input class=\"ds-field\" value=\"Buy dog food and treats\" /></label>",
+      "css": ".ds-label { display:grid; gap:6px; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size:13px; font-weight:500; color:var(--ink-2,#4a505c); } .ds-field { width:100%; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size:14px; color:var(--ink,#0e1014); background:var(--surface,#fff); border:1px solid var(--line-strong,#d0d4db); border-radius:12px; padding:10px 14px; outline:none; transition:border-color .15s, box-shadow .15s; } .ds-field::placeholder { color:var(--ink-3,#656b77); } .ds-field:focus { border-color:var(--accent,#3d49d6); box-shadow:0 0 0 4px var(--accent-soft,#eceefc); }"
+    },
+    {
+      "name": "Status Badges",
+      "kind": "chip",
+      "refersTo": "badge-ok",
+      "description": "Pill badges for money and check decisions.",
+      "html": "<span class=\"ds-badge ds-ok\">Captured $62.00</span> <span class=\"ds-badge ds-bad\">Blocked</span> <span class=\"ds-badge ds-hold\">Active hold</span> <span class=\"ds-badge ds-warn\">Injected text</span> <span class=\"ds-badge ds-muted\">Pet Food</span>",
+      "css": ".ds-badge { display:inline-flex; align-items:center; gap:6px; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size:12px; font-weight:500; padding:2px 8px; border-radius:9999px; white-space:nowrap; } .ds-ok { background:var(--ok-soft,#e6f3ed); color:var(--ok,#0c7a51); } .ds-bad { background:var(--bad-soft,#fbebe9); color:var(--bad,#b5312a); } .ds-hold { background:var(--accent-soft,#eceefc); color:var(--accent,#3d49d6); } .ds-warn { background:var(--warn-soft,#faf1dc); color:var(--warn,#855600); } .ds-muted { background:var(--surface-2,#f1f2f5); color:var(--ink-2,#4a505c); }"
+    },
+    {
+      "name": "Toggle Chip",
+      "kind": "chip",
+      "refersTo": "chip-on",
+      "description": "Selectable pill; ink when on, amber for allergen exclusions.",
+      "html": "<button class=\"ds-chip ds-on\">Pet Food</button> <button class=\"ds-chip\">Pet Toys</button> <button class=\"ds-chip ds-warn-on\">chicken</button>",
+      "css": ".ds-chip { font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size:12px; font-weight:500; padding:4px 10px; border-radius:9999px; border:1px solid var(--line-strong,#d0d4db); background:transparent; color:var(--ink-2,#4a505c); transition:background-color .15s; } .ds-chip:hover { background:var(--surface-2,#f1f2f5); } .ds-chip:focus-visible { outline:2px solid var(--accent,#3d49d6); outline-offset:2px; } .ds-on { background:var(--ink,#0e1014); border-color:var(--ink,#0e1014); color:var(--canvas,#f6f7f9); } .ds-on:hover { background:var(--ink,#0e1014); } .ds-warn-on { background:var(--warn,#855600); border-color:var(--warn,#855600); color:var(--canvas,#f6f7f9); } .ds-warn-on:hover { background:var(--warn,#855600); }"
+    },
+    {
+      "name": "Hold Ledger Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Card with panel head and hairline ledger rows; mono figures right.",
+      "html": "<section class=\"ds-card\"><header class=\"ds-head\"><div><h3>PayPal hold</h3><p>PayPal sandbox</p></div><span class=\"ds-badge ds-hold\">Active hold</span></header><div class=\"ds-row\"><span>Authorized</span><b class=\"ds-num ds-big\" style=\"color:var(--accent,#3d49d6)\">$80.00</b></div><div class=\"ds-row\"><span>Captured</span><b class=\"ds-num\" style=\"color:var(--ok,#0c7a51)\">$62.00</b></div><div class=\"ds-row\"><span>Released to you</span><b class=\"ds-num\" style=\"color:var(--accent,#3d49d6)\">$18.00</b></div></section>",
+      "css": ".ds-card { font-family: Geist, ui-sans-serif, system-ui, sans-serif; background:var(--surface,#fff); border:1px solid var(--line,#e3e5ea); border-radius:16px; padding:24px; box-shadow:0 1px 2px rgb(14 16 20 / .04), 0 8px 24px -12px rgb(14 16 20 / .08); color:var(--ink,#0e1014); max-width:320px; } .ds-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:20px; } .ds-head h3 { margin:0; font-size:15px; font-weight:600; letter-spacing:-.01em; } .ds-head p { margin:4px 0 0; font-size:13px; color:var(--ink-3,#656b77); } .ds-row { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:12px 0; border-bottom:1px solid var(--line,#e3e5ea); font-size:13px; color:var(--ink-2,#4a505c); } .ds-row:last-child { border-bottom:0; } .ds-num { font-family:'Geist Mono', ui-monospace, monospace; font-variant-numeric:tabular-nums; letter-spacing:-.025em; font-weight:400; font-size:15px; } .ds-big { font-size:20px; } .ds-badge { display:inline-flex; font-size:12px; font-weight:500; padding:2px 8px; border-radius:9999px; } .ds-hold { background:var(--accent-soft,#eceefc); color:var(--accent,#3d49d6); }"
+    },
+    {
+      "name": "Header Nav",
+      "kind": "nav",
+      "refersTo": "button-quiet",
+      "description": "Frosted sticky header with mark, health readout, quiet actions.",
+      "html": "<header class=\"ds-nav\"><a class=\"ds-brand\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 32 32\"><rect width=\"32\" height=\"32\" rx=\"9\" fill=\"#0e1014\"/><circle cx=\"16\" cy=\"16\" r=\"7.5\" fill=\"none\" stroke=\"#3d49d6\" stroke-width=\"2.4\"/><circle cx=\"16\" cy=\"16\" r=\"2.6\" fill=\"#f6f7f9\"/></svg>Leash</a><nav><span class=\"ds-health\"><i></i>PayPal sandbox</span><button class=\"ds-q\">Audit log</button><button class=\"ds-q\">Source</button></nav></header>",
+      "css": ".ds-nav { font-family: Geist, ui-sans-serif, system-ui, sans-serif; display:flex; align-items:center; justify-content:space-between; height:56px; padding:0 24px; background:rgb(246 247 249 / .85); backdrop-filter:blur(12px); border-bottom:1px solid var(--line,#e3e5ea); } .ds-brand { display:flex; align-items:center; gap:10px; font-size:15px; font-weight:600; letter-spacing:-.025em; color:var(--ink,#0e1014); } .ds-nav nav { display:flex; align-items:center; gap:4px; } .ds-health { display:flex; align-items:center; gap:6px; padding:0 8px; font-size:12px; color:var(--ink-3,#656b77); } .ds-health i { width:6px; height:6px; border-radius:9999px; background:var(--ok,#0c7a51); } .ds-q { font:500 14px Geist, sans-serif; padding:6px 12px; border:0; border-radius:9999px; background:transparent; color:var(--ink-2,#4a505c); } .ds-q:hover { background:var(--surface-2,#f1f2f5); color:var(--ink,#0e1014); } .ds-q:focus-visible { outline:2px solid var(--accent,#3d49d6); outline-offset:2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Ledger",
+    "overview": "Leash looks like a bank statement that happens to be live. Cool neutral paper, Geist set tight and dark, money in tabular mono, and every line of the story separated by a single hairline rule. The system is calm on purpose: the product's whole claim is that nothing surprising happens to your money, so the interface never raises its voice. Density is moderate; panels hold ledgers, not decoration.\n\nColor is spent like money. One indigo marks the hold (the authorized but uncharged budget, and what is released back). Green and red appear only where money is decided: captured or blocked. Amber is the warning voice for injected text, allergens, and pending states. Everything else is ink on neutrals. The one expressive object is the hold itself, rendered as a slow, real-time 3D stack of coins cinched by an indigo bank strap, with released coins lifting out.\n\nThe system explicitly refuses the neon \"AI startup\" look: no gradients, glows, or glassy purple fields. Light and dark themes are both first-class and swap through the same token names.",
+    "keyCharacteristics": [
+      "Cool neutral canvas with white cards; dark theme is near-black, not navy.",
+      "One accent (indigo) bound to the hold; status colors bound to money decisions.",
+      "Hairline ledgers: label left, mono figure right, a 1px rule between rows.",
+      "Pill buttons, pill badges, pill chips; 12-16px rounding on containers.",
+      "Geist for words, Geist Mono with tabular numerals for every figure and identifier.",
+      "One 3D hero object (the hold), reused small as a settlement receipt."
+    ],
+    "rules": [
+      {
+        "name": "The Hold Owns Indigo Rule",
+        "body": "Indigo means \"held or released back to you.\" If an element is not about the hold (or is not a focus ring), it is not indigo.",
+        "section": "colors"
+      },
+      {
+        "name": "The Money Decides Color Rule",
+        "body": "Green and red are reserved for outcomes on money and checks: captured/passed, blocked/vetoed. Warnings, pending states, and attack text use amber; neutral status uses the muted badge.",
+        "section": "colors"
+      },
+      {
+        "name": "The Zero Goes Grey Rule",
+        "body": "A ledger figure takes its semantic color only when nonzero; a zero amount drops to Ink 3.",
+        "section": "colors"
+      },
+      {
+        "name": "The Always-Dark Terminal Rule",
+        "body": "The agent log is dark in both themes and uses the dark-theme status values (amber #e9b64c, green #4fc89b, red #f2806f) on white-alpha text (30-85%).",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono Figures Rule",
+        "body": "Any number a user might compare or verify (money, quantities, PayPal IDs, hashes, times) is set in Geist Mono with tabular numerals. Words never are.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "Headings, labels, and column headers are sentence case with no added letter-spacing. Hierarchy comes from size, weight, and ink level, not caps.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Shadow Rule",
+        "body": "There is a single shadow token and it belongs to cards. Buttons, badges, and fields never cast shadows; state is shown with fill, opacity, and a 1px press.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** reserve Hold Indigo for the hold, released money, and focus.",
+      "**Do** set every figure, ID, and hash in Geist Mono with tabular numerals.",
+      "**Do** separate rows with 1px hairlines and introduce sections with a hairline top border instead of a new card.",
+      "**Do** use pill shapes for anything clickable or status-bearing, and 12-16px rounding for containers.",
+      "**Do** define every new color as a token in both light and dark themes so the toggle swaps it in one place.",
+      "**Do** animate entrances with the single rise motion (6px up, 0.5s, cubic-bezier(0.16, 1, 0.3, 1)) and honor reduced motion.",
+      "**Do** label simulated data as simulated, in the same quiet caption voice as real data."
+    ],
+    "donts": [
+      "**Don't** use gradients, glows, neon, or glassy purple fields; this is the \"AI startup\" look the product refuses.",
+      "**Don't** use green or red for anything that is not a money or check outcome; warnings are amber.",
+      "**Don't** add a second accent hue or a second shadow.",
+      "**Don't** add uppercase, letter-spaced eyebrow or kicker labels above headings; hierarchy is size, weight, and ink. (The user-pinned halftone footer's own mono caps column labels stay inside that component and are not a pattern to copy.)",
+      "**Don't** add another 3D or illustrative hero object; the hold is the one expressive object.",
+      "**Don't** set prose or in-app labels in mono."
+    ]
+  }
+}

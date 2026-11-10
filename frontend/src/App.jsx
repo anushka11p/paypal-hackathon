@@ -142,9 +142,9 @@ export default function App() {
     <>
       {/*
         THESIS: A payment safety product should feel like a bank, not a hackathon: calm, exact, provable. Refuses the neon "AI startup" look.
-        OWN-WORLD: Geist on cool neutrals, one indigo for the hold, green/red only for money decisions; hairline ledgers, mono figures, pill buttons.
+        OWN-WORLD: Geist on cool neutrals, one indigo for the hold, green/red only for money decisions, amber for warnings; hairline ledgers, mono figures, pill buttons.
         STORY: See the hold, run a hijacked agent, watch Leash capture only what passed and release the rest.
-        FIRST VIEWPORT: Left, the promise and two actions; right, the hold as a real-time 3D object (coins in a ring, the top coins released).
+        FIRST VIEWPORT: Left, the promise and two actions; right, the hold as a real-time 3D object (coins cinched by an indigo bank strap, the top coins released). Mobile: object first.
         FORM: user-pinned (Mercury bar, one 3D hero object, light/dark toggle); seed: pinned.
         FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
       */}
