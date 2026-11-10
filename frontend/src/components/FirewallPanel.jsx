@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Brain, CircleCheck, CircleX, Cpu, Loader2 } from "lucide-react";
 import { usd } from "../api";
 import { PanelHead } from "./MandatePanel";
+import HoldObject from "./HoldObject";
 
 const RULE_LABELS = {
   qty_exceeds_mandate: (l, p) => `Quantity ${l.qty} is over the limit of ${p.max_qty_per_sku}`,
@@ -31,7 +32,7 @@ function Verdict({ shown, ok, okText, children }) {
 }
 
 /** Replays the engine's real decisions one stage at a time; reports the running approved total. */
-export default function FirewallPanel({ cart, policy, animate, onProgress, onDone }) {
+export default function FirewallPanel({ cart, policy, theme, animate, onProgress, onDone }) {
   const total = cart.lines.length * 3;
   const [stage, setStage] = useState(animate ? 0 : total);
 
@@ -50,8 +51,8 @@ export default function FirewallPanel({ cart, policy, animate, onProgress, onDon
   const blocked = cart.proposed_total_cents - cart.approved_total_cents;
 
   return (
-    <section className="card p-5 sm:p-6">
-      <PanelHead step="4" title="Leash checks every line"
+    <section className="border-t border-line pt-6">
+      <PanelHead title="Leash checks every line"
         aside={
           <div className="hidden shrink-0 gap-4 text-xs text-ink-3 md:flex">
             <span className="flex items-center gap-1.5"><Cpu className="size-3.5" /> Rules: plain code, can't be prompted</span>
@@ -93,7 +94,8 @@ export default function FirewallPanel({ cart, policy, animate, onProgress, onDon
       </div>
 
       {complete && (
-        <div className="mt-6 rounded-xl bg-surface-2 px-5 py-4 animate-rise">
+        <div className="mt-2 grid items-center gap-x-8 gap-y-4 border-t border-line-strong pt-5 animate-rise md:grid-cols-[1fr_200px]">
+          <div>
           <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2 text-sm">
             <span className="text-ink-2">Proposed <span className="num ml-1 text-ink">{usd(cart.proposed_total_cents)}</span></span>
             <span className="text-ink-3">−</span>
@@ -107,6 +109,10 @@ export default function FirewallPanel({ cart, policy, animate, onProgress, onDon
               ? <>PayPal capture <span className="num">{cart.paypal.capture_id}</span> {cart.paypal.capture_status?.toLowerCase()} with final_capture, which released the rest. Authorization read back as {cart.paypal.authorization_status_after}.</>
               : cart.status === "blocked" ? "Nothing passed, so the whole authorization was voided." : "No capture was made."}
           </p>
+          </div>
+          <HoldObject theme={theme} mode="settle" className="order-first mx-auto aspect-square w-40 md:order-none md:w-[200px]"
+            releasedCoins={Math.round((cart.released_cents / Math.max(1, cart.captured_cents + cart.released_cents)) * 8)}
+            label={`Settled: ${usd(cart.captured_cents)} captured stays in the strap, ${usd(cart.released_cents)} released lifts out.`} />
         </div>
       )}
     </section>

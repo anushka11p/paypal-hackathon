@@ -24,7 +24,7 @@ function ProductRow({ p, poisoned }) {
             <span className="truncate">{p.name}</span>
             {attacks.length > 0 && (
               <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open}
-                className="badge-bad shrink-0 hover:opacity-80">
+                className="badge-warn shrink-0 hover:opacity-80">
                 <TriangleAlert className="size-3" /> Injected text <ChevronDown className={`size-3 transition-transform ${open ? "rotate-180" : ""}`} />
               </button>
             )}
@@ -38,7 +38,7 @@ function ProductRow({ p, poisoned }) {
           <figcaption className="flex items-center gap-1.5 border-b border-line px-3 py-1.5 text-[11px] text-ink-3">
             <Code2 className="size-3" /> Page source · {a.where} · simulated
           </figcaption>
-          <p className="px-3 py-2.5 font-mono text-[12px] leading-relaxed text-bad">{a.text}</p>
+          <p className="px-3 py-2.5 font-mono text-[12px] leading-relaxed text-warn">{a.text}</p>
         </figure>
       ))}
     </li>
@@ -66,7 +66,7 @@ function TerminalLine({ e, names }) {
       </div>
       {market && <div className="pl-[4.25rem] text-white/40">{market.available ? `${market.offers?.length || 0} offers, lowest ${market.lowest_usd ? "$" + market.lowest_usd : "n/a"}, ours $${market.our_price_usd}` : "Channel3 unavailable"}</div>}
       {e.injection?.map((t) => (
-        <div key={t} className="ml-[4.25rem] mt-1 flex gap-1.5 rounded-md bg-[#f2806f]/12 px-2 py-1.5 text-[#f6a497]">
+        <div key={t} className="ml-[4.25rem] mt-1 flex gap-1.5 rounded-md bg-[#e9b64c]/12 px-2 py-1.5 text-[#efc66f]">
           <ShieldAlert className="mt-[2px] size-3.5 shrink-0" />
           <span>Read a hidden instruction: “{t.length > 110 ? t.slice(0, 110) + "…" : t}”</span>
         </div>
@@ -92,11 +92,11 @@ export default function StorePanel({ mandate, job, onRun, runError }) {
 
   return (
     <section className="card p-5 sm:p-6">
-      <PanelHead step="3" title={`Agent shops at ${catalog?.merchant.name || "the store"}`}
+      <PanelHead title={`Agent shops at ${catalog?.merchant.name || "the store"}`}
         aside={
           <div className="flex shrink-0 rounded-full border border-line-strong p-0.5 text-xs font-medium" role="group" aria-label="Store">
             <button className={`rounded-full px-3 py-1 transition-colors ${!poisoned ? "bg-ink text-canvas" : "text-ink-2"}`} onClick={() => setScenario("clean")} disabled={running} aria-pressed={!poisoned}>Clean</button>
-            <button className={`rounded-full px-3 py-1 transition-colors ${poisoned ? "bg-bad text-canvas" : "text-ink-2"}`} onClick={() => setScenario("attack")} disabled={running} aria-pressed={poisoned}>Poisoned</button>
+            <button className={`rounded-full px-3 py-1 transition-colors ${poisoned ? "bg-warn text-canvas" : "text-ink-2"}`} onClick={() => setScenario("attack")} disabled={running} aria-pressed={poisoned}>Poisoned</button>
           </div>
         }>
         {poisoned

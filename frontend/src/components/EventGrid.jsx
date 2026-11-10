@@ -53,7 +53,7 @@ export default function EventGrid({ mandateId, refreshKey, live, theme = "light"
   ], []);
 
   return (
-    <section className="card p-5 sm:p-6">
+    <section className="border-t border-line pt-6">
       <PanelHead title="Audit trail"
         aside={chain && (chain.ok
           ? <span className="badge-ok"><Link2 className="size-3.5" /> Chain intact · <span className="num">{chain.checked}</span></span>

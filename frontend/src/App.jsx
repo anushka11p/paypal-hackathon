@@ -161,9 +161,9 @@ export default function App() {
                 {health.agent === "separate_process" ? "Agent isolated" : "Agent in-process"}
               </span>
             )}
-            {mandateId && <button className="btn-quiet" onClick={() => setShowAudit(true)}><FileJson className="size-4" /><span className="hidden sm:inline">Audit log</span></button>}
-            <button className="btn-quiet" onClick={reset}><RotateCcw className="size-4" /><span className="hidden sm:inline">Reset</span></button>
-            <a className="btn-quiet" href={REPO} target="_blank" rel="noreferrer"><Code2 className="size-4" /><span className="hidden sm:inline">Source</span></a>
+            {mandateId && <button className="btn-quiet" aria-label="Open the raw audit log" onClick={() => setShowAudit(true)}><FileJson className="size-4" /><span className="hidden sm:inline">Audit log</span></button>}
+            <button className="btn-quiet" aria-label="Reset the demo" onClick={reset}><RotateCcw className="size-4" /><span className="hidden sm:inline">Reset</span></button>
+            <a className="btn-quiet" href={REPO} target="_blank" rel="noreferrer" aria-label="Source code on GitHub"><Code2 className="size-4" /><span className="hidden sm:inline">Source</span></a>
             <button className="btn-quiet" onClick={toggle} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}>
               {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </button>
@@ -174,7 +174,7 @@ export default function App() {
       <main id="top" className="mx-auto max-w-[1320px] px-4 sm:px-6">
         <section className="grid grid-cols-1 items-center gap-6 pb-10 pt-10 md:grid-cols-[1.05fr_1fr] md:gap-8 md:pb-16 md:pt-20">
           <div className="min-w-0 max-w-xl">
-            <h1 className="text-[44px] font-medium leading-[1.02] tracking-[-0.035em] sm:text-[64px]">
+            <h1 className="text-[44px] font-medium leading-[1.0] tracking-[-0.04em] sm:text-[64px] lg:text-[84px]">
               Let AI shop.<br /><span className="text-ink-3">Keep the leash.</span>
             </h1>
             <p className="mt-6 max-w-[34rem] text-[17px] leading-relaxed text-ink-2">
@@ -187,16 +187,17 @@ export default function App() {
             </div>
             <p className="mt-8 border-t border-line pt-5 text-sm leading-relaxed text-ink-2">
               In <span className="num text-ink">20</span> of <span className="num text-ink">20</span> live runs the agent fell for both injected instructions.
-              Bad items approved: <span className="num text-ok">$0.00</span>.
+              Bad items approved: <span className="num text-ok">$0.00</span>. Verified against the PayPal sandbox: capture <span className="num text-ink">6LX40761XE0335641</span>, completed.
             </p>
           </div>
-          <div className="relative min-w-0">
-            <HoldObject theme={theme} className="mx-auto aspect-square w-full max-w-[360px] md:mr-0 md:max-w-[560px]" />
-            <div className="pointer-events-none absolute bottom-[8%] left-[6%] flex flex-col gap-2 text-xs md:left-[10%]">
-              <span className="flex items-center gap-2 text-ink-2"><span className="size-2 rounded-full bg-ink-3" /> Captured: what passed</span>
-              <span className="flex items-center gap-2 text-ink-2"><span className="size-2 rounded-full bg-accent" /> Released: back to you</span>
-            </div>
-          </div>
+          <figure className="order-first min-w-0 md:order-none">
+            <HoldObject theme={theme} className="mx-auto aspect-square w-full max-w-[260px] md:mr-0 md:max-w-[540px]" />
+            <figcaption className="mx-auto mt-2 flex max-w-[540px] flex-wrap justify-center gap-x-5 gap-y-1 border-t border-line pt-3 text-xs text-ink-2 md:mr-0">
+              <span>Held <span className="num ml-1 text-accent">$80.00</span></span>
+              <span className="flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-ok" />Captured <span className="num text-ok">$62.00</span></span>
+              <span className="flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-accent" />Released <span className="num text-accent">$18.00</span></span>
+            </figcaption>
+          </figure>
         </section>
 
         <section id="demo" className="scroll-mt-20 border-t border-line pt-10">
@@ -220,13 +221,13 @@ export default function App() {
           </div>
 
           {cart && mandate && (
-            <div className="mt-4">
-              <FirewallPanel key={cart.cart_id} cart={cart} policy={mandate.policy} animate={animateCart} onProgress={onProgress} onDone={onDone} />
+            <div className="mt-10">
+              <FirewallPanel key={cart.cart_id} cart={cart} policy={mandate.policy} theme={theme} animate={animateCart} onProgress={onProgress} onDone={onDone} />
             </div>
           )}
         </section>
 
-        <section className="mt-16 grid grid-cols-1 gap-4">
+        <section className="mt-16 grid grid-cols-1 gap-14">
           <div id="trail" className="min-w-0 scroll-mt-20"><EventGrid mandateId={mandateId} refreshKey={refreshKey} live={running} theme={theme} /></div>
           <div id="isolation" className="min-w-0 scroll-mt-20"><IsolationPanel /></div>
         </section>

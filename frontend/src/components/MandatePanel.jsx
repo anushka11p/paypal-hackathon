@@ -16,12 +16,11 @@ const MANUAL_POLICY = {
   allowed_categories: ["pet_food", "pet_treats"], excluded_allergens: ["chicken"], purpose: "Dog food and treats",
 };
 
-export function PanelHead({ step, title, aside, children }) {
+export function PanelHead({ title, aside, children }) {
   return (
     <header className="mb-5 flex items-start justify-between gap-3">
       <div className="min-w-0">
         <h3 className="flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em]">
-          {step && <span className="num flex size-5 items-center justify-center rounded-full bg-surface-2 text-[11px] text-ink-2">{step}</span>}
           {title}
         </h3>
         {children && <p className="mt-1 text-[13px] leading-relaxed text-ink-3">{children}</p>}
@@ -48,7 +47,7 @@ function RuleSet({ policy }) {
       <RuleRow label="Max quantity"><span className="num">{policy.max_qty_per_sku}</span></RuleRow>
       <RuleRow label="Allowed">{policy.allowed_categories.map((c) => <span key={c} className="badge-muted">{titleCase(c)}</span>)}</RuleRow>
       <RuleRow label="Never contains">
-        {policy.excluded_allergens.length ? policy.excluded_allergens.map((a) => <span key={a} className="badge-bad">{a}</span>) : <span className="text-ink-3">Nothing</span>}
+        {policy.excluded_allergens.length ? policy.excluded_allergens.map((a) => <span key={a} className="badge-warn">{a}</span>) : <span className="text-ink-3">Nothing</span>}
       </RuleRow>
       <RuleRow label="Anything else"><span className="text-ink-2">Rejected</span></RuleRow>
     </dl>
@@ -60,7 +59,7 @@ function toggle(list, value) {
 }
 
 function Chip({ on, onClick, tone = "ink", children }) {
-  const active = tone === "bad" ? "bg-bad text-canvas border-bad" : "bg-ink text-canvas border-ink";
+  const active = tone === "warn" ? "bg-warn text-canvas border-warn" : "bg-ink text-canvas border-ink";
   return (
     <button type="button" onClick={onClick}
       className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${on ? active : "border-line-strong text-ink-2 hover:bg-surface-2"}`}>
@@ -92,7 +91,7 @@ function PolicyEditor({ policy, onChange }) {
       </div>
       <div className="grid gap-2"><span className="label">Never contains</span>
         <div className="flex flex-wrap gap-1.5">{ALLERGENS.map((a) => (
-          <Chip key={a} tone="bad" on={policy.excluded_allergens.includes(a)} onClick={() => set("excluded_allergens", toggle(policy.excluded_allergens, a))}>{a}</Chip>
+          <Chip key={a} tone="warn" on={policy.excluded_allergens.includes(a)} onClick={() => set("excluded_allergens", toggle(policy.excluded_allergens, a))}>{a}</Chip>
         ))}</div>
       </div>
     </div>
@@ -129,7 +128,7 @@ export default function MandatePanel({ mandate, onRevoke }) {
   if (mandate) {
     return (
       <section className="card p-5 sm:p-6">
-        <PanelHead step="1" title="Your mandate" aside={<span className="badge-ok"><Lock className="size-3" /> Signed</span>}>
+        <PanelHead title="Your mandate" aside={<span className="badge-ok"><Lock className="size-3" /> Signed</span>}>
           “{mandate.instruction_text}”
         </PanelHead>
         <RuleSet policy={mandate.policy} />
@@ -143,7 +142,7 @@ export default function MandatePanel({ mandate, onRevoke }) {
 
   return (
     <section className="card p-5 sm:p-6">
-      <PanelHead step="1" title="Write the mandate">Plain English in. Strict rules out. The agent never sees them.</PanelHead>
+      <PanelHead title="Write the mandate">Plain English in. Strict rules out. The agent never sees them.</PanelHead>
       <div className="mb-2.5 flex flex-wrap gap-1.5">
         {PRESETS.map((p) => (
           <Chip key={p.label} on={text === p.text} onClick={() => { setText(p.text); setPolicy(null); setQuestion(null); }}>{p.label}</Chip>

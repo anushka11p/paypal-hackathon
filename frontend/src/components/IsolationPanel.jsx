@@ -23,7 +23,7 @@ export default function IsolationPanel() {
 
   const agent = result?.proof.agent;
   return (
-    <section className="card p-5 sm:p-6">
+    <section className="border-t border-line pt-6">
       <PanelHead title="Can the agent pay directly?"
         aside={<button className="btn-secondary shrink-0" onClick={attack} disabled={busy}>
           {busy && <Loader2 className="size-4 animate-spin" />} Make it try

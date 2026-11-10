@@ -38,7 +38,7 @@ export default function EscrowWidget({ mandate, cart, payments, revealedApproved
 
   return (
     <section className="card p-5 sm:p-6 lg:sticky lg:top-20">
-      <PanelHead step="2" title="PayPal hold" aside={<span className={tone}>{label}</span>}>
+      <PanelHead title="PayPal hold" aside={<span className={tone}>{label}</span>}>
         {payments === "sandbox" ? "PayPal sandbox" : "Payment simulator, same rules as the sandbox"}
       </PanelHead>
       <div>

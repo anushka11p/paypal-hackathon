@@ -1,39 +1,73 @@
 import { useEffect, useRef, useState } from "react";
 
 /*
- * The hold, as an object: eight coins (an $80 authorization, $10 each) held
- * inside a metal ring — the leash. Every few seconds the top coins lift out
- * and fade (released back to you) while the rest stay put (captured).
+ * The hold, as an object: a stack of coins (the authorized amount) cinched by
+ * an indigo bank strap — the leash. Released coins slide up out of the strap
+ * and fade; the coins that stay inside it are the capture.
+ *
+ * mode="loop"   hero: the release plays on a slow loop.
+ * mode="settle" receipt: plays once, then holds the settled state.
  * Three.js is loaded lazily; reduced motion renders one still frame.
  */
 
 const PALETTE = {
-  light: { coin: 0xc9ccd3, coinEdge: 0x9aa0ab, ring: 0x3d49d6, released: 0x3d49d6, shadow: "rgba(14,16,20,0.16)", exposure: 1.05 },
-  dark: { coin: 0x8a909b, coinEdge: 0x5d636d, ring: 0x8f98ff, released: 0x8f98ff, shadow: "rgba(0,0,0,0.55)", exposure: 1.15 },
+  light: { coin: 0x9ea4ae, released: 0x3d49d6, strap: 0x3d49d6, shadow: "rgba(14,16,20,0.22)", key: 2.1, exposure: 1.0 },
+  dark: { coin: 0x9298a3, released: 0x8f98ff, strap: 0x5b66e6, shadow: "rgba(0,0,0,0.6)", key: 1.6, exposure: 1.1 },
 };
 
 const COINS = 8;
-const RELEASED = 2; // top coins that float away: the unused part of the hold
+const T = 0.17; // coin thickness; coins touch, like a real stack
 
-function coinProfile(THREE) {
-  // Lathe profile: flat faces with a softly rounded rim.
-  const r = 1, t = 0.085, b = 0.03, pts = [];
-  pts.push(new THREE.Vector2(0, -t));
-  pts.push(new THREE.Vector2(r - b, -t));
-  for (let i = 0; i <= 6; i++) {
-    const a = -Math.PI / 2 + (i / 6) * Math.PI;
-    pts.push(new THREE.Vector2(r - b + Math.cos(a) * b, Math.sin(a) * t));
+function rimProfile(THREE) {
+  // Lathe profile: flat faces (covered by embossed discs) with a rounded rim.
+  const r = 1, h = T / 2, b = 0.035, pts = [new THREE.Vector2(0, -h), new THREE.Vector2(r - b, -h)];
+  for (let i = 0; i <= 8; i++) {
+    const a = -Math.PI / 2 + (i / 8) * Math.PI;
+    pts.push(new THREE.Vector2(r - b + Math.cos(a) * b, Math.sin(a) * h));
   }
-  pts.push(new THREE.Vector2(r - b, t));
-  pts.push(new THREE.Vector2(0, t));
+  pts.push(new THREE.Vector2(r - b, h), new THREE.Vector2(0, h));
   return pts;
 }
 
-export default function HoldObject({ theme = "light", className = "" }) {
+function reedTexture(THREE) {
+  // Bump map for the reeded edge: fine vertical ridges on the rim band only.
+  const c = document.createElement("canvas");
+  c.width = 1024; c.height = 64;
+  const g = c.getContext("2d");
+  g.fillStyle = "#808080"; g.fillRect(0, 0, 1024, 64);
+  for (let x = 0; x < 1024; x += 1024 / 160) {
+    g.fillStyle = "#d8d8d8"; g.fillRect(x, 8, 3, 48);
+    g.fillStyle = "#3a3a3a"; g.fillRect(x + 3, 8, 2.4, 48);
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = THREE.RepeatWrapping;
+  return t;
+}
+
+function faceTexture(THREE) {
+  // Bump map for the face: a raised border, a groove, and the Leash mark struck in the middle.
+  const s = 512, c = document.createElement("canvas");
+  c.width = c.height = s;
+  const g = c.getContext("2d"), m = s / 2;
+  g.fillStyle = "#7a7a7a"; g.fillRect(0, 0, s, s);
+  const ring = (r, w, color) => { g.beginPath(); g.arc(m, m, r, 0, Math.PI * 2); g.lineWidth = w; g.strokeStyle = color; g.stroke(); };
+  ring(s * 0.47, s * 0.05, "#d0d0d0");
+  ring(s * 0.4, s * 0.012, "#404040");
+  ring(s * 0.17, s * 0.045, "#e6e6e6");
+  g.beginPath(); g.arc(m, m, s * 0.055, 0, Math.PI * 2); g.fillStyle = "#e6e6e6"; g.fill();
+  for (let i = 0; i < 48; i++) {
+    const a = (i / 48) * Math.PI * 2;
+    g.save(); g.translate(m + Math.cos(a) * s * 0.33, m + Math.sin(a) * s * 0.33); g.rotate(a);
+    g.fillStyle = "#a8a8a8"; g.fillRect(-s * 0.004, -s * 0.018, s * 0.008, s * 0.036); g.restore();
+  }
+  return new THREE.CanvasTexture(c);
+}
+
+export default function HoldObject({ theme = "light", mode = "loop", releasedCoins = 2, className = "", label }) {
   const hostRef = useRef(null);
   const apiRef = useRef(null);
-  const [failed, setFailed] = useState(false);
   const themeRef = useRef(theme);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     let disposed = false;
@@ -43,20 +77,14 @@ export default function HoldObject({ theme = "light", className = "" }) {
       try {
         THREE = await import("three");
         ({ RoomEnvironment } = await import("three/examples/jsm/environments/RoomEnvironment.js"));
-      } catch {
-        setFailed(true);
-        return;
-      }
+      } catch { setFailed(true); return; }
       const host = hostRef.current;
       if (disposed || !host) return;
 
       let renderer;
       try {
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "low-power" });
-      } catch {
-        setFailed(true);
-        return;
-      }
+      } catch { setFailed(true); return; }
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -68,82 +96,89 @@ export default function HoldObject({ theme = "light", className = "" }) {
       const pmrem = new THREE.PMREMGenerator(renderer);
       scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
-      const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
-      camera.position.set(0, 3.9, 8.1);
-      camera.lookAt(0, 1.05, 0);
+      const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
+      camera.position.set(0, 4.1, 7.6);
+      camera.lookAt(0, 0.95, 0);
 
-      const key = new THREE.DirectionalLight(0xffffff, 1.4);
-      key.position.set(3, 5, 4);
+      const key = new THREE.DirectionalLight(0xffffff, 2);
+      key.position.set(-3, 6, 4);
       scene.add(key);
+      const rim = new THREE.DirectionalLight(0xffffff, 0.8);
+      rim.position.set(4, 2, -3);
+      scene.add(rim);
 
       const rig = new THREE.Group();
-      rig.position.y = 0.05;
       scene.add(rig);
 
-      // Coins
-      const coinGeo = new THREE.LatheGeometry(coinProfile(THREE), 96);
-      const coinMat = new THREE.MeshPhysicalMaterial({ metalness: 1, roughness: 0.32, clearcoat: 0.6, clearcoatRoughness: 0.25 });
+      const reeds = reedTexture(THREE);
+      const face = faceTexture(THREE);
+      const rimGeo = new THREE.LatheGeometry(rimProfile(THREE), 128);
+      const faceGeo = new THREE.CircleGeometry(0.965, 96);
+      const released = Math.max(0, Math.min(COINS - 1, releasedCoins));
+
       const coins = [];
       for (let i = 0; i < COINS; i++) {
-        const mat = coinMat.clone();
-        if (i >= COINS - RELEASED) mat.transparent = true;
-        const m = new THREE.Mesh(coinGeo, mat);
-        m.position.y = i * 0.25;
-        m.rotation.y = i * 0.37;
-        rig.add(m);
-        coins.push(m);
+        const isReleased = i >= COINS - released;
+        const mat = new THREE.MeshPhysicalMaterial({
+          metalness: 1, roughness: 0.34, clearcoat: 0.4, clearcoatRoughness: 0.3,
+          bumpMap: reeds, bumpScale: 1.4, transparent: isReleased,
+        });
+        const faceMat = new THREE.MeshPhysicalMaterial({
+          metalness: 1, roughness: 0.3, bumpMap: face, bumpScale: 2.2, transparent: isReleased,
+        });
+        const coin = new THREE.Group();
+        coin.add(new THREE.Mesh(rimGeo, mat));
+        const top = new THREE.Mesh(faceGeo, faceMat);
+        top.rotation.x = -Math.PI / 2; top.position.y = T / 2 + 0.0008;
+        const bottom = new THREE.Mesh(faceGeo, faceMat);
+        bottom.rotation.x = Math.PI / 2; bottom.position.y = -T / 2 - 0.0008;
+        coin.add(top, bottom);
+        // A real stack is never perfectly aligned.
+        const jx = Math.sin(i * 12.9898) * 0.035, jz = Math.cos(i * 78.233) * 0.035;
+        coin.position.set(jx, i * T, jz);
+        coin.rotation.y = i * 0.9;
+        coin.userData = { home: coin.position.clone(), released: isReleased, k: i - (COINS - released) + 1, mats: [mat, faceMat] };
+        rig.add(coin);
+        coins.push(coin);
       }
-      // Engraved ring on each face, a hint of minting.
-      const groove = new THREE.TorusGeometry(0.78, 0.006, 8, 96);
-      const grooveMat = new THREE.MeshStandardMaterial({ metalness: 1, roughness: 0.5 });
-      coins.forEach((c) => {
-        const g = new THREE.Mesh(groove, grooveMat);
-        g.rotation.x = Math.PI / 2;
-        g.position.y = 0.086;
-        c.add(g);
-      });
 
-      // The leash: one tilted ring circling the stack, plus a thinner companion.
-      const ringMat = new THREE.MeshPhysicalMaterial({ metalness: 0.9, roughness: 0.18, clearcoat: 1 });
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(1.62, 0.045, 32, 220), ringMat);
-      const ring2 = new THREE.Mesh(new THREE.TorusGeometry(1.86, 0.012, 16, 220), ringMat);
-      const ringPivot = new THREE.Group();
-      ringPivot.position.y = 0.85;
-      ringPivot.add(ring, ring2);
-      ring.rotation.x = Math.PI / 2 - 0.32;
-      ring2.rotation.x = Math.PI / 2 - 0.26;
-      ring2.rotation.y = 0.12;
-      rig.add(ringPivot);
+      // The leash: an indigo bank strap cinched around the coins that stay.
+      const kept = COINS - released;
+      const strapH = Math.min(0.42, kept * T * 0.55);
+      const strapMat = new THREE.MeshPhysicalMaterial({ roughness: 0.55, sheen: 0.6, sheenRoughness: 0.5, side: THREE.DoubleSide });
+      const strap = new THREE.Mesh(new THREE.CylinderGeometry(1.055, 1.055, strapH, 128, 1, true), strapMat);
+      strap.position.y = (kept - 1) * T / 2;
+      const edgeMat = new THREE.MeshPhysicalMaterial({ roughness: 0.4 });
+      const edgeTop = new THREE.Mesh(new THREE.TorusGeometry(1.056, 0.007, 8, 128), edgeMat);
+      edgeTop.rotation.x = Math.PI / 2; edgeTop.position.y = strap.position.y + strapH / 2;
+      const edgeBottom = edgeTop.clone(); edgeBottom.position.y = strap.position.y - strapH / 2;
+      rig.add(strap, edgeTop, edgeBottom);
 
       // Soft contact shadow.
       const sc = document.createElement("canvas");
       sc.width = sc.height = 128;
       const sctx = sc.getContext("2d");
       const shadowTex = new THREE.CanvasTexture(sc);
-      const shadow = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 4.4), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
-      shadow.rotation.x = -Math.PI / 2;
-      shadow.position.y = -0.1;
+      const shadow = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 3.6), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+      shadow.rotation.x = -Math.PI / 2; shadow.position.y = -T / 2 - 0.01;
       scene.add(shadow);
 
+      let palette;
       const applyTheme = (name) => {
         const p = PALETTE[name] || PALETTE.light;
-        coins.forEach((c, i) => {
-          c.material.color.setHex(i >= COINS - RELEASED ? p.coinEdge : p.coin);
-        });
-        grooveMat.color.setHex(p.coinEdge);
-        ringMat.color.setHex(p.ring);
+        coins.forEach((c) => c.userData.mats.forEach((m) => m.color.setHex(p.coin)));
+        strapMat.color.setHex(p.strap);
+        edgeMat.color.setHex(p.strap).multiplyScalar(0.7);
+        key.intensity = p.key;
         renderer.toneMappingExposure = p.exposure;
         sctx.clearRect(0, 0, 128, 128);
-        const grad = sctx.createRadialGradient(64, 64, 4, 64, 64, 62);
-        grad.addColorStop(0, p.shadow);
-        grad.addColorStop(1, "rgba(0,0,0,0)");
-        sctx.fillStyle = grad;
-        sctx.fillRect(0, 0, 128, 128);
+        const grad = sctx.createRadialGradient(64, 64, 6, 64, 64, 62);
+        grad.addColorStop(0, p.shadow); grad.addColorStop(1, "rgba(0,0,0,0)");
+        sctx.fillStyle = grad; sctx.fillRect(0, 0, 128, 128);
         shadowTex.needsUpdate = true;
-        return { ...p, edgeColor: new THREE.Color(p.coinEdge), releasedColor: new THREE.Color(p.released) };
+        palette = { coin: new THREE.Color(p.coin), released: new THREE.Color(p.released) };
       };
-      let palette = applyTheme(themeRef.current);
-      apiRef.current = { setTheme: (name) => { palette = applyTheme(name); if (reduced) render(0); } };
+      applyTheme(themeRef.current);
 
       let w = 1, h = 1;
       const resize = () => {
@@ -167,29 +202,33 @@ export default function HoldObject({ theme = "light", className = "" }) {
       host.addEventListener("pointermove", onMove);
       host.addEventListener("pointerleave", onLeave);
 
-      const ease = (t) => 1 - Math.pow(1 - t, 3);
+      const ease = (t) => 1 - Math.pow(1 - t, 4);
+      const start = performance.now();
+      const liftAt = (t) => {
+        if (mode === "settle") return ease(Math.min(1, Math.max(0, (t - start - 300) / 1600)));
+        // 6s loop: a short rest, a long held release, then settle back in.
+        const c = ((t - start) / 6000) % 1;
+        return c < 0.15 ? 0 : c < 0.45 ? ease((c - 0.15) / 0.3) : c < 0.85 ? 1 : 1 - ease((c - 0.85) / 0.15);
+      };
       const render = (t) => {
-        // 7s cycle: rest, then the released coins lift out and fade, then return.
-        const cycle = (t / 7000) % 1;
-        const lift = cycle < 0.45 ? 0 : cycle < 0.8 ? ease((cycle - 0.45) / 0.35) : 1 - ease((cycle - 0.8) / 0.2);
-        coins.forEach((c, i) => {
-          const base = i * 0.25;
-          if (i >= COINS - RELEASED) {
-            const k = i - (COINS - RELEASED) + 1;
-            c.position.y = base + lift * (0.45 + k * 0.28);
-            c.position.x = lift * k * 0.18;
-            c.rotation.z = lift * 0.35 * k;
-            c.material.opacity = 1 - lift * 0.85;
-            c.material.color.lerpColors(palette.edgeColor, palette.releasedColor, lift);
-          }
+        const lift = reduced ? 1 : liftAt(t);
+        coins.forEach((c) => {
+          const { home, released: isReleased, k } = c.userData;
+          if (!isReleased) return;
+          c.position.y = home.y + lift * (0.32 + k * 0.2);
+          c.position.x = home.x + lift * k * 0.12;
+          c.rotation.z = lift * 0.16 * k;
+          c.userData.mats.forEach((m) => {
+            m.opacity = 1 - lift * 0.55;
+            m.color.lerpColors(palette.coin, palette.released, lift * 0.85);
+          });
         });
         px += (tx - px) * 0.06; py += (ty - py) * 0.06;
-        rig.rotation.y = t * 0.00018 + px * 0.35;
-        rig.rotation.x = py * 0.12;
-        ringPivot.rotation.y = -t * 0.00032;
-        ringPivot.rotation.z = Math.sin(t * 0.0006) * 0.05;
+        rig.rotation.y = (reduced ? 0.6 : t * 0.00012) + px * 0.3;
+        rig.rotation.x = py * 0.08;
         renderer.render(scene, camera);
       };
+      apiRef.current = { setTheme: (name) => { applyTheme(name); render(performance.now()); } };
 
       let raf = 0, visible = true;
       const loop = (t) => { raf = 0; if (!visible) return; render(t); raf = requestAnimationFrame(loop); };
@@ -198,9 +237,9 @@ export default function HoldObject({ theme = "light", className = "" }) {
         if (visible && !reduced && !raf) raf = requestAnimationFrame(loop);
       });
       io.observe(host);
-      const ro = new ResizeObserver(() => { resize(); if (reduced) render(2000); });
+      const ro = new ResizeObserver(() => { resize(); render(performance.now()); });
       ro.observe(host);
-      if (reduced) render(2000); else raf = requestAnimationFrame(loop);
+      if (reduced) render(performance.now()); else raf = requestAnimationFrame(loop);
 
       cleanup = () => {
         cancelAnimationFrame(raf);
@@ -208,23 +247,23 @@ export default function HoldObject({ theme = "light", className = "" }) {
         host.removeEventListener("pointermove", onMove);
         host.removeEventListener("pointerleave", onLeave);
         scene.traverse((o) => { o.geometry?.dispose?.(); if (o.material) [].concat(o.material).forEach((m) => { m.map?.dispose?.(); m.dispose(); }); });
-        pmrem.dispose(); renderer.dispose();
+        reeds.dispose(); face.dispose(); pmrem.dispose(); renderer.dispose();
         renderer.domElement.remove();
         apiRef.current = null;
       };
     })();
     return () => { disposed = true; cleanup(); };
-  }, []);
+  }, [mode, releasedCoins]);
 
   useEffect(() => { themeRef.current = theme; apiRef.current?.setTheme(theme); }, [theme]);
 
   return (
     <div ref={hostRef} className={`relative ${className}`} role="img"
-      aria-label="An $80 PayPal hold shown as a stack of eight coins inside a ring; the top two lift away as the released amount.">
+      aria-label={label || "A stack of coins held by an indigo strap; the top coins slide out, released back to you."}>
       {failed && (
-        <svg viewBox="0 0 200 200" className="absolute inset-0 m-auto size-2/3 text-accent" aria-hidden="true">
-          <ellipse cx="100" cy="110" rx="70" ry="22" fill="none" stroke="currentColor" strokeWidth="3" />
-          {Array.from({ length: 6 }, (_, i) => <ellipse key={i} cx="100" cy={130 - i * 8} rx="44" ry="13" fill="var(--surface-2)" stroke="var(--line-strong)" />)}
+        <svg viewBox="0 0 200 200" className="absolute inset-0 m-auto size-2/3" aria-hidden="true">
+          {Array.from({ length: 8 }, (_, i) => <ellipse key={i} cx="100" cy={150 - i * 11} rx="56" ry="16" fill="var(--surface-2)" stroke="var(--line-strong)" />)}
+          <rect x="44" y="118" width="112" height="16" fill="var(--accent)" opacity="0.85" />
         </svg>
       )}
     </div>
