@@ -46,13 +46,13 @@ export default function IsolationPanel() {
             <span className={result.hack.status === 403 ? "badge-ok" : "badge-bad"}>
               <ShieldCheck className="size-3.5" /> {result.hack.status === 403 ? "403: refused by the runtime guard" : `Unexpected ${result.hack.status}`}
             </span>
-            <pre className="mt-2 whitespace-pre-wrap rounded-xl bg-slate-950 p-3 font-mono text-[11px] text-slate-300">{result.hack.body.detail}</pre>
+            <pre className="mt-2 whitespace-pre-wrap rounded-xl bg-black/55 p-3 font-mono text-[11px] text-slate-300">{result.hack.body.detail}</pre>
           </div>
           <div>
             <span className={agent?.isolated ? "badge-ok" : "badge-warn"}>
               <KeyRound className="size-3.5" /> {agent?.isolated ? "Agent process holds 0 payment secrets" : "Agent in-process (dev mode)"}
             </span>
-            <pre className="mt-2 whitespace-pre-wrap rounded-xl bg-slate-950 p-3 font-mono text-[11px] text-slate-300">{JSON.stringify(agent, null, 2)}</pre>
+            <pre className="mt-2 whitespace-pre-wrap rounded-xl bg-black/55 p-3 font-mono text-[11px] text-slate-300">{JSON.stringify(agent, null, 2)}</pre>
           </div>
         </div>
       )}

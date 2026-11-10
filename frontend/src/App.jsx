@@ -8,13 +8,23 @@ import FirewallPanel from "./components/FirewallPanel";
 import EventGrid from "./components/EventGrid";
 import IsolationPanel from "./components/IsolationPanel";
 import AuditModal from "./components/AuditModal";
+import FluffyOrbs from "./components/FluffyOrbs";
+import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer";
+
+const REPO = "https://github.com/anushka11p/paypal-hackathon";
+const FOOTER_COLUMNS = [
+  { title: "Product", links: [{ label: "Live demo", href: "#top" }, { label: "Security trail", href: "#trail" }, { label: "Isolation proof", href: "#isolation" }] },
+  { title: "Built with", links: [{ label: "PayPal", href: "https://developer.paypal.com" }, { label: "Groq", href: "https://groq.com" }, { label: "Channel3", href: "https://channel3.ai" }, { label: "AG Grid", href: "https://www.ag-grid.com" }] },
+  { title: "Team", links: [{ label: "Anushka Prasad" }, { label: "Anika" }, { label: "Source on GitHub", href: REPO }] },
+];
 
 function Logo() {
   return (
-    <svg viewBox="0 0 32 32" className="size-8" aria-hidden="true">
-      <rect width="32" height="32" rx="9" fill="#0f172a" />
-      <path d="M10 9v11a4 4 0 0 0 4 4h8" fill="none" stroke="#10b981" strokeWidth="3" strokeLinecap="round" />
-      <circle cx="22" cy="24" r="2.5" fill="#10b981" />
+    <svg viewBox="0 0 32 32" className="size-8 drop-shadow-[0_0_12px_rgb(244_114_182/0.5)]" aria-hidden="true">
+      <defs><radialGradient id="lg" cx="50%" cy="30%" r="75%"><stop offset="0" stopColor="#fff" /><stop offset=".6" stopColor="#f9c6dd" /><stop offset="1" stopColor="#ec4899" /></radialGradient></defs>
+      <rect width="32" height="32" rx="10" fill="url(#lg)" />
+      <path d="M11 9v11a4 4 0 0 0 4 4h7" fill="none" stroke="#4a2140" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="22" cy="24" r="2.4" fill="#4a2140" />
     </svg>
   );
 }
@@ -34,11 +44,11 @@ function Stepper({ step }) {
     <ol className="flex flex-wrap items-center gap-x-2 gap-y-2 text-xs font-semibold">
       {STEPS.map((s, i) => (
         <li key={s} className="flex items-center gap-2">
-          <span className={`flex size-6 items-center justify-center rounded-full transition ${i < step ? "bg-ok text-white" : i === step ? "bg-ink text-white" : "bg-slate-200 text-ink-3"}`}>
+          <span className={`flex size-6 items-center justify-center rounded-full transition ${i < step ? "bg-ok text-canvas" : i === step ? "bg-blush text-canvas" : "bg-surface-2 text-ink-3"}`}>
             {i < step ? <Check className="size-3.5" /> : i + 1}
           </span>
           <span className={i <= step ? "text-ink" : "text-ink-3"}>{s}</span>
-          {i < STEPS.length - 1 && <span className="mx-1 h-px w-6 bg-slate-300" />}
+          {i < STEPS.length - 1 && <span className="mx-1 h-px w-6 bg-white/15" />}
         </li>
       ))}
     </ol>
@@ -117,7 +127,8 @@ export default function App() {
   const onDone = useCallback(() => { setSettling(false); setApprovedSoFar(null); }, []);
 
   return (
-    <div className="mx-auto max-w-[1400px] px-4 pb-24 sm:px-6">
+    <>
+    <div id="top" className="mx-auto max-w-[1400px] px-4 pb-6 sm:px-6">
       <header className="flex flex-wrap items-center justify-between gap-3 py-5">
         <div className="flex items-center gap-2.5 text-lg font-bold tracking-tight"><Logo /> Leash</div>
         <div className="flex flex-wrap items-center gap-2">
@@ -130,17 +141,20 @@ export default function App() {
         </div>
       </header>
 
-      <section className="flex flex-wrap items-end justify-between gap-6 pb-6 pt-4">
+      <section className="grid items-center gap-6 pb-8 pt-6 md:grid-cols-[1fr_auto]">
         <div className="max-w-2xl">
-          <h1 className="text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl">Let AI shop.<br />Keep the leash.</h1>
-          <p className="mt-3 text-base leading-relaxed text-ink-2 sm:text-lg">
+          <h1 className="text-4xl font-semibold leading-[1.04] tracking-tight sm:text-6xl">
+            Let AI shop.<br /><span className="bg-gradient-to-r from-blush via-pink to-pink-2 bg-clip-text text-transparent">Keep the leash.</span>
+          </h1>
+          <p className="mt-4 text-base leading-relaxed text-ink-2 sm:text-lg">
             One line of text on a product page can hijack a shopping agent. Leash makes that irrelevant:
             the agent only proposes, and a separate firewall captures from a PayPal hold sized to your exact budget, and only for what your rules allow.
           </p>
+          <div className="mt-5 inline-flex items-center gap-2 rounded-2xl border border-line bg-surface px-4 py-2.5 text-sm text-ink-2">
+            <ShieldCheck className="size-4 text-pink" /> The agent proposes. <b className="text-ink">Only Leash pays.</b>
+          </div>
         </div>
-        <div className="flex items-center gap-2 rounded-2xl border border-line bg-white px-4 py-3 text-sm text-ink-2">
-          <ShieldCheck className="size-5 text-ok" /> The agent proposes. <b className="text-ink">Only Leash pays.</b>
-        </div>
+        <FluffyOrbs size={300} className="mx-auto hidden md:block" />
       </section>
 
       <div className="mb-5 card px-5 py-3.5"><Stepper step={currentStep(mandate, job, cart)} /></div>
@@ -163,13 +177,24 @@ export default function App() {
       )}
 
       <div className="mt-5 grid gap-5">
-        <EventGrid mandateId={mandateId} refreshKey={refreshKey} live={running} />
-        <IsolationPanel />
+        <div id="trail" className="scroll-mt-6"><EventGrid mandateId={mandateId} refreshKey={refreshKey} live={running} /></div>
+        <div id="isolation" className="scroll-mt-6"><IsolationPanel /></div>
       </div>
 
-      <footer className="mt-12 text-center text-xs text-ink-3">Sandbox only. No real money moves. Built for the PayPal AI Hackathon.</footer>
+      <p className="mt-10 text-center text-xs text-ink-3">Sandbox only. No real money moves. Built for the PayPal AI Hackathon.</p>
 
       {showAudit && mandateId && <AuditModal mandateId={mandateId} mandate={mandate} cart={cart} onClose={() => setShowAudit(false)} />}
     </div>
+    <HalftoneWordmarkFooter
+      wordmark="leash"
+      label="Leash"
+      meta="©2026 · PayPal AI Hackathon"
+      columns={FOOTER_COLUMNS}
+      palette={{ background: "#0d0a11", ink: "#f3d9e6", warm: "#ec4899" }}
+      fontFamily='"Inter", "Helvetica Neue", Arial, sans-serif'
+      height="440px"
+      className="mt-16"
+    />
+    </>
   );
 }

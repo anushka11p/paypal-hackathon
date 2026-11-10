@@ -73,7 +73,7 @@ function PolicyEditor({ policy, onChange }) {
       <div className="grid gap-1.5 text-xs font-semibold text-ink-2">Allowed categories
         <div className="flex flex-wrap gap-1.5">{CATEGORIES.map((c) => (
           <button key={c} type="button" onClick={() => set("allowed_categories", toggle(policy.allowed_categories, c))}
-            className={policy.allowed_categories.includes(c) ? "badge bg-ink text-white" : "badge-muted"}>{titleCase(c)}</button>
+            className={policy.allowed_categories.includes(c) ? "badge bg-blush text-canvas" : "badge-muted"}>{titleCase(c)}</button>
         ))}</div>
       </div>
       <div className="grid gap-1.5 text-xs font-semibold text-ink-2">Banned ingredients
@@ -141,7 +141,7 @@ export default function MandatePanel({ mandate, onRevoke }) {
       <div className="mb-3 flex flex-wrap gap-1.5">
         {PRESETS.map((p) => (
           <button key={p.label} type="button" onClick={() => { setText(p.text); setPolicy(null); setQuestion(null); }}
-            className={text === p.text ? "badge bg-ink text-white" : "badge-muted hover:bg-slate-200"}>{p.label}</button>
+            className={text === p.text ? "badge bg-blush text-canvas" : "badge-muted hover:bg-surface-2"}>{p.label}</button>
         ))}
       </div>
       <textarea className="field min-h-24 resize-y leading-relaxed" value={text} onChange={(e) => setText(e.target.value)}

@@ -18,8 +18,9 @@ function DecisionCell({ value }) {
 
 const theme = themeQuartz.withParams({
   fontFamily: "Inter, sans-serif", fontSize: 13, headerFontWeight: 600, borderRadius: 10, wrapperBorderRadius: 14,
-  backgroundColor: "#ffffff", headerBackgroundColor: "#f8fafc", borderColor: "#e2e8f0", foregroundColor: "#0f172a",
-  rowHoverColor: "#f1f5f9", accentColor: "#0070e0",
+  backgroundColor: "#140e18", headerBackgroundColor: "#1c1421", borderColor: "rgba(255,255,255,0.08)",
+  foregroundColor: "#f7eef4", headerTextColor: "#cdbac7", oddRowBackgroundColor: "#170f1b",
+  rowHoverColor: "rgba(244,114,182,0.07)", accentColor: "#f472b6", chromeBackgroundColor: "#1c1421",
 });
 
 export default function EventGrid({ mandateId, refreshKey, live }) {

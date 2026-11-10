@@ -16,7 +16,7 @@ function ProductCard({ p, poisoned }) {
   const [open, setOpen] = useState(false);
   const attacks = poisoned ? attacksOf(p) : [];
   return (
-    <div className={`rounded-xl border bg-white p-3.5 transition ${attacks.length ? "border-bad/40" : "border-line"}`}>
+    <div className={`rounded-xl border bg-black/20 p-3.5 transition ${attacks.length ? "border-bad/40" : "border-line"}`}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="text-sm font-semibold leading-snug">{p.name}</div>
@@ -32,7 +32,7 @@ function ProductCard({ p, poisoned }) {
             <span className="flex items-center gap-1">{open ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />} {open ? "Hide" : "Inspect source"}</span>
           </button>
           {open && attacks.map((a) => (
-            <pre key={a.where} className="mt-2 whitespace-pre-wrap break-words rounded-lg bg-slate-950 p-2.5 font-mono text-[11px] leading-relaxed text-slate-300 animate-rise">
+            <pre key={a.where} className="mt-2 whitespace-pre-wrap break-words rounded-lg bg-black/55 p-2.5 font-mono text-[11px] leading-relaxed text-slate-300 animate-rise">
               <span className="text-slate-500">{`<!-- ${a.where} · simulated attack -->`}</span>{"\n"}<span className="text-red-300">{a.text}</span>
             </pre>
           ))}
@@ -92,7 +92,7 @@ export default function StorePanel({ mandate, job, onRun, runError }) {
           <h2 className="mt-1 text-lg font-semibold">{catalog?.merchant.name || "Store"}</h2>
         </div>
         <div className="flex rounded-xl border border-line bg-canvas p-1 text-xs font-semibold" role="group" aria-label="Store mode">
-          <button className={`rounded-lg px-3 py-1.5 ${!poisoned ? "bg-white shadow-sm" : "text-ink-3"}`} onClick={() => setScenario("clean")} disabled={running}>Safe store</button>
+          <button className={`rounded-lg px-3 py-1.5 ${!poisoned ? "bg-surface-2 text-ink shadow-sm" : "text-ink-3"}`} onClick={() => setScenario("clean")} disabled={running}>Safe store</button>
           <button className={`flex items-center gap-1 rounded-lg px-3 py-1.5 ${poisoned ? "bg-bad text-white shadow-sm" : "text-ink-3"}`} onClick={() => setScenario("attack")} disabled={running}>
             <Skull className="size-3.5" /> Poisoned listings
           </button>
@@ -123,7 +123,7 @@ export default function StorePanel({ mandate, job, onRun, runError }) {
       </div>
 
       {(job && job.state !== "idle") && (
-        <div className="mt-5 overflow-hidden rounded-xl bg-slate-950 animate-rise">
+        <div className="mt-5 overflow-hidden rounded-xl bg-black/55 animate-rise">
           <div className="flex items-center justify-between border-b border-white/10 px-3.5 py-2 text-xs text-slate-400">
             <span className="flex items-center gap-1.5"><Terminal className="size-3.5" /> agent process · no payment credentials</span>
             <span className="flex items-center gap-1.5"><Code2 className="size-3.5" />{job.scenario === "attack" ? "poisoned store" : "safe store"}</span>
