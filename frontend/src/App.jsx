@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
-import { Bot, Check, FileJson, RotateCcw, ShieldCheck, Wallet } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ArrowDown, Check, Code2, FileJson, Moon, RotateCcw, Sun } from "lucide-react";
 import { api } from "./api";
+import { useTheme } from "./theme";
 import MandatePanel from "./components/MandatePanel";
 import EscrowWidget from "./components/EscrowWidget";
 import StorePanel from "./components/StorePanel";
@@ -8,49 +9,57 @@ import FirewallPanel from "./components/FirewallPanel";
 import EventGrid from "./components/EventGrid";
 import IsolationPanel from "./components/IsolationPanel";
 import AuditModal from "./components/AuditModal";
-import FluffyOrbs from "./components/FluffyOrbs";
+import HoldObject from "./components/HoldObject";
 import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer";
 
 const REPO = "https://github.com/anushka11p/paypal-hackathon";
 const FOOTER_COLUMNS = [
-  { title: "Product", links: [{ label: "Live demo", href: "#top" }, { label: "Security trail", href: "#trail" }, { label: "Isolation proof", href: "#isolation" }] },
+  { title: "Product", links: [{ label: "Live demo", href: "#demo" }, { label: "Security trail", href: "#trail" }, { label: "Isolation proof", href: "#isolation" }] },
   { title: "Built with", links: [{ label: "PayPal", href: "https://developer.paypal.com" }, { label: "Groq", href: "https://groq.com" }, { label: "Channel3", href: "https://channel3.ai" }, { label: "AG Grid", href: "https://www.ag-grid.com" }] },
   { title: "Team", links: [{ label: "Anushka Prasad" }, { label: "Anika" }, { label: "Source on GitHub", href: REPO }] },
 ];
+const FOOTER_PALETTE = {
+  light: { background: "#eceef2", ink: "#0e1014", warm: "#3d49d6" },
+  dark: { background: "#07080a", ink: "#d9dce2", warm: "#8f98ff" },
+};
 
-function Logo() {
+function Mark() {
   return (
-    <svg viewBox="0 0 32 32" className="size-8 drop-shadow-[0_0_12px_rgb(244_114_182/0.5)]" aria-hidden="true">
-      <defs><radialGradient id="lg" cx="50%" cy="30%" r="75%"><stop offset="0" stopColor="#fff" /><stop offset=".6" stopColor="#f9c6dd" /><stop offset="1" stopColor="#ec4899" /></radialGradient></defs>
-      <rect width="32" height="32" rx="10" fill="url(#lg)" />
-      <path d="M11 9v11a4 4 0 0 0 4 4h7" fill="none" stroke="#4a2140" strokeWidth="3" strokeLinecap="round" />
-      <circle cx="22" cy="24" r="2.4" fill="#4a2140" />
+    <svg viewBox="0 0 32 32" className="size-7" aria-hidden="true">
+      <rect width="32" height="32" rx="9" className="fill-ink" />
+      <circle cx="16" cy="16" r="7.5" fill="none" className="stroke-accent" strokeWidth="2.4" />
+      <circle cx="16" cy="16" r="2.6" className="fill-canvas" />
     </svg>
   );
 }
 
-const STEPS = ["Mandate", "PayPal hold", "Agent shops", "Firewall", "Settlement"];
+const STEPS = ["Mandate", "PayPal hold", "Agent shops", "Leash checks", "Settled"];
 
 function currentStep(mandate, job, cart) {
   if (!mandate) return 0;
   if (mandate.status === "pending_approval") return 1;
-  if (cart) return 4;
+  if (cart) return 5;
   if (job?.state === "running") return job.phase === "leash_checking" ? 3 : 2;
   return 2;
 }
 
 function Stepper({ step }) {
   return (
-    <ol className="flex flex-wrap items-center gap-x-2 gap-y-2 text-xs font-semibold">
-      {STEPS.map((s, i) => (
-        <li key={s} className="flex items-center gap-2">
-          <span className={`flex size-6 items-center justify-center rounded-full transition ${i < step ? "bg-ok text-canvas" : i === step ? "bg-blush text-canvas" : "bg-surface-2 text-ink-3"}`}>
-            {i < step ? <Check className="size-3.5" /> : i + 1}
-          </span>
-          <span className={i <= step ? "text-ink" : "text-ink-3"}>{s}</span>
-          {i < STEPS.length - 1 && <span className="mx-1 h-px w-6 bg-white/15" />}
-        </li>
-      ))}
+    <ol className="flex flex-wrap items-center gap-x-1 gap-y-2 text-[13px]" aria-label="Progress">
+      {STEPS.map((s, i) => {
+        const done = i < step, now = i === step;
+        return (
+          <li key={s} className="flex items-center gap-1" aria-current={now ? "step" : undefined}>
+            <span className={`flex items-center gap-2 rounded-full px-2.5 py-1 transition-colors ${now ? "bg-ink text-canvas" : done ? "text-ink" : "text-ink-3"}`}>
+              <span className={`num flex size-4 items-center justify-center rounded-full text-[10px] ${now ? "bg-canvas text-ink" : done ? "bg-ok text-canvas" : "border border-line-strong"}`}>
+                {done ? <Check className="size-3" strokeWidth={3} /> : i + 1}
+              </span>
+              {s}
+            </span>
+            {i < STEPS.length - 1 && <span className="h-px w-5 bg-line-strong" aria-hidden="true" />}
+          </li>
+        );
+      })}
     </ol>
   );
 }
@@ -61,6 +70,7 @@ function readUrl() {
 }
 
 export default function App() {
+  const { theme, toggle } = useTheme();
   const [{ mandateId, returnError, cancelled }, setUrl] = useState(readUrl);
   const [health, setHealth] = useState(null);
   const [mandate, setMandate] = useState(null);
@@ -77,14 +87,15 @@ export default function App() {
 
   useEffect(() => {
     if (!mandateId) return;
-    let cancelledLoad = false;
+    let stale = false;
     Promise.all([api.mandate(mandateId), api.carts(mandateId), api.shopStatus(mandateId)]).then(([m, c, s]) => {
-      if (cancelledLoad) return;
+      if (stale) return;
       setMandate(m);
       setCart(c.carts.at(-1) || null);
       if (s.state !== "idle") setJob(s);
+      document.getElementById("demo")?.scrollIntoView({ block: "start" });
     }).catch(() => setMandate(null));
-    return () => { cancelledLoad = true; };
+    return () => { stale = true; };
   }, [mandateId]);
 
   // Poll the shopping job while it runs; when it finishes, replay the firewall decisions.
@@ -125,76 +136,119 @@ export default function App() {
 
   const onProgress = useCallback((cents) => setApprovedSoFar(cents), []);
   const onDone = useCallback(() => { setSettling(false); setApprovedSoFar(null); }, []);
+  const footerPalette = useMemo(() => FOOTER_PALETTE[theme], [theme]);
 
   return (
     <>
-    <div id="top" className="mx-auto max-w-[1400px] px-4 pb-6 sm:px-6">
-      <header className="flex flex-wrap items-center justify-between gap-3 py-5">
-        <div className="flex items-center gap-2.5 text-lg font-bold tracking-tight"><Logo /> Leash</div>
-        <div className="flex flex-wrap items-center gap-2">
-          {health && <span className={health.payments === "sandbox" ? "badge-ok" : "badge-warn"}><Wallet className="size-3.5" />
-            {health.payments === "sandbox" ? "PayPal sandbox" : health.payments === "mock" ? "Payment simulator" : "Backend offline"}</span>}
-          {health?.agent && <span className={health.agent === "separate_process" ? "badge-ok" : "badge-warn"}><Bot className="size-3.5" />
-            {health.agent === "separate_process" ? "Agent isolated" : "Agent in-process"}</span>}
-          {mandateId && <button className="btn-ghost !py-1.5" onClick={() => setShowAudit(true)}><FileJson className="size-4" /> Inspect raw audit log</button>}
-          <button className="btn-ghost !py-1.5" onClick={reset}><RotateCcw className="size-4" /> Reset demo</button>
+      {/*
+        THESIS: A payment safety product should feel like a bank, not a hackathon: calm, exact, provable. Refuses the neon "AI startup" look.
+        OWN-WORLD: Geist on cool neutrals, one indigo for the hold, green/red only for money decisions; hairline ledgers, mono figures, pill buttons.
+        STORY: See the hold, run a hijacked agent, watch Leash capture only what passed and release the rest.
+        FIRST VIEWPORT: Left, the promise and two actions; right, the hold as a real-time 3D object (coins in a ring, the top coins released).
+        FORM: user-pinned (Mercury bar, one 3D hero object, light/dark toggle); seed: pinned.
+        FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+      */}
+      <header className="sticky top-0 z-40 border-b border-line bg-canvas/85 backdrop-blur-md">
+        <div className="mx-auto flex h-14 max-w-[1320px] items-center justify-between gap-3 px-4 sm:px-6">
+          <a href="#top" className="flex items-center gap-2.5 text-[15px] font-semibold tracking-tight"><Mark /> Leash</a>
+          <nav className="flex items-center gap-1">
+            {health && (
+              <span className="hidden items-center gap-1.5 px-2 text-xs text-ink-3 md:flex">
+                <span className={`size-1.5 rounded-full ${health.payments === "sandbox" ? "bg-ok" : "bg-warn"}`} />
+                {health.payments === "sandbox" ? "PayPal sandbox" : health.payments === "mock" ? "Payment simulator" : "Backend offline"}
+                <span className="mx-1 text-line-strong">/</span>
+                <span className={`size-1.5 rounded-full ${health.agent === "separate_process" ? "bg-ok" : "bg-warn"}`} />
+                {health.agent === "separate_process" ? "Agent isolated" : "Agent in-process"}
+              </span>
+            )}
+            {mandateId && <button className="btn-quiet" onClick={() => setShowAudit(true)}><FileJson className="size-4" /><span className="hidden sm:inline">Audit log</span></button>}
+            <button className="btn-quiet" onClick={reset}><RotateCcw className="size-4" /><span className="hidden sm:inline">Reset</span></button>
+            <a className="btn-quiet" href={REPO} target="_blank" rel="noreferrer"><Code2 className="size-4" /><span className="hidden sm:inline">Source</span></a>
+            <button className="btn-quiet" onClick={toggle} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}>
+              {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+            </button>
+          </nav>
         </div>
       </header>
 
-      <section className="grid items-center gap-6 pb-8 pt-6 md:grid-cols-[1fr_auto]">
-        <div className="max-w-2xl">
-          <h1 className="text-4xl font-semibold leading-[1.04] tracking-tight sm:text-6xl">
-            Let AI shop.<br /><span className="bg-gradient-to-r from-blush via-pink to-pink-2 bg-clip-text text-transparent">Keep the leash.</span>
-          </h1>
-          <p className="mt-4 text-base leading-relaxed text-ink-2 sm:text-lg">
-            One line of text on a product page can hijack a shopping agent. Leash makes that irrelevant:
-            the agent only proposes, and a separate firewall captures from a PayPal hold sized to your exact budget, and only for what your rules allow.
-          </p>
-          <div className="mt-5 inline-flex items-center gap-2 rounded-2xl border border-line bg-surface px-4 py-2.5 text-sm text-ink-2">
-            <ShieldCheck className="size-4 text-pink" /> The agent proposes. <b className="text-ink">Only Leash pays.</b>
+      <main id="top" className="mx-auto max-w-[1320px] px-4 sm:px-6">
+        <section className="grid grid-cols-1 items-center gap-6 pb-10 pt-10 md:grid-cols-[1.05fr_1fr] md:gap-8 md:pb-16 md:pt-20">
+          <div className="min-w-0 max-w-xl">
+            <h1 className="text-[44px] font-medium leading-[1.02] tracking-[-0.035em] sm:text-[64px]">
+              Let AI shop.<br /><span className="text-ink-3">Keep the leash.</span>
+            </h1>
+            <p className="mt-6 max-w-[34rem] text-[17px] leading-relaxed text-ink-2">
+              One line of text on a product page can hijack a shopping agent. With Leash, the agent only proposes a cart.
+              Your budget becomes a PayPal authorization, and a separate firewall captures only what your rules allow, then releases the rest.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <a href="#demo" className="btn-primary px-5 py-3"><ArrowDown className="size-4" /> Run the live demo</a>
+              <a href="#trail" className="btn-secondary px-5 py-3">See the audit trail</a>
+            </div>
+            <p className="mt-8 border-t border-line pt-5 text-sm leading-relaxed text-ink-2">
+              In <span className="num text-ink">20</span> of <span className="num text-ink">20</span> live runs the agent fell for both injected instructions.
+              Bad items approved: <span className="num text-ok">$0.00</span>.
+            </p>
           </div>
-        </div>
-        <FluffyOrbs size={300} className="mx-auto hidden md:block" />
-      </section>
+          <div className="relative min-w-0">
+            <HoldObject theme={theme} className="mx-auto aspect-square w-full max-w-[360px] md:mr-0 md:max-w-[560px]" />
+            <div className="pointer-events-none absolute bottom-[8%] left-[6%] flex flex-col gap-2 text-xs md:left-[10%]">
+              <span className="flex items-center gap-2 text-ink-2"><span className="size-2 rounded-full bg-ink-3" /> Captured: what passed</span>
+              <span className="flex items-center gap-2 text-ink-2"><span className="size-2 rounded-full bg-accent" /> Released: back to you</span>
+            </div>
+          </div>
+        </section>
 
-      <div className="mb-5 card px-5 py-3.5"><Stepper step={currentStep(mandate, job, cart)} /></div>
+        <section id="demo" className="scroll-mt-20 border-t border-line pt-10">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-medium tracking-[-0.02em]">Live demo</h2>
+              <p className="mt-1 text-sm text-ink-2">A real agent, real checks, and a real authorization. The store and its two attack texts are simulated.</p>
+            </div>
+            <Stepper step={currentStep(mandate, job, cart)} />
+          </div>
 
-      {returnError && <p className="mb-4 rounded-xl bg-bad-soft px-4 py-3 text-sm text-bad-ink">PayPal approval didn't complete: {returnError}</p>}
-      {cancelled && <p className="mb-4 rounded-xl bg-warn-soft px-4 py-3 text-sm text-warn-ink">The PayPal approval was cancelled or declined. No money was held.</p>}
+          {returnError && <p className="mb-4 rounded-xl bg-bad-soft px-4 py-3 text-sm text-bad">PayPal approval didn't complete: {returnError}</p>}
+          {cancelled && <p className="mb-4 rounded-xl bg-warn-soft px-4 py-3 text-sm text-warn">The PayPal approval was cancelled or declined. Nothing was held.</p>}
 
-      <div className="grid items-start gap-5 lg:grid-cols-12">
-        <div className="lg:col-span-4"><MandatePanel mandate={mandate} onRevoke={revoke} /></div>
-        <div className="lg:col-span-5"><StorePanel mandate={mandate} job={job} onRun={run} runError={runError} /></div>
-        <div className="lg:col-span-3">
-          <EscrowWidget mandate={mandate} cart={cart} payments={health?.payments} revealedApprovedCents={approvedSoFar} settling={settling} />
-        </div>
-      </div>
+          <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-12">
+            <div className="min-w-0 lg:col-span-4"><MandatePanel mandate={mandate} onRevoke={revoke} /></div>
+            <div className="min-w-0 lg:col-span-5"><StorePanel mandate={mandate} job={job} onRun={run} runError={runError} /></div>
+            <div className="min-w-0 lg:col-span-3">
+              <EscrowWidget mandate={mandate} cart={cart} payments={health?.payments} revealedApprovedCents={approvedSoFar} settling={settling} />
+            </div>
+          </div>
 
-      {cart && mandate && (
-        <div className="mt-5">
-          <FirewallPanel key={cart.cart_id} cart={cart} policy={mandate.policy} animate={animateCart} onProgress={onProgress} onDone={onDone} />
-        </div>
-      )}
+          {cart && mandate && (
+            <div className="mt-4">
+              <FirewallPanel key={cart.cart_id} cart={cart} policy={mandate.policy} animate={animateCart} onProgress={onProgress} onDone={onDone} />
+            </div>
+          )}
+        </section>
 
-      <div className="mt-5 grid gap-5">
-        <div id="trail" className="scroll-mt-6"><EventGrid mandateId={mandateId} refreshKey={refreshKey} live={running} /></div>
-        <div id="isolation" className="scroll-mt-6"><IsolationPanel /></div>
-      </div>
+        <section className="mt-16 grid grid-cols-1 gap-4">
+          <div id="trail" className="min-w-0 scroll-mt-20"><EventGrid mandateId={mandateId} refreshKey={refreshKey} live={running} theme={theme} /></div>
+          <div id="isolation" className="min-w-0 scroll-mt-20"><IsolationPanel /></div>
+        </section>
 
-      <p className="mt-10 text-center text-xs text-ink-3">Sandbox only. No real money moves. Built for the PayPal AI Hackathon.</p>
+        <p className="mt-12 text-center text-xs text-ink-3">Sandbox only. No real money moves. Built for the PayPal AI Hackathon.</p>
+      </main>
+
+      <HalftoneWordmarkFooter
+        wordmark="leash"
+        label="Leash"
+        meta="©2026 · PayPal AI Hackathon"
+        columns={FOOTER_COLUMNS}
+        palette={footerPalette}
+        fontFamily='"Geist", "Helvetica Neue", Arial, sans-serif'
+        monoFamily='"Geist Mono", ui-monospace, monospace'
+        fontWeight={700}
+        grain={0.3}
+        height="420px"
+        className="mt-16"
+      />
 
       {showAudit && mandateId && <AuditModal mandateId={mandateId} mandate={mandate} cart={cart} onClose={() => setShowAudit(false)} />}
-    </div>
-    <HalftoneWordmarkFooter
-      wordmark="leash"
-      label="Leash"
-      meta="©2026 · PayPal AI Hackathon"
-      columns={FOOTER_COLUMNS}
-      palette={{ background: "#0d0a11", ink: "#f3d9e6", warm: "#ec4899" }}
-      fontFamily='"Inter", "Helvetica Neue", Arial, sans-serif'
-      height="440px"
-      className="mt-16"
-    />
     </>
   );
 }

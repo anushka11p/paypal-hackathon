@@ -1,29 +1,30 @@
-import { CheckCircle2, Clock, Undo2, Wallet } from "lucide-react";
+import { CircleCheck, Clock, Undo2 } from "lucide-react";
 import { usd } from "../api";
+import { PanelHead } from "./MandatePanel";
 
 function status(mandate, settling) {
-  if (!mandate) return ["badge-muted", "NO HOLD"];
-  if (mandate.status === "pending_approval") return ["badge-warn", "AWAITING APPROVAL"];
-  if (mandate.status === "revoked") return ["badge-muted", "HOLD RELEASED"];
-  if (mandate.status === "settled" && !settling) return ["badge-ok", "SETTLED"];
-  return ["badge-hold", "ACTIVE HOLD"];
+  if (!mandate) return ["badge-muted", "No hold"];
+  if (mandate.status === "pending_approval") return ["badge-warn", "Awaiting approval"];
+  if (mandate.status === "revoked") return ["badge-muted", "Released"];
+  if (mandate.status === "settled" && !settling) return ["badge-ok", "Settled"];
+  return ["badge-hold", "Active hold"];
 }
 
-function Row({ label, value, tone = "", hint }) {
+function Line({ label, value, tone = "text-ink", hint, strong }) {
   return (
-    <div className="flex items-baseline justify-between gap-3 py-2.5">
+    <div className="flex items-baseline justify-between gap-3 border-b border-line py-3 last:border-0">
       <div>
-        <div className="text-sm text-ink-2">{label}</div>
-        {hint && <div className="text-[11px] text-ink-3">{hint}</div>}
+        <div className="text-[13px] text-ink-2">{label}</div>
+        {hint && <div className="mt-0.5 text-[11px] text-ink-3">{hint}</div>}
       </div>
-      <div className={`text-lg font-semibold tabular-nums transition-colors ${tone}`}>{value}</div>
+      <div className={`num transition-colors duration-300 ${strong ? "text-xl" : "text-[15px]"} ${tone}`}>{value}</div>
     </div>
   );
 }
 
 /**
- * revealedApprovedCents: during the firewall animation, how much has been approved so far,
- * so "remaining available" counts down item by item. null once the animation is done.
+ * revealedApprovedCents: while the firewall animation plays, how much has been approved so far,
+ * so the remaining hold counts down item by item. null once the animation is done.
  */
 export default function EscrowWidget({ mandate, cart, payments, revealedApprovedCents, settling }) {
   const [tone, label] = status(mandate, settling);
@@ -36,46 +37,40 @@ export default function EscrowWidget({ mandate, cart, payments, revealedApproved
   const remaining = mandate && mandate.status !== "revoked" && !done ? Math.max(hold - approvedSoFar, 0) : 0;
 
   return (
-    <section className="card overflow-hidden lg:sticky lg:top-6">
-      <div className="flex items-center justify-between bg-paypal px-5 py-4 text-white">
-        <div className="flex items-center gap-2 font-semibold"><Wallet className="size-4" /> PayPal escrow</div>
-        <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
-          {payments === "sandbox" ? "Sandbox" : "Simulator"}
-        </span>
+    <section className="card p-5 sm:p-6 lg:sticky lg:top-20">
+      <PanelHead step="2" title="PayPal hold" aside={<span className={tone}>{label}</span>}>
+        {payments === "sandbox" ? "PayPal sandbox" : "Payment simulator, same rules as the sandbox"}
+      </PanelHead>
+      <div>
+        <Line label="Authorized" value={usd(hold)} tone="text-accent" strong
+          hint={mandate && !done ? "Held, not charged" : null} />
+        <Line label="Still on hold" value={usd(remaining)} tone={remaining ? "text-ink" : "text-ink-3"} />
+        <Line label="Captured" value={usd(captured)} tone={captured ? "text-ok" : "text-ink-3"} />
+        <Line label="Released to you" value={usd(released)} tone={released ? "text-accent" : "text-ink-3"} />
       </div>
-      <div className="card-pad">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="eyebrow">Step 2 · Hold</span>
-          <span className={`${tone} ${label === "ACTIVE HOLD" ? "animate-pulse-ring" : ""}`}>{label}</span>
+
+      {done && cart.status === "captured" && (
+        <div className="mt-4 flex flex-wrap gap-2 animate-rise">
+          <span className="badge-ok"><CircleCheck className="size-3.5" /> Captured {usd(captured)}</span>
+          {released > 0 && <span className="badge-hold"><Undo2 className="size-3.5" /> Released {usd(released)}</span>}
         </div>
-        <div className="divide-y divide-line">
-          <Row label="Authorized amount" value={usd(hold)} tone="text-hold"
-            hint={mandate && !done ? "Hold only — $0.00 captured yet" : null} />
-          <Row label="Remaining available hold" value={usd(remaining)} />
-          <Row label="Captured by PayPal" value={usd(captured)} tone={captured ? "text-ok-ink" : "text-ink-3"} />
-          <Row label="Released to you" value={usd(released)} tone={released ? "text-hold" : "text-ink-3"} />
-        </div>
-        {done && cart.status === "captured" && (
-          <div className="mt-4 grid gap-2 animate-rise">
-            <span className="badge-ok w-fit"><CheckCircle2 className="size-3.5" /> SETTLED {usd(captured)}</span>
-            {released > 0 && <span className="badge-hold w-fit"><Undo2 className="size-3.5" /> HOLD RELEASED {usd(released)}</span>}
-          </div>
-        )}
-        {done && cart.status === "blocked" && (
-          <span className="badge-hold mt-4 w-fit animate-rise"><Undo2 className="size-3.5" /> Nothing passed · full hold voided</span>
-        )}
-        {mandate?.paypal?.authorization_id && (
-          <dl className="mt-4 space-y-1 border-t border-line pt-3 font-mono text-[11px] text-ink-3">
-            <div className="flex justify-between gap-2"><dt>Order</dt><dd className="truncate">{mandate.paypal.order_id}</dd></div>
-            <div className="flex justify-between gap-2"><dt>Authorization</dt><dd className="truncate">{mandate.paypal.authorization_id}</dd></div>
-            {done && cart.paypal.capture_id && <div className="flex justify-between gap-2"><dt>Capture</dt><dd className="truncate">{cart.paypal.capture_id}</dd></div>}
-            <div className="flex justify-between gap-2"><dt>Auth status</dt><dd>{mandate.paypal.authorization_status}</dd></div>
-          </dl>
-        )}
-        {mandate?.status === "pending_approval" && (
-          <a className="btn-paypal mt-4 w-full" href={mandate.paypal.approve_url}><Clock className="size-4" /> Finish PayPal approval</a>
-        )}
-      </div>
+      )}
+      {done && cart.status === "blocked" && (
+        <span className="badge-hold mt-4 animate-rise"><Undo2 className="size-3.5" /> Nothing passed. Full hold voided.</span>
+      )}
+
+      {mandate?.paypal?.authorization_id && (
+        <dl className="mt-5 space-y-1.5 border-t border-line pt-4 text-[11px]">
+          {[["Order", mandate.paypal.order_id], ["Authorization", mandate.paypal.authorization_id],
+            ...(done && cart.paypal.capture_id ? [["Capture", cart.paypal.capture_id]] : []),
+            ["Status", mandate.paypal.authorization_status]].map(([k, v]) => (
+            <div key={k} className="flex justify-between gap-3"><dt className="text-ink-3">{k}</dt><dd className="num truncate text-ink-2">{v}</dd></div>
+          ))}
+        </dl>
+      )}
+      {mandate?.status === "pending_approval" && (
+        <a className="btn-primary mt-5 w-full" href={mandate.paypal.approve_url}><Clock className="size-4" /> Finish PayPal approval</a>
+      )}
     </section>
   );
 }

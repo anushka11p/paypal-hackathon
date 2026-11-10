@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Ban, FileSignature, Hash, Layers, Loader2, Lock, PencilLine, ShieldCheck, Sparkles, Wallet } from "lucide-react";
+import { Loader2, Lock, PencilLine, Sparkles } from "lucide-react";
 import { api, titleCase, usd } from "../api";
 
 const CATEGORIES = ["pet_food", "pet_treats", "pet_supplements", "pet_toys", "pet_accessories"];
 const ALLERGENS = ["chicken", "beef", "lamb", "fish", "dairy", "egg", "wheat", "soy", "corn", "peanut"];
 
 const PRESETS = [
-  { label: "Dog food & treats", text: "Dog food and treats, up to $80, max 2 of anything, never chicken (my dog is allergic)." },
+  { label: "Food & treats", text: "Dog food and treats, up to $80, max 2 of anything, never chicken (my dog is allergic)." },
   { label: "Treats only", text: "Just dog treats and chews, up to $30 total, no more than 2 of each, no chicken or beef." },
   { label: "Strict restock", text: "Only dog food, up to $50, one bag maximum, nothing containing chicken." },
 ];
@@ -16,37 +16,42 @@ const MANUAL_POLICY = {
   allowed_categories: ["pet_food", "pet_treats"], excluded_allergens: ["chicken"], purpose: "Dog food and treats",
 };
 
-function Rule({ icon: Icon, label, children }) {
+export function PanelHead({ step, title, aside, children }) {
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-line bg-canvas/60 px-3.5 py-3">
-      <Icon className="mt-0.5 size-4 shrink-0 text-ink-3" aria-hidden />
+    <header className="mb-5 flex items-start justify-between gap-3">
       <div className="min-w-0">
-        <div className="eyebrow">{label}</div>
-        <div className="mt-1 flex flex-wrap gap-1.5 text-sm font-semibold">{children}</div>
+        <h3 className="flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em]">
+          {step && <span className="num flex size-5 items-center justify-center rounded-full bg-surface-2 text-[11px] text-ink-2">{step}</span>}
+          {title}
+        </h3>
+        {children && <p className="mt-1 text-[13px] leading-relaxed text-ink-3">{children}</p>}
       </div>
+      {aside}
+    </header>
+  );
+}
+
+function RuleRow({ label, children }) {
+  return (
+    <div className="flex items-baseline justify-between gap-4 border-b border-line py-2.5 last:border-0">
+      <dt className="text-[13px] text-ink-3">{label}</dt>
+      <dd className="flex flex-wrap justify-end gap-1.5 text-right text-sm font-medium">{children}</dd>
     </div>
   );
 }
 
 function RuleSet({ policy }) {
   return (
-    <div className="grid gap-2.5 animate-rise">
-      <Rule icon={Layers} label="Allowed categories">
-        {policy.allowed_categories.map((c) => <span key={c} className="badge-ok">{titleCase(c)}</span>)}
-      </Rule>
-      <div className="grid grid-cols-2 gap-2.5">
-        <Rule icon={Wallet} label="Max budget · PayPal hold"><span className="text-lg tabular-nums">{usd(policy.budget_cents)}</span></Rule>
-        <Rule icon={Hash} label="Max qty per item"><span className="text-lg tabular-nums">{policy.max_qty_per_sku}</span></Rule>
-      </div>
-      <Rule icon={Ban} label="Banned ingredients">
-        {policy.excluded_allergens.length
-          ? policy.excluded_allergens.map((a) => <span key={a} className="badge-bad">{a}</span>)
-          : <span className="text-ink-3">None</span>}
-      </Rule>
-      <div className="flex items-center gap-2 text-xs text-ink-3">
-        <ShieldCheck className="size-3.5" aria-hidden /> Unknown categories are rejected · max {usd(policy.max_unit_price_cents)} per item
-      </div>
-    </div>
+    <dl className="animate-rise">
+      <RuleRow label="PayPal hold"><span className="num text-base text-accent">{usd(policy.budget_cents)}</span></RuleRow>
+      <RuleRow label="Max per item"><span className="num">{usd(policy.max_unit_price_cents)}</span></RuleRow>
+      <RuleRow label="Max quantity"><span className="num">{policy.max_qty_per_sku}</span></RuleRow>
+      <RuleRow label="Allowed">{policy.allowed_categories.map((c) => <span key={c} className="badge-muted">{titleCase(c)}</span>)}</RuleRow>
+      <RuleRow label="Never contains">
+        {policy.excluded_allergens.length ? policy.excluded_allergens.map((a) => <span key={a} className="badge-bad">{a}</span>) : <span className="text-ink-3">Nothing</span>}
+      </RuleRow>
+      <RuleRow label="Anything else"><span className="text-ink-2">Rejected</span></RuleRow>
+    </dl>
   );
 }
 
@@ -54,32 +59,40 @@ function toggle(list, value) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 }
 
+function Chip({ on, onClick, tone = "ink", children }) {
+  const active = tone === "bad" ? "bg-bad text-canvas border-bad" : "bg-ink text-canvas border-ink";
+  return (
+    <button type="button" onClick={onClick}
+      className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${on ? active : "border-line-strong text-ink-2 hover:bg-surface-2"}`}>
+      {children}
+    </button>
+  );
+}
+
 function PolicyEditor({ policy, onChange }) {
   const set = (k, v) => onChange({ ...policy, [k]: v });
   const money = (k) => (
-    <input type="number" min="0.01" step="0.01" className="field" value={(policy[k] / 100).toFixed(2)}
+    <input type="number" min="0.01" step="0.01" className="field num" value={(policy[k] / 100).toFixed(2)}
       onChange={(e) => set(k, Math.round(parseFloat(e.target.value || "0") * 100))} />
   );
   return (
-    <div className="grid gap-3 animate-rise">
-      <div className="grid grid-cols-2 gap-3">
-        <label className="grid gap-1.5 text-xs font-semibold text-ink-2">Budget (PayPal hold){money("budget_cents")}</label>
-        <label className="grid gap-1.5 text-xs font-semibold text-ink-2">Max per item{money("max_unit_price_cents")}</label>
-        <label className="grid gap-1.5 text-xs font-semibold text-ink-2">Max qty per item
-          <input type="number" min="1" max="50" className="field" value={policy.max_qty_per_sku}
+    <div className="grid gap-4 animate-rise">
+      <div className="grid grid-cols-3 gap-2.5">
+        <label className="grid gap-1.5 label">Hold{money("budget_cents")}</label>
+        <label className="grid gap-1.5 label">Per item{money("max_unit_price_cents")}</label>
+        <label className="grid gap-1.5 label">Max qty
+          <input type="number" min="1" max="50" className="field num" value={policy.max_qty_per_sku}
             onChange={(e) => set("max_qty_per_sku", parseInt(e.target.value || "1", 10))} />
         </label>
       </div>
-      <div className="grid gap-1.5 text-xs font-semibold text-ink-2">Allowed categories
+      <div className="grid gap-2"><span className="label">Allowed categories</span>
         <div className="flex flex-wrap gap-1.5">{CATEGORIES.map((c) => (
-          <button key={c} type="button" onClick={() => set("allowed_categories", toggle(policy.allowed_categories, c))}
-            className={policy.allowed_categories.includes(c) ? "badge bg-blush text-canvas" : "badge-muted"}>{titleCase(c)}</button>
+          <Chip key={c} on={policy.allowed_categories.includes(c)} onClick={() => set("allowed_categories", toggle(policy.allowed_categories, c))}>{titleCase(c)}</Chip>
         ))}</div>
       </div>
-      <div className="grid gap-1.5 text-xs font-semibold text-ink-2">Banned ingredients
+      <div className="grid gap-2"><span className="label">Never contains</span>
         <div className="flex flex-wrap gap-1.5">{ALLERGENS.map((a) => (
-          <button key={a} type="button" onClick={() => set("excluded_allergens", toggle(policy.excluded_allergens, a))}
-            className={policy.excluded_allergens.includes(a) ? "badge bg-bad text-white" : "badge-muted"}>{a}</button>
+          <Chip key={a} tone="bad" on={policy.excluded_allergens.includes(a)} onClick={() => set("excluded_allergens", toggle(policy.excluded_allergens, a))}>{a}</Chip>
         ))}</div>
       </div>
     </div>
@@ -115,62 +128,53 @@ export default function MandatePanel({ mandate, onRevoke }) {
 
   if (mandate) {
     return (
-      <section className="card card-pad">
-        <header className="mb-4 flex items-center justify-between gap-3">
-          <div><div className="eyebrow">Step 1 · Mandate</div><h2 className="mt-1 text-lg font-semibold">Your rules, signed</h2></div>
-          <Lock className="size-5 text-ok" aria-label="Locked" />
-        </header>
-        <p className="mb-4 rounded-xl bg-canvas px-3.5 py-3 text-sm text-ink-2">“{mandate.instruction_text}”</p>
+      <section className="card p-5 sm:p-6">
+        <PanelHead step="1" title="Your mandate" aside={<span className="badge-ok"><Lock className="size-3" /> Signed</span>}>
+          “{mandate.instruction_text}”
+        </PanelHead>
         <RuleSet policy={mandate.policy} />
-        <div className="mt-4 flex items-center gap-2 font-mono text-[11px] text-ink-3">
-          <FileSignature className="size-3.5" aria-hidden /> {mandate.signature.slice(0, 26)}…
-        </div>
+        <p className="num mt-4 truncate text-[11px] text-ink-3" title={mandate.signature}>{mandate.signature}</p>
         {["pending_approval", "active"].includes(mandate.status) && (
-          <button className="btn-ghost mt-4 w-full" onClick={onRevoke}>Revoke mandate & release hold</button>
+          <button className="btn-secondary mt-4 w-full" onClick={onRevoke}>Revoke and release the hold</button>
         )}
       </section>
     );
   }
 
   return (
-    <section className="card card-pad">
-      <header className="mb-4">
-        <div className="eyebrow">Step 1 · Mandate</div>
-        <h2 className="mt-1 text-lg font-semibold">Set the leash in plain English</h2>
-      </header>
-      <div className="mb-3 flex flex-wrap gap-1.5">
+    <section className="card p-5 sm:p-6">
+      <PanelHead step="1" title="Write the mandate">Plain English in. Strict rules out. The agent never sees them.</PanelHead>
+      <div className="mb-2.5 flex flex-wrap gap-1.5">
         {PRESETS.map((p) => (
-          <button key={p.label} type="button" onClick={() => { setText(p.text); setPolicy(null); setQuestion(null); }}
-            className={text === p.text ? "badge bg-blush text-canvas" : "badge-muted hover:bg-surface-2"}>{p.label}</button>
+          <Chip key={p.label} on={text === p.text} onClick={() => { setText(p.text); setPolicy(null); setQuestion(null); }}>{p.label}</Chip>
         ))}
       </div>
-      <textarea className="field min-h-24 resize-y leading-relaxed" value={text} onChange={(e) => setText(e.target.value)}
-        aria-label="Mandate" />
+      <textarea className="field min-h-24 resize-y leading-relaxed" value={text} onChange={(e) => setText(e.target.value)} aria-label="Mandate" />
       <div className="mt-3 flex flex-wrap gap-2">
-        <button className="btn-primary" onClick={compile} disabled={busy || !text.trim()}>
+        <button className={policy ? "btn-secondary" : "btn-primary"} onClick={compile} disabled={busy || !text.trim()}>
           {busy === "compile" ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
-          {busy === "compile" ? "Compiling…" : "Compile mandate"}
+          {busy === "compile" ? "Compiling" : policy ? "Recompile" : "Compile into rules"}
         </button>
-        {compilerDown && <button className="btn-ghost" onClick={() => { setPolicy(MANUAL_POLICY); setError(null); }}>Fill rules by hand</button>}
+        {compilerDown && <button className="btn-secondary" onClick={() => { setPolicy(MANUAL_POLICY); setError(null); }}>Fill rules by hand</button>}
       </div>
 
-      {question && <p className="mt-4 rounded-xl bg-warn-soft px-3.5 py-3 text-sm text-warn-ink">Leash needs one thing first: {question}</p>}
-      {error && <p className="mt-4 rounded-xl bg-bad-soft px-3.5 py-3 text-sm text-bad-ink">{error}</p>}
+      {question && <p className="mt-4 rounded-xl bg-warn-soft px-3.5 py-3 text-sm text-warn">One thing first: {question}</p>}
+      {error && <p className="mt-4 rounded-xl bg-bad-soft px-3.5 py-3 text-sm text-bad">{error}</p>}
 
       {policy && (
-        <div className="mt-5 border-t border-line pt-5">
-          <div className="mb-3 flex items-center justify-between">
-            <span className="eyebrow">Compiled rules</span>
-            <button className="flex items-center gap-1 text-xs font-semibold text-ink-2 hover:text-ink" onClick={() => setEditing((v) => !v)}>
+        <div className="mt-6 border-t border-line pt-4">
+          <div className="mb-1 flex items-center justify-between">
+            <span className="text-[13px] font-medium text-ink-2">Compiled rules</span>
+            <button className="btn-quiet !px-2 !py-1 text-xs" onClick={() => setEditing((v) => !v)}>
               <PencilLine className="size-3.5" /> {editing ? "Done" : "Edit"}
             </button>
           </div>
           {editing ? <PolicyEditor policy={policy} onChange={setPolicy} /> : <RuleSet policy={policy} />}
-          <button className="btn-paypal mt-5 w-full py-3" onClick={approve} disabled={busy}>
-            {busy === "approve" ? <Loader2 className="size-4 animate-spin" /> : <Wallet className="size-4" />}
-            Authorize {usd(policy.budget_cents)} hold with PayPal
+          <button className="btn-primary mt-5 w-full py-3" onClick={approve} disabled={busy}>
+            {busy === "approve" && <Loader2 className="size-4 animate-spin" />}
+            Authorize <span className="num">{usd(policy.budget_cents)}</span> hold with PayPal
           </button>
-          <p className="mt-2 text-center text-xs text-ink-3">A hold, not a charge. The agent never sees these rules.</p>
+          <p className="mt-2 text-center text-xs text-ink-3">A hold, not a charge. Nothing is captured until Leash approves items.</p>
         </div>
       )}
     </section>

@@ -1,68 +1,74 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  Bot, Code2, Eye, EyeOff, Loader2, PackageSearch, Play, ScanSearch, ShieldAlert, ShoppingCart, Skull, Store, Terminal,
+  Bot, ChevronDown, Code2, Loader2, PackageSearch, Play, ScanSearch, ShieldAlert, ShoppingCart, Store, TriangleAlert,
 } from "lucide-react";
 import { api, titleCase, usd } from "../api";
+import { PanelHead } from "./MandatePanel";
 
 const DEFAULT_TASK = "Restock Bramble's usual dog food, and pick up some treats and dental chews.";
 
 function attacksOf(p) {
-  const out = p.reviews.filter((r) => r.simulated_attack).map((r) => ({ where: `5★ review by ${r.author}`, text: r.text }));
-  if (p.note_is_simulated_attack && p.merchandising_note) out.push({ where: "Seller fulfillment note", text: p.merchandising_note });
+  const out = p.reviews.filter((r) => r.simulated_attack).map((r) => ({ where: `review by ${r.author}`, text: r.text }));
+  if (p.note_is_simulated_attack && p.merchandising_note) out.push({ where: "seller fulfillment note", text: p.merchandising_note });
   return out;
 }
 
-function ProductCard({ p, poisoned }) {
+function ProductRow({ p, poisoned }) {
   const [open, setOpen] = useState(false);
   const attacks = poisoned ? attacksOf(p) : [];
   return (
-    <div className={`rounded-xl border bg-black/20 p-3.5 transition ${attacks.length ? "border-bad/40" : "border-line"}`}>
-      <div className="flex items-start justify-between gap-2">
+    <li className="border-b border-line last:border-0">
+      <div className="flex items-center justify-between gap-3 py-3">
         <div className="min-w-0">
-          <div className="text-sm font-semibold leading-snug">{p.name}</div>
-          <div className="mt-0.5 text-xs text-ink-3">{titleCase(p.category)} · contains {p.allergen_tags.contains?.join(", ") || "—"}</div>
+          <div className="flex items-center gap-2 text-sm font-medium">
+            <span className="truncate">{p.name}</span>
+            {attacks.length > 0 && (
+              <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open}
+                className="badge-bad shrink-0 hover:opacity-80">
+                <TriangleAlert className="size-3" /> Injected text <ChevronDown className={`size-3 transition-transform ${open ? "rotate-180" : ""}`} />
+              </button>
+            )}
+          </div>
+          <div className="mt-0.5 text-xs text-ink-3">{titleCase(p.category)} · contains {p.allergen_tags.contains?.join(", ") || "nothing listed"}</div>
         </div>
-        <div className="text-sm font-semibold tabular-nums">{usd(p.price_cents)}</div>
+        <div className="num shrink-0 text-sm">{usd(p.price_cents)}</div>
       </div>
-      {attacks.length > 0 && (
-        <div className="mt-2.5">
-          <button type="button" onClick={() => setOpen((v) => !v)}
-            className="flex w-full items-center justify-between rounded-lg bg-bad-soft px-2.5 py-1.5 text-xs font-semibold text-bad-ink">
-            <span className="flex items-center gap-1.5"><Skull className="size-3.5" /> Hidden injection</span>
-            <span className="flex items-center gap-1">{open ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />} {open ? "Hide" : "Inspect source"}</span>
-          </button>
-          {open && attacks.map((a) => (
-            <pre key={a.where} className="mt-2 whitespace-pre-wrap break-words rounded-lg bg-black/55 p-2.5 font-mono text-[11px] leading-relaxed text-slate-300 animate-rise">
-              <span className="text-slate-500">{`<!-- ${a.where} · simulated attack -->`}</span>{"\n"}<span className="text-red-300">{a.text}</span>
-            </pre>
-          ))}
-        </div>
-      )}
-    </div>
+      {open && attacks.map((a) => (
+        <figure key={a.where} className="mb-3 overflow-hidden rounded-xl border border-line bg-sunken animate-rise">
+          <figcaption className="flex items-center gap-1.5 border-b border-line px-3 py-1.5 text-[11px] text-ink-3">
+            <Code2 className="size-3" /> Page source · {a.where} · simulated
+          </figcaption>
+          <p className="px-3 py-2.5 font-mono text-[12px] leading-relaxed text-bad">{a.text}</p>
+        </figure>
+      ))}
+    </li>
   );
 }
 
 const TOOL_LABEL = {
-  list_products: () => ["Browsing the store catalog", PackageSearch],
-  view_product: (e, names) => [`Reading product page: ${names[e.input.sku] || e.input.sku}`, ScanSearch],
+  list_products: () => ["Browsing the catalog", PackageSearch],
+  view_product: (e, names) => [`Reading ${names[e.input.sku] || e.input.sku}`, ScanSearch],
   check_market_price: (e, names) => [`Comparing ${names[e.input.sku] || e.input.sku} on Channel3`, Store],
-  add_to_cart: (e, names) => [`Cart ← ${e.input.qty}× ${names[e.input.sku] || e.input.sku} — “${e.input.reason}”`, ShoppingCart],
+  add_to_cart: (e, names) => [`Added ${e.input.qty} × ${names[e.input.sku] || e.input.sku}: “${e.input.reason}”`, ShoppingCart],
   remove_from_cart: (e, names) => [`Removed ${names[e.input.sku] || e.input.sku}`, ShoppingCart],
-  checkout: () => ["Submitting cart to Leash for approval", Bot],
+  checkout: () => ["Handed the cart to Leash", Bot],
 };
 
 function TerminalLine({ e, names }) {
-  if (e.type === "text") return <div className="text-slate-500 italic">… {e.text}</div>;
+  if (e.type === "text") return <div className="pl-12 text-white/40">{e.text}</div>;
   const [label, Icon] = (TOOL_LABEL[e.name] || (() => [e.name, Bot]))(e, names);
   const market = e.name === "check_market_price" && e.output;
   return (
     <div className="animate-rise">
-      <div className="flex gap-2 text-slate-200"><span className="w-10 shrink-0 text-slate-600">{e.at?.toFixed(1)}s</span>
-        <Icon className="mt-0.5 size-3.5 shrink-0 text-sky-400" /><span>{label}</span></div>
-      {market && <div className="ml-12 text-slate-500">{market.available ? `${market.offers?.length || 0} offers · lowest ${market.lowest_usd ? "$" + market.lowest_usd : "n/a"} · ours $${market.our_price_usd}` : "Channel3 unavailable"}</div>}
+      <div className="flex gap-2 text-white/85">
+        <span className="w-10 shrink-0 text-right text-white/30">{e.at?.toFixed(1)}s</span>
+        <Icon className="mt-[3px] size-3.5 shrink-0 text-white/45" /><span>{label}</span>
+      </div>
+      {market && <div className="pl-[4.25rem] text-white/40">{market.available ? `${market.offers?.length || 0} offers, lowest ${market.lowest_usd ? "$" + market.lowest_usd : "n/a"}, ours $${market.our_price_usd}` : "Channel3 unavailable"}</div>}
       {e.injection?.map((t) => (
-        <div key={t} className="ml-12 mt-1 rounded border-l-2 border-red-500 bg-red-500/10 px-2 py-1 text-red-300">
-          <ShieldAlert className="mr-1 inline size-3.5" />Agent read hidden instruction: “{t.length > 120 ? t.slice(0, 120) + "…" : t}”
+        <div key={t} className="ml-[4.25rem] mt-1 flex gap-1.5 rounded-md bg-[#f2806f]/12 px-2 py-1.5 text-[#f6a497]">
+          <ShieldAlert className="mt-[2px] size-3.5 shrink-0" />
+          <span>Read a hidden instruction: “{t.length > 110 ? t.slice(0, 110) + "…" : t}”</span>
         </div>
       ))}
     </div>
@@ -85,55 +91,45 @@ export default function StorePanel({ mandate, job, onRun, runError }) {
   const poisoned = scenario === "attack";
 
   return (
-    <section className="card card-pad">
-      <header className="mb-4 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <div className="eyebrow">Step 3 · AI shopping agent</div>
-          <h2 className="mt-1 text-lg font-semibold">{catalog?.merchant.name || "Store"}</h2>
-        </div>
-        <div className="flex rounded-xl border border-line bg-canvas p-1 text-xs font-semibold" role="group" aria-label="Store mode">
-          <button className={`rounded-lg px-3 py-1.5 ${!poisoned ? "bg-surface-2 text-ink shadow-sm" : "text-ink-3"}`} onClick={() => setScenario("clean")} disabled={running}>Safe store</button>
-          <button className={`flex items-center gap-1 rounded-lg px-3 py-1.5 ${poisoned ? "bg-bad text-white shadow-sm" : "text-ink-3"}`} onClick={() => setScenario("attack")} disabled={running}>
-            <Skull className="size-3.5" /> Poisoned listings
-          </button>
-        </div>
-      </header>
+    <section className="card p-5 sm:p-6">
+      <PanelHead step="3" title={`Agent shops at ${catalog?.merchant.name || "the store"}`}
+        aside={
+          <div className="flex shrink-0 rounded-full border border-line-strong p-0.5 text-xs font-medium" role="group" aria-label="Store">
+            <button className={`rounded-full px-3 py-1 transition-colors ${!poisoned ? "bg-ink text-canvas" : "text-ink-2"}`} onClick={() => setScenario("clean")} disabled={running} aria-pressed={!poisoned}>Clean</button>
+            <button className={`rounded-full px-3 py-1 transition-colors ${poisoned ? "bg-bad text-canvas" : "text-ink-2"}`} onClick={() => setScenario("attack")} disabled={running} aria-pressed={poisoned}>Poisoned</button>
+          </div>
+        }>
+        {poisoned
+          ? "Two listings carry simulated text written to hijack shopping assistants. Open them to read it."
+          : "The same store without the injected text."}
+      </PanelHead>
 
-      {poisoned && (
-        <p className="mb-3 rounded-xl bg-bad-soft px-3.5 py-2.5 text-xs leading-relaxed text-bad-ink">
-          Two listings carry <b>simulated</b> third-party text aimed at shopping assistants. Open “Inspect source” to see what the agent will read.
-          The agent's reasoning, Leash's checks and the payment calls are all real.
-        </p>
-      )}
-
-      <div className="grid gap-2.5 sm:grid-cols-2">
-        {(catalog?.products || []).map((p) => <ProductCard key={p.sku} p={p} poisoned={poisoned} />)}
-      </div>
+      <ul>{(catalog?.products || []).map((p) => <ProductRow key={p.sku} p={p} poisoned={poisoned} />)}</ul>
 
       <div className="mt-5 grid gap-2">
-        <label className="text-xs font-semibold text-ink-2" htmlFor="task">What you asked the agent (it never sees your rules)</label>
+        <label className="label" htmlFor="task">Task for the agent</label>
         <input id="task" className="field" value={task} onChange={(e) => setTask(e.target.value)} disabled={running} />
-        <button className="btn-primary py-3" onClick={() => onRun(task, scenario)} disabled={!canRun}>
+        <button className="btn-primary mt-1 py-3" onClick={() => onRun(task, scenario)} disabled={!canRun}>
           {running ? <Loader2 className="size-4 animate-spin" /> : <Play className="size-4" />}
-          {running ? "Agent is shopping…" : "Run AI shopping agent"}
+          {running ? "Agent is shopping" : "Run the agent"}
         </button>
-        {!mandate && <p className="text-center text-xs text-ink-3">Set and authorize a mandate first.</p>}
+        {!mandate && <p className="text-center text-xs text-ink-3">Authorize a mandate first.</p>}
         {mandate?.status === "pending_approval" && <p className="text-center text-xs text-ink-3">Finish the PayPal approval first.</p>}
-        {runError && <p className="rounded-xl bg-bad-soft px-3.5 py-2.5 text-sm text-bad-ink">{runError}</p>}
+        {runError && <p className="rounded-xl bg-bad-soft px-3.5 py-2.5 text-sm text-bad">{runError}</p>}
       </div>
 
-      {(job && job.state !== "idle") && (
-        <div className="mt-5 overflow-hidden rounded-xl bg-black/55 animate-rise">
-          <div className="flex items-center justify-between border-b border-white/10 px-3.5 py-2 text-xs text-slate-400">
-            <span className="flex items-center gap-1.5"><Terminal className="size-3.5" /> agent process · no payment credentials</span>
-            <span className="flex items-center gap-1.5"><Code2 className="size-3.5" />{job.scenario === "attack" ? "poisoned store" : "safe store"}</span>
+      {job && job.state !== "idle" && (
+        <div className="mt-5 overflow-hidden rounded-xl bg-term animate-rise">
+          <div className="flex items-center justify-between border-b border-white/10 px-3.5 py-2 text-[11px] text-white/45">
+            <span>Agent process · no payment credentials</span>
+            <span>{job.scenario === "attack" ? "poisoned store" : "clean store"}</span>
           </div>
-          <div ref={termRef} className="max-h-80 space-y-1.5 overflow-y-auto p-3.5 font-mono text-[12px] leading-relaxed">
+          <div ref={termRef} className="max-h-80 space-y-1.5 overflow-y-auto p-3.5 font-mono text-[12px] leading-relaxed" aria-live="polite">
             {events.map((e, i) => <TerminalLine key={i} e={e} names={names} />)}
-            {job.phase === "agent_shopping" && <div className="flex items-center gap-2 text-slate-500"><Loader2 className="size-3.5 animate-spin" /> agent thinking…</div>}
-            {job.phase === "leash_checking" && <div className="flex items-center gap-2 text-amber-300"><Loader2 className="size-3.5 animate-spin" /> Leash intercepted the cart — inspecting every line…</div>}
-            {job.state === "done" && <div className="text-emerald-400">✓ Cart handed off. Leash decided; see the firewall below.</div>}
-            {job.state === "error" && <div className="text-red-400">✗ {job.error}</div>}
+            {job.phase === "agent_shopping" && <div className="flex items-center gap-2 pl-12 text-white/40"><Loader2 className="size-3.5 animate-spin" /> thinking</div>}
+            {job.phase === "leash_checking" && <div className="flex items-center gap-2 pl-12 text-[#e9b64c]"><Loader2 className="size-3.5 animate-spin" /> Leash intercepted the cart and is checking every line</div>}
+            {job.state === "done" && <div className="pl-12 text-[#4fc89b]">Done. Leash's decisions are below.</div>}
+            {job.state === "error" && <div className="pl-12 text-[#f2806f]">{job.error}</div>}
           </div>
         </div>
       )}
