@@ -96,8 +96,7 @@
 }
 
 @utility card {
-  @apply rounded-2xl border border-line bg-surface;
-  box-shadow: var(--shadow);
+  @apply rounded-xl border border-line bg-surface;
 }
 @utility num {
   @apply font-mono tabular-nums tracking-tight;
@@ -114,14 +113,16 @@
 @utility btn-quiet {
   @apply btn px-3 py-1.5 text-ink-2 hover:bg-surface-2 hover:text-ink;
 }
+/* Status is a dot and a word, never a filled pill. */
 @utility badge {
-  @apply inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap;
+  @apply inline-flex items-center gap-1.5 text-xs font-medium whitespace-nowrap;
+  &::before { content: ""; width: 6px; height: 6px; border-radius: 9999px; background: currentColor; flex: none; }
 }
-@utility badge-ok { @apply badge bg-ok-soft text-ok; }
-@utility badge-bad { @apply badge bg-bad-soft text-bad; }
-@utility badge-hold { @apply badge bg-accent-soft text-accent; }
-@utility badge-warn { @apply badge bg-warn-soft text-warn; }
-@utility badge-muted { @apply badge bg-surface-2 text-ink-2; }
+@utility badge-ok { @apply badge text-ok; }
+@utility badge-bad { @apply badge text-bad; }
+@utility badge-hold { @apply badge text-accent; }
+@utility badge-warn { @apply badge text-warn; }
+@utility badge-muted { @apply badge text-ink-3; }
 @utility field {
   @apply w-full rounded-xl border border-line-strong bg-surface px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-3 outline-none transition focus:border-accent focus:ring-4 focus:ring-accent-soft;
 }

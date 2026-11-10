@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { CellStyleModule, ClientSideRowModelModule, ModuleRegistry, TextFilterModule, TooltipModule, themeQuartz } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { Link2, Link2Off } from "lucide-react";
 import { api } from "../api";
 import { PanelHead } from "./MandatePanel";
 
@@ -56,8 +55,8 @@ export default function EventGrid({ mandateId, refreshKey, live, theme = "light"
     <section className="border-t border-line pt-6">
       <PanelHead title="Audit trail"
         aside={chain && (chain.ok
-          ? <span className="badge-ok"><Link2 className="size-3.5" /> Chain intact · <span className="num">{chain.checked}</span></span>
-          : <span className="badge-bad"><Link2Off className="size-3.5" /> Broken at #{chain.first_bad_id}</span>)}>
+          ? <span className="badge-ok">Chain intact, <span className="num">{chain.checked}</span> entries</span>
+          : <span className="badge-bad">Chain broken at entry {chain.first_bad_id}</span>)}>
         Every proposal, check, verdict and PayPal call. Each entry stores the hash of the one before it, so any edit to history shows.
       </PanelHead>
       <div className="h-[440px] w-full">

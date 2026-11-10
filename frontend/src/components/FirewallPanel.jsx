@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Brain, CircleCheck, CircleX, Cpu, Loader2 } from "lucide-react";
 import { usd } from "../api";
 import { PanelHead } from "./MandatePanel";
 import HoldObject from "./HoldObject";
@@ -25,10 +24,8 @@ const STEP_MS = 420;
 const GRID = "grid grid-cols-[minmax(0,1.7fr)_5.5rem_minmax(0,1.3fr)_minmax(0,1.6fr)_minmax(0,0.9fr)] gap-4";
 
 function Verdict({ shown, ok, okText, children }) {
-  if (!shown) return <span className="inline-flex items-center gap-1.5 text-xs text-ink-3"><Loader2 className="size-3 animate-spin" /> checking</span>;
-  return ok
-    ? <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-ok animate-rise"><CircleCheck className="size-4" /> {okText}</span>
-    : <span className="inline-flex items-start gap-1.5 text-[13px] font-medium text-bad animate-rise"><CircleX className="mt-[1px] size-4 shrink-0" /> {children}</span>;
+  if (!shown) return <span className="text-xs text-ink-3">Checking</span>;
+  return <span className={`text-[13px] animate-rise ${ok ? "text-ink-2" : "font-medium text-bad"}`}>{ok ? okText : children}</span>;
 }
 
 /** Replays the engine's real decisions one stage at a time; reports the running approved total. */
@@ -53,12 +50,7 @@ export default function FirewallPanel({ cart, policy, theme, payments, animate, 
   return (
     <section className="border-t border-line pt-6">
       <PanelHead title="Leash checks every line"
-        aside={
-          <div className="hidden shrink-0 gap-4 text-xs text-ink-3 md:flex">
-            <span className="flex items-center gap-1.5"><Cpu className="size-3.5" /> Rules: plain code, can't be prompted</span>
-            <span className="flex items-center gap-1.5"><Brain className="size-3.5" /> Intent: an LLM that can only veto</span>
-          </div>
-        }>
+        aside={<p className="hidden shrink-0 text-xs text-ink-3 md:block">Rules are plain code. Intent is an LLM that can only veto.</p>}>
         Both layers see every item. Either can block it; neither can approve it alone.
       </PanelHead>
 
@@ -78,10 +70,10 @@ export default function FirewallPanel({ cart, policy, theme, payments, animate, 
                   <div className="mt-0.5 text-xs leading-relaxed text-ink-3">“{l.agent_reason}”</div>
                 </div>
                 <div className={`num text-right text-sm ${s3 && !ok ? "text-ink-3 line-through decoration-bad/60" : ""}`}>{usd(l.line_total_cents)}</div>
-                <div><Verdict shown={s1} ok={l.deterministic.decision === "approved"} okText="Passed">
+                <div><Verdict shown={s1} ok={l.deterministic.decision === "approved"} okText="Pass">
                   {(RULE_LABELS[l.deterministic.rule] || (() => l.deterministic.rule))(l, policy)}</Verdict></div>
                 <div>
-                  <Verdict shown={s2} ok={l.evaluator.decision === "approved"} okText="Matches the request">Vetoed</Verdict>
+                  <Verdict shown={s2} ok={l.evaluator.decision === "approved"} okText="Matches the request">Veto</Verdict>
                   {s2 && <p className="mt-1 text-xs leading-relaxed text-ink-3">{l.evaluator.reason}</p>}
                 </div>
                 <div className="text-[13px] font-medium">{s3

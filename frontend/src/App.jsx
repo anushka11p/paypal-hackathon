@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ArrowDown, Check, Code2, FileJson, Moon, RotateCcw, Sun } from "lucide-react";
+import { Code2, FileJson, Moon, RotateCcw, Sun } from "lucide-react";
 import { api } from "./api";
 import { useTheme } from "./theme";
 import MandatePanel from "./components/MandatePanel";
@@ -45,18 +45,13 @@ function currentStep(mandate, job, cart) {
 
 function Stepper({ step }) {
   return (
-    <ol className="flex flex-wrap items-center gap-x-1 gap-y-2 text-[13px]" aria-label="Progress">
+    <ol className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px]" aria-label="Progress">
       {STEPS.map((s, i) => {
         const done = i < step, now = i === step;
         return (
-          <li key={s} className="flex items-center gap-1" aria-current={now ? "step" : undefined}>
-            <span className={`flex items-center gap-2 rounded-full px-2.5 py-1 transition-colors ${now ? "bg-ink text-canvas" : done ? "text-ink" : "text-ink-3"}`}>
-              <span className={`num flex size-4 items-center justify-center rounded-full text-[10px] ${now ? "bg-canvas text-ink" : done ? "bg-ok text-canvas" : "border border-line-strong"}`}>
-                {done ? <Check className="size-3" strokeWidth={3} /> : i + 1}
-              </span>
-              {s}
-            </span>
-            {i < STEPS.length - 1 && <span className="h-px w-5 bg-line-strong" aria-hidden="true" />}
+          <li key={s} aria-current={now ? "step" : undefined}
+            className={`border-b pb-1 transition-colors ${now ? "border-ink font-medium text-ink" : done ? "border-transparent text-ink-2" : "border-transparent text-ink-3"}`}>
+            {s}
           </li>
         );
       })}
@@ -182,7 +177,7 @@ export default function App() {
               Your budget becomes a PayPal authorization, and a separate firewall captures only what your rules allow, then releases the rest.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <a href="#demo" className="btn-primary px-5 py-3"><ArrowDown className="size-4" /> Run the live demo</a>
+              <a href="#demo" className="btn-primary px-5 py-3">Run the live demo</a>
               <a href="#trail" className="btn-secondary px-5 py-3">See the audit trail</a>
             </div>
             <p className="mt-8 border-t border-line pt-5 text-sm leading-relaxed text-ink-2">

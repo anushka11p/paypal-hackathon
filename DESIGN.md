@@ -196,13 +196,13 @@ The system explicitly refuses the neon "AI startup" look: no gradients, glows, o
 - Cool neutral canvas with white cards; dark theme is near-black, not navy.
 - One accent (indigo) bound to the hold; status colors bound to money decisions.
 - Hairline ledgers: label left, mono figure right, a 1px rule between rows.
-- Pill buttons, pill badges, pill chips; 12-16px rounding on containers.
+- Pill buttons and outline chips; status is a dot and a word, never a filled pill; 12px rounding on containers, no shadows.
 - Geist for words, Geist Mono with tabular numerals for every figure and identifier.
 - One 3D hero object (the hold), reused small as a settlement receipt.
 
 ## Colors
 
-A restrained neutral palette with a single indigo and three semantic status voices, each paired with a soft tint for badges and notices.
+A restrained neutral palette with a single indigo and three semantic status voices. Soft tints back only error and warning notices; status itself is colored text with a dot.
 
 ### Primary
 - **Hold Indigo** (`hold-indigo` #3d49d6 light / `hold-indigo-dark` #8f98ff dark): the PayPal hold and only the hold. Authorized amount, "Active hold" badge, released-to-you figures, the bank strap and released coins on the 3D object, the ring in the logo mark, focus rings, text selection (soft tint), and the AG Grid accent. Its soft tint (`hold-indigo-soft`, 12% alpha of the dark value in dark mode) backs hold badges and the field focus ring.
@@ -224,7 +224,7 @@ A restrained neutral palette with a single indigo and three semantic status voic
 - **Ink 3** (`ink-3` #656b77 / #8b919d): tertiary text, hints, zero-value figures, the dimmed second line of the hero headline.
 - **Hairline** (`line` #e3e5ea / #22262d): every ledger rule, card border, section divider.
 - **Strong Hairline** (`line-strong` #d0d4db / #30353e): field and secondary-button borders, inactive chip borders, the settlement total rule, stepper connectors.
-- **Terminal** (`term` #0e1014 / #07080a): the agent log pane, dark in both themes.
+- **Terminal** (`term` #0e1014 / #07080a): retained token; the agent log now renders as a Sunken Well in the active theme.
 
 ### Named Rules
 **The Hold Owns Indigo Rule.** Indigo means "held or released back to you." If an element is not about the hold (or is not a focus ring), it is not indigo.
@@ -233,7 +233,7 @@ A restrained neutral palette with a single indigo and three semantic status voic
 
 **The Zero Goes Grey Rule.** A ledger figure takes its semantic color only when nonzero; a zero amount drops to Ink 3.
 
-**The Always-Dark Terminal Rule.** The agent log is dark in both themes and uses the dark-theme status values (amber #e9b64c, green #4fc89b, red #f2806f) on white-alpha text (30-85%).
+**The Quiet Log Rule.** The agent log is a Sunken Well in the active theme: Ink text, Ink 3 timestamps, Amber only for hidden instructions the agent read, green and red only for done and error. No icons, no dark block.
 
 ## Typography
 
@@ -267,18 +267,14 @@ Rhythm is a 4px base: 8-12px inside rows, 20-24px card padding, 40px section top
 
 ## Elevation & Depth
 
-Nearly flat. Depth comes from tonal layering (canvas, white card, sunken well) and hairlines. Cards carry one soft ambient shadow; nothing else is shadowed. In dark mode the shadow becomes a 3% white inner top highlight plus a deep diffuse drop. The modal scrim is Ink at 40%. The only real depth in the product is the 3D hold object, which casts its own soft radial ground shadow.
-
-### Shadow Vocabulary
-- **Card ambient, light** (`box-shadow: 0 1px 2px rgb(14 16 20 / 0.04), 0 8px 24px -12px rgb(14 16 20 / 0.08)`): cards and the modal.
-- **Card ambient, dark** (`box-shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.6)`): the same role in dark mode.
+Flat. Depth comes from tonal layering (canvas, white card, sunken well) and 1px hairlines; nothing casts a shadow. The modal scrim is Ink at 40%. The only real depth in the product is the 3D hold object, which casts its own soft radial ground shadow.
 
 ### Named Rules
-**The One Shadow Rule.** There is a single shadow token and it belongs to cards. Buttons, badges, and fields never cast shadows; state is shown with fill, opacity, and a 1px press.
+**The No Shadow Rule.** Nothing in the interface casts a shadow. Cards are a white plane with a hairline; state is shown with ink level, underline, and a 1px press.
 
 ## Shapes
 
-Two shape families. Interactive and status elements are full pills: buttons, badges, chips, segmented toggles, tabs, stepper steps, and status dots. Containers are softly rounded rectangles: 16px for cards and the modal, 12px for fields, notices, code wells, and the terminal, 8px/12px for AG Grid cells and wrapper, 6px for the focus outline. Borders are always 1px hairlines. The logo mark is a 9/32-rounded ink square holding an indigo ring, echoing the strap around the coins.
+Two shape families. Buttons, chips and modal tabs are full pills; status is a 6px dot beside its word; toggles and the stepper are underlined text. Containers are softly rounded rectangles: 12px for cards, the modal, fields, notices, code wells, and the agent log, 8px/12px for AG Grid cells and wrapper, 6px for the focus outline. Borders are always 1px hairlines. The logo mark is a 9/32-rounded ink square holding an indigo ring, echoing the strap around the coins.
 
 ## Components
 
@@ -291,16 +287,16 @@ Quiet, confident pills that press rather than glow.
 - **Hover / Focus / Active:** primary hover drops to 90% opacity; all buttons translate down 1px on press; 150ms transitions; disabled at 40% opacity with a not-allowed cursor; focus is a 2px indigo outline at 2px offset.
 
 ### Chips
-- **Style:** 12px medium pill, 4px 10px, Strong Hairline border, Ink 2 text, hover Hover Grey.
-- **State:** selected fills Ink with Canvas text; selected warning chips (allergens) fill Amber. Segmented toggles (Clean / Poisoned) and modal tabs follow the same on/off logic inside a hairline pill track.
+- **Style:** 12px medium pill, 4px 10px, Hairline border, Ink 3 text, hover to Ink 2.
+- **State:** selected chips take an Ink border and Ink text (Amber for allergen chips); never a solid fill. The Clean / Poisoned toggle is underlined text: the selected word in Ink with a 1px Ink underline, the other in Ink 3.
 
 ### Badges
-- **Style:** 12px medium pill, 2px 8px, soft tint background with full-strength text: ok, bad, hold, warn, muted. Optional 14px leading icon. Badges carry decisions and statuses; they are never decorative labels.
+- **Style:** 12px medium text preceded by a 6px dot in currentColor: ok, bad, hold, warn, muted (Ink 3). No background, no icon. Used only for statuses (Signed, Settled, chain intact); lists of values such as categories or allergens are plain comma-separated text.
 
 ### Cards / Containers
-- **Corner Style:** 16px.
+- **Corner Style:** 12px.
 - **Background:** Card White on Cool Paper.
-- **Shadow Strategy:** the single card ambient shadow (see Elevation & Depth).
+- **Shadow Strategy:** none.
 - **Border:** 1px Hairline.
 - **Internal Padding:** 20px, 24px from 640px.
 - Panel heads: 15px semibold title, optional 13px Ink 3 description, an aside (badge, toggle, or button) aligned right, 20px below.
@@ -317,7 +313,7 @@ A 56px sticky header on 85% Canvas with backdrop blur and a hairline bottom bord
 The system's core pattern. A label left (13px, Ink 2 or Ink 3) and a mono figure right, baseline-aligned, 10-12px vertical padding, separated by a 1px Hairline with the last row unruled. Used for the mandate rules, the PayPal hold, references, and the firewall line grid. Totals sit under a Strong Hairline.
 
 ### Stepper
-Five pill steps joined by 20px Strong Hairline connectors. Current step fills Ink; completed steps show a green numbered dot with a check; future steps are Ink 3 with a hairline-ringed number.
+Five words in a row, 20px apart. The current step is Ink, medium weight, with a 1px Ink underline; completed steps are Ink 2; future steps are Ink 3. No numbers, dots, or checks.
 
 ### Hold Object (signature)
 A Three.js stack of brushed grey coins cinched by an indigo bank strap. Released coins lift out and tint toward indigo. `loop` mode (hero) plays a 6s rest-release-settle cycle with slow auto-rotation and slight pointer parallax; `settle` mode (112px settlement receipt) plays once and holds the final captured/released split. Respects reduced motion (static pose) and pauses offscreen.
@@ -326,7 +322,7 @@ A Three.js stack of brushed grey coins cinched by an indigo bank strap. Released
 The HalftoneWordmarkFooter renders a dot-halftone "leash" wordmark (Geist 700) with link columns, fed the theme palette: light background #eceef2 with Ink and Hold Indigo dots, dark background #07080a with #d9dce2 ink and #8f98ff. It keeps its own internal type styling; treat it as a fixed asset, not a source of new rules.
 
 ### Code Well and Terminal
-JSON and page-source excerpts sit in Sunken Well boxes (12px radius, hairline border, 11.5-12px mono, Ink 2; injected text in Amber). The agent log is an always-dark Terminal pane with a white-10% header rule and 12px mono lines.
+JSON excerpts sit in Sunken Well boxes (12px radius, hairline border, 11.5-12px mono, Ink 2). Injected page text is a quote: 1px Amber rule on the left, mono Ink 2 text, an Ink 3 'Simulated …' attribution. The agent log is a Sunken Well with a hairline header rule and 12px mono lines (see the Quiet Log Rule).
 
 ## Do's and Don'ts
 
@@ -334,7 +330,7 @@ JSON and page-source excerpts sit in Sunken Well boxes (12px radius, hairline bo
 - **Do** reserve Hold Indigo for the hold, released money, and focus.
 - **Do** set every figure, ID, and hash in Geist Mono with tabular numerals.
 - **Do** separate rows with 1px hairlines and introduce sections with a hairline top border instead of a new card.
-- **Do** use pill shapes for anything clickable or status-bearing, and 12-16px rounding for containers.
+- **Do** use pills only for buttons and chips; show status as a dot and a word; round containers 12px.
 - **Do** define every new color as a token in both light and dark themes so the toggle swaps it in one place.
 - **Do** animate entrances with the single rise motion (6px up, 0.5s, cubic-bezier(0.16, 1, 0.3, 1)) and honor reduced motion.
 - **Do** label simulated data as simulated, in the same quiet caption voice as real data.
@@ -342,7 +338,7 @@ JSON and page-source excerpts sit in Sunken Well boxes (12px radius, hairline bo
 ### Don't:
 - **Don't** use gradients, glows, neon, or glassy purple fields; this is the "AI startup" look the product refuses.
 - **Don't** use green or red for anything that is not a money or check outcome; warnings are amber.
-- **Don't** add a second accent hue or a second shadow.
+- **Don't** add a second accent hue, any shadow, filled status pills, or icons inside data rows.
 - **Don't** add uppercase, letter-spaced eyebrow or kicker labels above headings; hierarchy is size, weight, and ink. (The user-pinned halftone footer's own mono caps column labels stay inside that component and are not a pattern to copy.)
 - **Don't** add another 3D or illustrative hero object; the hold is the one expressive object.
 - **Don't** set prose or in-app labels in mono.

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Loader2, Lock, PencilLine, Sparkles } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { api, titleCase, usd } from "../api";
 
 const CATEGORIES = ["pet_food", "pet_treats", "pet_supplements", "pet_toys", "pet_accessories"];
@@ -45,9 +45,9 @@ function RuleSet({ policy }) {
       <RuleRow label="PayPal hold"><span className="num text-base text-accent">{usd(policy.budget_cents)}</span></RuleRow>
       <RuleRow label="Max per item"><span className="num">{usd(policy.max_unit_price_cents)}</span></RuleRow>
       <RuleRow label="Max quantity"><span className="num">{policy.max_qty_per_sku}</span></RuleRow>
-      <RuleRow label="Allowed">{policy.allowed_categories.map((c) => <span key={c} className="badge-muted">{titleCase(c)}</span>)}</RuleRow>
+      <RuleRow label="Allowed">{policy.allowed_categories.map(titleCase).join(", ")}</RuleRow>
       <RuleRow label="Never contains">
-        {policy.excluded_allergens.length ? policy.excluded_allergens.map((a) => <span key={a} className="badge-warn">{a}</span>) : <span className="text-ink-3">Nothing</span>}
+        {policy.excluded_allergens.length ? <span className="text-warn">{policy.excluded_allergens.join(", ")}</span> : <span className="text-ink-3">Nothing</span>}
       </RuleRow>
       <RuleRow label="Anything else"><span className="text-ink-2">Rejected</span></RuleRow>
     </dl>
@@ -59,10 +59,10 @@ function toggle(list, value) {
 }
 
 function Chip({ on, onClick, tone = "ink", children }) {
-  const active = tone === "warn" ? "bg-warn text-canvas border-warn" : "bg-ink text-canvas border-ink";
+  const active = tone === "warn" ? "border-warn text-warn" : "border-ink text-ink";
   return (
     <button type="button" onClick={onClick}
-      className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${on ? active : "border-line-strong text-ink-2 hover:bg-surface-2"}`}>
+      className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${on ? active : "border-line text-ink-3 hover:text-ink-2"}`}>
       {children}
     </button>
   );
@@ -128,7 +128,7 @@ export default function MandatePanel({ mandate, onRevoke }) {
   if (mandate) {
     return (
       <section className="card p-5 sm:p-6">
-        <PanelHead title="Your mandate" aside={<span className="badge-ok"><Lock className="size-3" /> Signed</span>}>
+        <PanelHead title="Your mandate" aside={<span className="badge-ok">Signed</span>}>
           “{mandate.instruction_text}”
         </PanelHead>
         <RuleSet policy={mandate.policy} />
@@ -151,7 +151,7 @@ export default function MandatePanel({ mandate, onRevoke }) {
       <textarea className="field min-h-24 resize-y leading-relaxed" value={text} onChange={(e) => setText(e.target.value)} aria-label="Mandate" />
       <div className="mt-3 flex flex-wrap gap-2">
         <button className={policy ? "btn-secondary" : "btn-primary"} onClick={compile} disabled={busy || !text.trim()}>
-          {busy === "compile" ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+          {busy === "compile" && <Loader2 className="size-4 animate-spin" />}
           {busy === "compile" ? "Compiling" : policy ? "Recompile" : "Compile into rules"}
         </button>
         {compilerDown && <button className="btn-secondary" onClick={() => { setPolicy(MANUAL_POLICY); setError(null); }}>Fill rules by hand</button>}
@@ -165,7 +165,7 @@ export default function MandatePanel({ mandate, onRevoke }) {
           <div className="mb-1 flex items-center justify-between">
             <span className="text-[13px] font-medium text-ink-2">Compiled rules</span>
             <button className="btn-quiet !px-2 !py-1 text-xs" onClick={() => setEditing((v) => !v)}>
-              <PencilLine className="size-3.5" /> {editing ? "Done" : "Edit"}
+              {editing ? "Done" : "Edit"}
             </button>
           </div>
           {editing ? <PolicyEditor policy={policy} onChange={setPolicy} /> : <RuleSet policy={policy} />}

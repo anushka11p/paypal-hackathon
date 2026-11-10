@@ -1,4 +1,3 @@
-import { CircleCheck, Clock, Undo2 } from "lucide-react";
 import { usd } from "../api";
 import { PanelHead } from "./MandatePanel";
 
@@ -49,14 +48,8 @@ export default function EscrowWidget({ mandate, cart, payments, revealedApproved
         <Line label="Released to you" value={usd(released)} tone={released ? "text-accent" : "text-ink-3"} />
       </div>
 
-      {done && cart.status === "captured" && (
-        <div className="mt-4 flex flex-wrap gap-2 animate-rise">
-          <span className="badge-ok"><CircleCheck className="size-3.5" /> Captured {usd(captured)}</span>
-          {released > 0 && <span className="badge-hold"><Undo2 className="size-3.5" /> Released {usd(released)}</span>}
-        </div>
-      )}
       {done && cart.status === "blocked" && (
-        <span className="badge-hold mt-4 animate-rise"><Undo2 className="size-3.5" /> Nothing passed. Full hold voided.</span>
+        <p className="mt-3 text-[13px] text-ink-2 animate-rise">Nothing passed. The full hold was voided.</p>
       )}
 
       {mandate?.paypal?.authorization_id && (
@@ -70,7 +63,7 @@ export default function EscrowWidget({ mandate, cart, payments, revealedApproved
         </dl>
       )}
       {mandate?.status === "pending_approval" && (
-        <a className="btn-primary mt-5 w-full" href={mandate.paypal.approve_url}><Clock className="size-4" /> Finish PayPal approval</a>
+        <a className="btn-primary mt-5 w-full" href={mandate.paypal.approve_url}>Finish PayPal approval</a>
       )}
     </section>
   );
