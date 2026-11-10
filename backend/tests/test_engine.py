@@ -10,7 +10,7 @@ from policy.engine import (
 )
 from policy.evaluator import evaluate_cart
 from policy.mandate_service import revoke_mandate
-from llm.claude import LLMUnavailable
+from llm.provider import LLMUnavailable
 from tests.conftest import ATTACK_CART, fake_evaluator, make_mandate
 
 
@@ -87,7 +87,7 @@ def test_unknown_sku_rejected(session):
 def test_evaluator_outage_fails_closed(session, monkeypatch):
     def boom(**kwargs):
         raise LLMUnavailable("offline")
-    monkeypatch.setattr(evaluator_module.claude, "parse", boom)
+    monkeypatch.setattr(evaluator_module.provider, "parse", boom)
     mandate = make_mandate(session)
     result = settle(session, mandate, cart(("PET-1001", 1)), evaluate_cart)
     assert by_sku(result)["PET-1001"].final_reason == "evaluator_veto"

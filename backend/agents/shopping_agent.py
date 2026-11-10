@@ -15,12 +15,13 @@ from __future__ import annotations
 
 import json
 
-import anthropic
+import groq
 
 from agents.channel3 import search_market
-from llm import claude
+from llm import provider
 
 MAX_TURNS = 14
+TEMPERATURE = 0.3
 
 SYSTEM_PROMPT = """You are a household shopping assistant ordering from the \
 online store Bramble & Co. on the shopper's behalf.
@@ -61,8 +62,8 @@ TOOLS = [
      "input_schema": {"type": "object", "properties": {"summary": {"type": "string"}},
                       "required": ["summary"], "additionalProperties": False}},
 ]
-for _tool in TOOLS:
-    _tool["strict"] = True
+FUNCTION_TOOLS = [{"type": "function", "function": {
+    "name": t["name"], "description": t["description"], "parameters": t["input_schema"]}} for t in TOOLS]
 
 
 class AgentError(RuntimeError):
@@ -82,7 +83,7 @@ def _product_page(p: dict) -> dict:
 
 def run_shopping_agent(*, task: str, catalog: list[dict], model: str | None = None) -> dict:
     """Returns {"lines": [{"sku","qty","reason"}], "summary", "transcript", "model"}."""
-    model = model or claude.model_for("AGENT")
+    model = model or provider.model_for("AGENT")
     by_sku = {p["sku"]: p for p in catalog}
     cart: dict[str, dict] = {}
     transcript: list[dict] = []
@@ -114,37 +115,53 @@ def run_shopping_agent(*, task: str, catalog: list[dict], model: str | None = No
             return {"ok": True, "message": "Cart handed to the payment service."}
         return {"error": f"unknown tool {name}"}
 
-    messages = [{"role": "user", "content": f"Shopping task: {task}"}]
+    messages = [{"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": f"Shopping task: {task}"}]
     for _ in range(MAX_TURNS):
-        try:
-            response = claude.client().beta.messages.create(
-                model=model, max_tokens=8000, system=SYSTEM_PROMPT, tools=TOOLS, messages=messages,
-                output_config={"effort": "low"}, betas=[claude.FALLBACK_BETA], fallbacks="default",
-            )
-        except anthropic.AnthropicError as e:
-            raise AgentError(f"Claude call failed: {e}") from e
-        except TypeError as e:  # raised by the SDK when no credentials are configured
-            raise AgentError(f"Claude is not configured: {e}") from e
-        if response.stop_reason == "refusal":
-            raise AgentError("agent model declined the task")
-
-        for block in response.content:
-            if block.type == "text" and block.text.strip():
-                transcript.append({"type": "text", "text": block.text.strip()})
-        messages.append({"role": "assistant", "content": response.content})
-
-        tool_uses = [b for b in response.content if b.type == "tool_use"]
-        if not tool_uses:
+        message = _complete(model, messages)
+        if message.content and message.content.strip():
+            transcript.append({"type": "text", "text": message.content.strip()})
+        tool_calls = message.tool_calls or []
+        messages.append({
+            "role": "assistant", "content": message.content or "",
+            **({"tool_calls": [{"id": tc.id, "type": "function",
+                                "function": {"name": tc.function.name, "arguments": tc.function.arguments}}
+                               for tc in tool_calls]} if tool_calls else {}),
+        })
+        if not tool_calls:
             break
-        results, done = [], False
-        for tu in tool_uses:
-            output = execute(tu.name, tu.input)
-            transcript.append({"type": "tool_call", "name": tu.name, "input": tu.input,
-                               "output": output if tu.name in ("view_product", "check_market_price") else None})
-            results.append({"type": "tool_result", "tool_use_id": tu.id, "content": json.dumps(output)})
-            done = done or tu.name == "checkout"
-        messages.append({"role": "user", "content": results})
+        done = False
+        for tc in tool_calls:
+            try:
+                args = json.loads(tc.function.arguments or "{}")
+                output = execute(tc.function.name, args)
+            except (ValueError, KeyError, TypeError) as e:
+                args, output = {}, {"error": f"invalid arguments: {e}"}
+            transcript.append({"type": "tool_call", "name": tc.function.name, "input": args,
+                               "output": output if tc.function.name in ("view_product", "check_market_price") else None})
+            messages.append({"role": "tool", "tool_call_id": tc.id, "content": json.dumps(output)})
+            done = done or tc.function.name == "checkout"
         if done:
             break
 
     return {"lines": list(cart.values()), "summary": summary, "transcript": transcript, "model": model}
+
+
+def _complete(model: str, messages: list[dict]):
+    """One agent turn. Retries once when the model emits a malformed tool call."""
+    for attempt in range(2):
+        try:
+            response = provider.client().chat.completions.create(
+                model=model, messages=messages, tools=FUNCTION_TOOLS, tool_choice="auto",
+                reasoning_effort="low", temperature=TEMPERATURE, max_completion_tokens=4000,
+            )
+            return response.choices[0].message
+        except groq.BadRequestError as e:
+            if attempt == 0 and "tool" in str(e).lower():
+                continue
+            raise AgentError(f"model request rejected: {e}") from e
+        except provider.LLMUnavailable as e:
+            raise AgentError(str(e)) from e
+        except groq.GroqError as e:
+            raise AgentError(f"Groq call failed: {e}") from e
+    raise AgentError("model kept producing malformed tool calls")

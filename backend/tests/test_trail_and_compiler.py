@@ -50,3 +50,15 @@ def test_hand_edited_policy_is_validated(kwargs):
                 allowed_categories=["pet_food"], excluded_allergens=[], purpose="x")
     with pytest.raises(PolicyValidationError):
         policy_from_fields(**{**base, **kwargs})
+
+
+def test_strict_schema_is_groq_compatible():
+    from llm.provider import strict_schema
+    from policy.evaluator import EvaluatorOutput
+    schema = strict_schema(EvaluatorOutput)
+    assert "$defs" not in str(schema) and "$ref" not in str(schema)
+    item = schema["properties"]["verdicts"]["items"]
+    assert item["additionalProperties"] is False and set(item["required"]) == {"sku", "verdict", "reason"}
+    compiled = strict_schema(CompiledPolicy)
+    assert set(compiled["required"]) == set(compiled["properties"])
+    assert compiled["properties"]["budget_usd"]["type"] == ["number", "null"]

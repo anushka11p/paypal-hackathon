@@ -1,7 +1,7 @@
 """
 Plain-English mandate -> structured policy.
 
-Claude proposes the policy; deterministic code below validates and
+The LLM proposes the policy; deterministic code below validates and
 normalizes it, and the user inspects it before any hold is placed. The
 compiler can ask a clarifying question but never guesses a budget.
 """
@@ -11,7 +11,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from llm import claude
+from llm import provider
 from policy.vocab import ALLERGENS, BUDGET_CEILING_CENTS, CATEGORIES
 
 Category = Literal["pet_food", "pet_treats", "pet_supplements", "pet_toys", "pet_accessories"]
@@ -56,7 +56,7 @@ def compile_mandate(text: str) -> dict:
     text = (text or "").strip()
     if not text:
         raise PolicyValidationError("mandate text is empty")
-    raw = claude.parse(
+    raw = provider.parse(
         role="COMPILER", system=SYSTEM_PROMPT,
         user=f"Shopper's mandate:\n<mandate>\n{text[:2000]}\n</mandate>",
         output_model=CompiledPolicy, effort="low",

@@ -15,8 +15,9 @@ ATTACK_CART = [("PET-1001", 1), ("PET-3010", 5), ("PET-3020", 1), ("PET-9001", 1
 @pytest.fixture(autouse=True)
 def mock_payments(monkeypatch):
     """Every test runs against the in-memory PayPal unless it opts into the sandbox path."""
-    monkeypatch.delenv("PAYPAL_CLIENT_ID", raising=False)
-    monkeypatch.delenv("PAYPAL_CLIENT_SECRET", raising=False)
+    # Empty (not deleted) so load_dotenv() can't pull the real sandbox keys back in.
+    monkeypatch.setenv("PAYPAL_CLIENT_ID", "")
+    monkeypatch.setenv("PAYPAL_CLIENT_SECRET", "")
     monkeypatch.setattr(paypal_client, "_transport", None)
     paypal_client._token.update({"value": None, "expires_at": 0.0})
     mock.reset()
@@ -59,7 +60,7 @@ def make_mandate(session, policy: dict | None = None, *, approve: bool = True):
 
 
 def fake_evaluator(veto: set[str] = frozenset()):
-    """Stands in for Claude: vetoes exactly the given skus, approves the rest."""
+    """Stands in for the LLM evaluator: vetoes exactly the given skus, approves the rest."""
     calls = []
 
     def evaluate(*, instruction_text, shopping_task, lines, products):

@@ -3,7 +3,7 @@ LLM intent evaluator — coverage, not authority.
 
 It answers one question per cart line: "is this what the shopper asked
 for?" It can only veto. It never approves anything on its own, can't
-override a deterministic rejection, and fails closed: if Claude is
+override a deterministic rejection, and fails closed: if the LLM is
 unreachable, refuses, or skips a line, that line is rejected.
 """
 from __future__ import annotations
@@ -14,7 +14,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-from llm import claude
+from llm import provider
 
 SYSTEM_PROMPT = """You review a shopping cart that an AI agent proposed on a \
 shopper's behalf, before payment. You are a veto-only reviewer: you cannot \
@@ -88,9 +88,9 @@ def evaluate_cart(*, instruction_text: str, shopping_task: str, lines: list[dict
         "Proposed cart:\n" + "\n\n".join(blocks)
     )
     try:
-        out = claude.parse(role="EVALUATOR", system=SYSTEM_PROMPT, user=user,
+        out = provider.parse(role="EVALUATOR", system=SYSTEM_PROMPT, user=user,
                            output_model=EvaluatorOutput, effort="medium")
-    except claude.LLMUnavailable as e:
+    except provider.LLMUnavailable as e:
         reason = f"evaluator unavailable, failing closed ({e})"
         return ({line["sku"]: Verdict(False, reason) for line in lines},
                 {"injection_suspected": False, "notes": reason, "available": False})

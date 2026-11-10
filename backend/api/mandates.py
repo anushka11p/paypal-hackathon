@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from api.deps import frontend_url, get_db_session, public_base_url
 from api.serializers import mandate_out
-from llm.claude import LLMUnavailable
+from llm.provider import LLMUnavailable
 from models.db import EventType, Mandate, Merchant
 from payment_core.mock_paypal import MockPayPalError, mock
 from payment_core.paypal_client import PaymentError, using_sandbox
@@ -58,7 +58,7 @@ def compile_route(payload: CompileRequest, session: Session = Depends(get_db_ses
         raise HTTPException(status_code=422, detail=str(e))
     except LLMUnavailable as e:
         raise HTTPException(status_code=503, detail=f"policy compiler unavailable: {e}")
-    trail.append(session, event_type=EventType.mandate_compiled, actor="policy_compiler", source="Claude",
+    trail.append(session, event_type=EventType.mandate_compiled, actor="policy_compiler", source="Groq LLM",
                  decision="needs_clarification" if result["needs_clarification"] else "compiled",
                  reason_summary=payload.text[:300], detail=result)
     return result

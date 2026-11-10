@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from agents.shopping_agent import AgentError, run_shopping_agent
-from llm.claude import model_for
+from llm.provider import model_for
 from models.catalog import product_view
 from models.db import Mandate, MandateStatus, Merchant, User, UserRole, get_engine, get_session_factory, init_db
 from models.seed import demo_products
