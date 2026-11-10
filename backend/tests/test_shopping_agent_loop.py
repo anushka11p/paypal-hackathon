@@ -65,3 +65,24 @@ def test_malformed_tool_arguments_are_reported_back_not_crashing(monkeypatch):
     assert result["lines"] == []
     first_tool = next(m for m in fake.requests[1]["messages"] if m["role"] == "tool")
     assert "invalid arguments" in first_tool["content"]
+
+
+def test_agent_service_streams_steps_then_result(monkeypatch):
+    import importlib
+    import sys
+    from fastapi.testclient import TestClient
+
+    for key in ("PAYPAL_CLIENT_ID", "PAYPAL_CLIENT_SECRET", "PAYPAL_BASE_URL", "MANDATE_SIGNING_SECRET"):
+        monkeypatch.delenv(key, raising=False)
+    sys.modules.pop("agents.service", None)
+    service = importlib.import_module("agents.service")
+
+    def fake_run(*, task, catalog, model=None, on_event=None):
+        on_event({"type": "text", "text": "browsing"})
+        return {"lines": [{"sku": "PET-1001", "qty": 1, "reason": "x"}], "summary": "", "transcript": [], "model": "m"}
+
+    monkeypatch.setattr(service, "run_shopping_agent", fake_run)
+    res = TestClient(service.app).post("/run-stream", json={"task": "t", "catalog": []})
+    items = [json.loads(line) for line in res.text.splitlines() if line]
+    assert [i["type"] for i in items] == ["event", "result"]
+    assert items[1]["result"]["lines"][0]["sku"] == "PET-1001"

@@ -81,13 +81,21 @@ def _product_page(p: dict) -> dict:
     }
 
 
-def run_shopping_agent(*, task: str, catalog: list[dict], model: str | None = None) -> dict:
-    """Returns {"lines": [{"sku","qty","reason"}], "summary", "transcript", "model"}."""
+def run_shopping_agent(*, task: str, catalog: list[dict], model: str | None = None, on_event=None) -> dict:
+    """
+    Returns {"lines": [{"sku","qty","reason"}], "summary", "transcript", "model"}.
+    on_event, if given, receives each transcript entry as it happens (for the live feed).
+    """
     model = model or provider.model_for("AGENT")
     by_sku = {p["sku"]: p for p in catalog}
     cart: dict[str, dict] = {}
     transcript: list[dict] = []
     summary = ""
+
+    def emit(entry: dict) -> None:
+        transcript.append(entry)
+        if on_event:
+            on_event(entry)
 
     def execute(name: str, args: dict) -> object:
         nonlocal summary
@@ -120,7 +128,7 @@ def run_shopping_agent(*, task: str, catalog: list[dict], model: str | None = No
     for _ in range(MAX_TURNS):
         message = _complete(model, messages)
         if message.content and message.content.strip():
-            transcript.append({"type": "text", "text": message.content.strip()})
+            emit({"type": "text", "text": message.content.strip()})
         tool_calls = message.tool_calls or []
         messages.append({
             "role": "assistant", "content": message.content or "",
@@ -137,8 +145,8 @@ def run_shopping_agent(*, task: str, catalog: list[dict], model: str | None = No
                 output = execute(tc.function.name, args)
             except (ValueError, KeyError, TypeError) as e:
                 args, output = {}, {"error": f"invalid arguments: {e}"}
-            transcript.append({"type": "tool_call", "name": tc.function.name, "input": args,
-                               "output": output if tc.function.name in ("view_product", "check_market_price") else None})
+            emit({"type": "tool_call", "name": tc.function.name, "input": args,
+                  "output": output if tc.function.name in ("view_product", "check_market_price") else None})
             messages.append({"role": "tool", "tool_call_id": tc.id, "content": json.dumps(output)})
             done = done or tc.function.name == "checkout"
         if done:

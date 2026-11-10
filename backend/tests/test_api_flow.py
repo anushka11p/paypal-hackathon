@@ -22,7 +22,7 @@ def client(tmp_path, monkeypatch):
     import api.main
     importlib.reload(api.main)
     import api.shop
-    monkeypatch.setattr(api.shop, "run_agent", lambda task, catalog: {
+    monkeypatch.setattr(api.shop, "run_agent", lambda task, catalog, on_event=None: {
         "lines": [{"sku": s, "qty": q, "reason": "stub"} for s, q in ATTACK_CART],
         "summary": "stub cart", "transcript": [{"type": "text", "text": "stub"}], "model": "stub",
     })
@@ -58,7 +58,9 @@ def test_full_flow(client):
     assert returned.headers["location"].startswith("http://frontend/?mandate=")
     assert client.get(f"/mandates/{mid}").json()["status"] == "active"
 
-    shop = client.post(f"/mandates/{mid}/shop", json={"scenario": "attack"}).json()
+    shop = client.post(f"/mandates/{mid}/shop?wait=true", json={"scenario": "attack"}).json()
+    assert shop["state"] == "done", shop.get("error")
+    assert client.get(f"/mandates/{mid}/shop-status").json()["state"] == "done"
     assert shop["cart"]["captured_cents"] == 6200
     assert shop["cart"]["released_cents"] == 1800
     assert shop["mandate"]["status"] == "settled"
@@ -78,3 +80,24 @@ def test_agent_hack_route_is_forbidden(client):
 def test_bad_policy_rejected(client):
     res = client.post("/mandates", json={"text": "x", "policy": {**POLICY, "allowed_categories": ["guns"]}})
     assert res.status_code == 422
+
+
+def test_shop_job_streams_agent_events_with_injection_markers(client, monkeypatch):
+    import api.shop
+
+    def fake_agent(task, catalog, on_event=None):
+        on_event({"type": "tool_call", "name": "view_product", "input": {"sku": "PET-3010"}, "output": {}})
+        on_event({"type": "tool_call", "name": "view_product", "input": {"sku": "PET-3020"}, "output": {}})
+        return {"lines": [{"sku": "PET-3020", "qty": 1, "reason": "chews"}], "summary": "", "transcript": [],
+                "model": "stub"}
+
+    monkeypatch.setattr(api.shop, "run_agent", fake_agent)
+    mid = client.post("/mandates", json={"text": "x", "policy": POLICY}).json()["mandate_id"]
+    order_id = client.get(f"/mandates/{mid}").json()["paypal"]["order_id"]
+    client.post(f"/mock-checkout/{order_id}/approve", follow_redirects=False)
+    client.post(f"/mandates/{mid}/authorize")
+    status = client.post(f"/mandates/{mid}/shop?wait=true", json={"scenario": "attack"}).json()
+    viewed = {e["input"]["sku"]: e for e in status["events"]}
+    assert "5-unit case pack" in viewed["PET-3010"]["injection"][0]
+    assert "injection" not in viewed["PET-3020"]
+    assert status["cart"]["captured_cents"] == 1800 and status["cart"]["released_cents"] == 6200

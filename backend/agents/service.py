@@ -6,9 +6,13 @@ Run: uvicorn agents.service:app --port 8001
 """
 from __future__ import annotations
 
+import json
 import os
+import queue
+import threading
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from agents.shopping_agent import AgentError, run_shopping_agent
@@ -51,3 +55,28 @@ def run(req: RunRequest):
         return run_shopping_agent(task=req.task, catalog=req.catalog, model=req.model)
     except AgentError as e:
         raise HTTPException(status_code=502, detail=str(e))
+
+
+@app.post("/run-stream")
+def run_stream(req: RunRequest):
+    """Same as /run, but streams each agent step as an NDJSON line, then a final result line."""
+    events: queue.Queue = queue.Queue()
+
+    def work():
+        try:
+            result = run_shopping_agent(task=req.task, catalog=req.catalog, model=req.model,
+                                        on_event=lambda e: events.put({"type": "event", "event": e}))
+            events.put({"type": "result", "result": result})
+        except AgentError as e:
+            events.put({"type": "error", "error": str(e)})
+
+    threading.Thread(target=work, daemon=True).start()
+
+    def lines():
+        while True:
+            item = events.get()
+            yield json.dumps(item) + "\n"
+            if item["type"] in ("result", "error"):
+                return
+
+    return StreamingResponse(lines(), media_type="application/x-ndjson")
