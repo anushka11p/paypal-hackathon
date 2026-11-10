@@ -24,7 +24,8 @@ export const api = {
   createMandate: (text, policy) => post("/mandates", { text, policy }),
   mandate: (id) => request(`/mandates/${id}`),
   carts: (id) => request(`/mandates/${id}/carts`),
-  shop: (id, task, scenario) => post(`/mandates/${id}/shop`, { task, scenario }),
+  startShop: (id, task, scenario) => post(`/mandates/${id}/shop`, { task, scenario }),
+  shopStatus: (id) => request(`/mandates/${id}/shop-status`),
   revoke: (id) => post(`/mandates/${id}/revoke`),
   audit: (id) => request(id ? `/audit/${id}` : "/audit"),
   verifyChain: () => request("/audit/verify"),
@@ -37,3 +38,5 @@ export const api = {
 
 export const usd = (cents) =>
   cents == null ? "—" : (cents / 100).toLocaleString("en-US", { style: "currency", currency: "USD" });
+
+export const titleCase = (s) => s.replace(/^pet_/, "").replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());

@@ -1,25 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  ClientSideRowModelModule, ModuleRegistry, TextFilterModule, TooltipModule, colorSchemeDarkBlue, themeQuartz,
-} from "ag-grid-community";
+import { ClientSideRowModelModule, ModuleRegistry, TextFilterModule, TooltipModule, themeQuartz } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
+import { Link2, Link2Off } from "lucide-react";
 import { api } from "../api";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, TextFilterModule, TooltipModule]);
 
-const DECISION_TONE = {
-  blocked: "bad", veto: "bad", denied: "bad", failed: "bad", void_failed: "bad",
-  passed: "ok", consistent: "ok", COMPLETED: "ok", CAPTURED: "ok", CREATED: "hold", VOIDED: "hold",
+const TONE = {
+  blocked: "badge-bad", veto: "badge-bad", denied: "badge-bad", failed: "badge-bad",
+  passed: "badge-ok", consistent: "badge-ok", COMPLETED: "badge-ok", CAPTURED: "badge-ok", signed: "badge-ok",
+  CREATED: "badge-hold", VOIDED: "badge-hold", awaiting_buyer_approval: "badge-warn",
 };
 
 function DecisionCell({ value }) {
-  if (!value) return null;
-  return <span className={`chip ${DECISION_TONE[value] || ""}`}>{value}</span>;
+  return value ? <span className={TONE[value] || "badge-muted"}>{value}</span> : null;
 }
 
-const prefersDark = typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches;
-const theme = (prefersDark ? themeQuartz.withPart(colorSchemeDarkBlue) : themeQuartz).withParams({
-  fontFamily: "Inter, sans-serif", fontSize: 13, headerFontWeight: 600, borderRadius: 10, wrapperBorderRadius: 12,
+const theme = themeQuartz.withParams({
+  fontFamily: "Inter, sans-serif", fontSize: 13, headerFontWeight: 600, borderRadius: 10, wrapperBorderRadius: 14,
+  backgroundColor: "#ffffff", headerBackgroundColor: "#f8fafc", borderColor: "#e2e8f0", foregroundColor: "#0f172a",
+  rowHoverColor: "#f1f5f9", accentColor: "#0070e0",
 });
 
 export default function EventGrid({ mandateId, refreshKey, live }) {
@@ -35,40 +35,36 @@ export default function EventGrid({ mandateId, refreshKey, live }) {
       } catch { /* keep the last good view */ }
     }
     load();
-    const timer = live ? setInterval(load, 1500) : null;
+    const timer = live ? setInterval(load, 1200) : null;
     return () => { cancelled = true; if (timer) clearInterval(timer); };
   }, [mandateId, refreshKey, live]);
 
   const columnDefs = useMemo(() => [
-    { field: "timestamp", headerName: "Time", width: 110, valueFormatter: (p) => new Date(p.value + "Z").toLocaleTimeString() },
-    { field: "event_type", headerName: "Event", width: 170 },
+    { field: "timestamp", headerName: "Time", width: 100, valueFormatter: (p) => new Date(p.value + "Z").toLocaleTimeString() },
+    { field: "event_type", headerName: "Event", width: 160, filter: true },
     { field: "source", headerName: "Source", width: 130, filter: true },
-    { field: "decision", headerName: "Decision", width: 140, cellRenderer: DecisionCell, filter: true },
-    { field: "rule_fired", headerName: "Rule", width: 190 },
-    { field: "reason_summary", headerName: "Detail", flex: 1, minWidth: 260, tooltipField: "reason_summary" },
-    { field: "entry_hash", headerName: "Hash", width: 120, valueFormatter: (p) => p.value?.slice(0, 10) + "…" },
+    { field: "decision", headerName: "Decision", width: 150, cellRenderer: DecisionCell, filter: true },
+    { field: "rule_fired", headerName: "Rule", width: 180 },
+    { field: "reason_summary", headerName: "Detail", flex: 1, minWidth: 280, tooltipField: "reason_summary" },
+    { field: "entry_hash", headerName: "Hash", width: 110, valueFormatter: (p) => (p.value ? p.value.slice(0, 10) + "…" : "") },
   ], []);
 
   return (
-    <section className="step">
-      <div className="step-head">
-        <h2><span className="step-num">05</span>Security events</h2>
-        <div className="row">
-          {chain && (
-            <span className={`chip ${chain.ok ? "ok" : "bad"}`}><span className="dot" />
-              {chain.ok ? `Hash chain intact · ${chain.checked} entries` : `Chain broken at entry ${chain.first_bad_id}`}
-            </span>
-          )}
-          {live && <span className="chip hold"><span className="spinner" style={{ width: 10, height: 10 }} />live</span>}
+    <section className="card card-pad">
+      <header className="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <div className="eyebrow">Audit · AG Grid</div>
+          <h2 className="mt-1 text-lg font-semibold">Security event trail</h2>
         </div>
-      </div>
-      <div className="grid-host">
+        {chain && (chain.ok
+          ? <span className="badge-ok"><Link2 className="size-3.5" /> Hash chain intact · {chain.checked} entries</span>
+          : <span className="badge-bad"><Link2Off className="size-3.5" /> Chain broken at #{chain.first_bad_id}</span>)}
+      </header>
+      <div className="h-[420px] w-full">
         <AgGridReact theme={theme} rowData={rows} columnDefs={columnDefs} getRowId={(p) => String(p.data.id)}
           animateRows defaultColDef={{ sortable: true, resizable: true }} tooltipShowDelay={300} />
       </div>
-      <p className="muted small" style={{ marginTop: 10 }}>
-        Every row stores the hash of the one before it, so editing any past entry breaks the chain. It's tamper-evident, not proof of what you meant.
-      </p>
+      <p className="mt-3 text-xs text-ink-3">Each row stores the hash of the one before it, so editing any past entry breaks the chain. Tamper-evident, not proof of intent.</p>
     </section>
   );
 }

@@ -10,10 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.3.5",
     "ag-grid-community": "^36.3.0",
     "ag-grid-react": "^36.3.0",
+    "lucide-react": "^1.71.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "tailwindcss": "^4.3.5"
   },
   "devDependencies": {
     "@types/react": "^19.2.18",

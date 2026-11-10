@@ -233,7 +233,7 @@ backend/
   tests/         security-invariant tests
   trials/        20-run attack measurement
   start.sh       runs the agent and Leash as separate processes
-frontend/        React + Vite UI, AG Grid security-event table
+frontend/        React + Vite + Tailwind UI: live agent terminal, animated firewall, PayPal escrow widget, AG Grid trail
 ```
 
 ## Built on
