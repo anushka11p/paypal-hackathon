@@ -101,3 +101,10 @@ def test_shop_job_streams_agent_events_with_injection_markers(client, monkeypatc
     assert "5-unit case pack" in viewed["PET-3010"]["injection"][0]
     assert "injection" not in viewed["PET-3020"]
     assert status["cart"]["captured_cents"] == 1800 and status["cart"]["released_cents"] == 6200
+
+
+def test_list_mandates_newest_first(client):
+    first = client.post("/mandates", json={"text": "a", "policy": POLICY}).json()["mandate_id"]
+    second = client.post("/mandates", json={"text": "b", "policy": POLICY}).json()["mandate_id"]
+    listed = [m["mandate_id"] for m in client.get("/mandates?limit=5").json()["mandates"]]
+    assert listed[:2] == [second, first]

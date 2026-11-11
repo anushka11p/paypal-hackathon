@@ -83,6 +83,13 @@ def create_route(payload: CreateMandateRequest, session: Session = Depends(get_d
     return mandate_out(mandate)
 
 
+@router.get("/mandates")
+def list_route(limit: int = 8, session: Session = Depends(get_db_session)):
+    """Most recent mandates, newest first, for the history strip."""
+    rows = session.query(Mandate).order_by(Mandate.id.desc()).limit(max(1, min(limit, 50))).all()
+    return {"mandates": [mandate_out(m) for m in rows]}
+
+
 @router.get("/mandates/{mandate_id}")
 def get_route(mandate_id: str, session: Session = Depends(get_db_session)):
     return mandate_out(_get(session, mandate_id))

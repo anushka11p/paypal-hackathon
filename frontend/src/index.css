@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 /*
  * Leash — banking-grade calm (bar: Mercury). Restrained: neutrals, one indigo
@@ -129,6 +130,69 @@
 @utility label {
   @apply text-[13px] font-medium text-ink-2;
 }
+
+
+/* Course design cards (components/ui/course-design-cards.tsx). The component's
+   own palette variables are kept; the card itself is drawn with Leash tokens so
+   it follows light/dark, and each colour maps to a money state:
+   green = settled, blue = active hold, orange = awaiting approval, red = revoked. */
+:root {
+  --clr-blue: #1890ff;
+  --clr-green: #01c3a8;
+  --clr-orange: #ffb741;
+  --clr-red: #a63d2a;
+  --bg-dark: #232228;
+  --bg-footer: #151419;
+  --color-white: #fff;
+  --color-gray-light: #ddd;
+  --color-gray-medium: #363636;
+  --color-gray-dark: #292929;
+  --color-gray-very-dark: #222127;
+}
+.cdc-card {
+  --cdc-accent: var(--ink-3);
+  display: flex; flex-direction: column; min-width: 0;
+  border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden;
+  transition: border-color .2s ease, transform .2s cubic-bezier(.16, 1, .3, 1);
+}
+.cdc-card:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.cdc-green { --cdc-accent: var(--ok); }
+.cdc-blue { --cdc-accent: var(--accent); }
+.cdc-orange { --cdc-accent: var(--warn); }
+.cdc-red { --cdc-accent: var(--bad); }
+.cdc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 0; color: var(--ink-3); font-size: 12px;
+}
+.cdc-date::before {
+  content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 9999px;
+  background: var(--cdc-accent); margin-right: 8px; vertical-align: 1px;
+}
+.cdc-body { padding: 10px 16px 16px; }
+.cdc-body h3 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+.cdc-body h3 a { color: inherit; text-decoration: none; }
+.cdc-body h3 a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.cdc-body p { margin: 4px 0 0; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+.cdc-progress { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; margin-top: 16px; font-size: 12px; color: var(--ink-3); }
+.cdc-progress .num { color: var(--ink); }
+.cdc-progress-bar { position: relative; height: 4px; border-radius: 9999px; background: var(--surface-2); overflow: hidden; }
+.cdc-progress-bar::after {
+  content: ""; position: absolute; inset: 0 auto 0 0; width: var(--cdc-progress, 0%);
+  background: var(--cdc-accent); border-radius: inherit;
+}
+.cdc-footer {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto;
+  padding: 10px 16px; border-top: 1px solid var(--line); background: var(--sunken);
+}
+.cdc-footer ul { display: flex; align-items: center; list-style: none; margin: 0; padding: 0; }
+.cdc-footer li + li { margin-left: -6px; }
+.cdc-footer img { width: 26px; height: 26px; border-radius: 9999px; object-fit: cover; border: 2px solid var(--sunken); }
+.cdc-btn-add {
+  display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px;
+  border-radius: 9999px; border: 1px dashed var(--line-strong); color: var(--ink-3); background: var(--surface);
+}
+.cdc-btn-add:hover { color: var(--ink); border-color: var(--ink-3); }
+.cdc-btn-countdown { font-size: 12px; color: var(--ink-2); font-weight: 500; white-space: nowrap; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }

@@ -23,6 +23,7 @@ export const api = {
   compile: (text) => post("/mandates/compile", { text }),
   createMandate: (text, policy) => post("/mandates", { text, policy }),
   mandate: (id) => request(`/mandates/${id}`),
+  mandates: (limit = 8) => request(`/mandates?limit=${limit}`),
   carts: (id) => request(`/mandates/${id}/carts`),
   startShop: (id, task, scenario) => post(`/mandates/${id}/shop`, { task, scenario }),
   shopStatus: (id) => request(`/mandates/${id}/shop-status`),

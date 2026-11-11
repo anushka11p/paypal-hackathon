@@ -10,6 +10,8 @@ import EventGrid from "./components/EventGrid";
 import IsolationPanel from "./components/IsolationPanel";
 import AuditModal from "./components/AuditModal";
 import HoldObject from "./components/HoldObject";
+import AgentReads from "./components/AgentReads";
+import RecentMandates from "./components/RecentMandates";
 import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer";
 
 const REPO = "https://github.com/anushka11p/paypal-hackathon";
@@ -197,6 +199,8 @@ export default function App() {
           </figure>
         </section>
 
+        <AgentReads />
+
         <section id="demo" className="scroll-mt-20 border-t border-line pt-10">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -225,6 +229,7 @@ export default function App() {
         </section>
 
         <section className="mt-16 grid grid-cols-1 gap-14">
+          <RecentMandates refreshKey={refreshKey} currentId={mandateId} />
           <div id="trail" className="min-w-0 scroll-mt-20"><EventGrid mandateId={mandateId} refreshKey={refreshKey} live={running} theme={theme} /></div>
           <div id="isolation" className="min-w-0 scroll-mt-20"><IsolationPanel /></div>
         </section>

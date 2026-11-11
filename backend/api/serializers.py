@@ -15,6 +15,7 @@ def mandate_out(m: Mandate) -> dict:
         "released_cents": m.hold_cents - m.captured_cents if m.status.value in ("settled", "revoked") else 0,
         "currency": m.currency,
         "expiry": m.expiry.isoformat(),
+        "created_at": m.created_at.isoformat(),
         "signature": m.signature,
         "paypal": {
             "order_id": m.paypal_order_id,
