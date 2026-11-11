@@ -18,7 +18,7 @@ const REPO = "https://github.com/anushka11p/paypal-hackathon";
 const FOOTER_COLUMNS = [
   { title: "Product", links: [{ label: "Live demo", href: "#demo" }, { label: "Security trail", href: "#trail" }, { label: "Isolation proof", href: "#isolation" }] },
   { title: "Built with", links: [{ label: "PayPal", href: "https://developer.paypal.com" }, { label: "Groq", href: "https://groq.com" }, { label: "Channel3", href: "https://channel3.ai" }, { label: "AG Grid", href: "https://www.ag-grid.com" }] },
-  { title: "Team", links: [{ label: "Anushka Prasad" }, { label: "Anika" }, { label: "Source on GitHub", href: REPO }] },
+  { title: "Team", links: [{ label: "Anushka" }, { label: "Anika" }, { label: "Source on GitHub", href: REPO }] },
 ];
 const FOOTER_PALETTE = {
   light: { background: "#eceef2", ink: "#0e1014", warm: "#3d49d6" },
@@ -247,7 +247,8 @@ export default function App() {
         monoFamily='"Geist Mono", ui-monospace, monospace'
         fontWeight={700}
         grain={0.3}
-        height="420px"
+        crop={0.45}
+        height="max(480px, 30vw)"
         className="mt-16"
       />
 
