@@ -5,12 +5,14 @@ import { useTheme } from "./theme";
 import MandatePanel from "./components/MandatePanel";
 import EscrowWidget from "./components/EscrowWidget";
 import StorePanel from "./components/StorePanel";
+import MascotGuide from "./components/MascotGuide";
 import FirewallPanel from "./components/FirewallPanel";
 import EventGrid from "./components/EventGrid";
 import IsolationPanel from "./components/IsolationPanel";
 import AuditModal from "./components/AuditModal";
 import HoldObject from "./components/HoldObject";
 import AgentReads from "./components/AgentReads";
+import Reveal from "./components/Reveal";
 import RecentMandates from "./components/RecentMandates";
 import HalftoneWordmarkFooter from "@/components/ui/halftone-wordmark-footer";
 
@@ -214,11 +216,14 @@ export default function App() {
           {cancelled && <p className="mb-4 rounded-xl bg-warn-soft px-4 py-3 text-sm text-warn">The PayPal approval was cancelled or declined. Nothing was held.</p>}
 
           <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-12">
-            <div className="min-w-0 lg:col-span-4"><MandatePanel mandate={mandate} onRevoke={revoke} /></div>
-            <div className="min-w-0 lg:col-span-5"><StorePanel mandate={mandate} job={job} onRun={run} runError={runError} /></div>
-            <div className="min-w-0 lg:col-span-3">
-              <EscrowWidget mandate={mandate} cart={cart} payments={health?.payments} revealedApprovedCents={approvedSoFar} settling={settling} />
-            </div>
+            <Reveal className="min-w-0 lg:col-span-4"><MandatePanel mandate={mandate} onRevoke={revoke} /></Reveal>
+            <Reveal delay={80} className="min-w-0 lg:col-span-5"><StorePanel mandate={mandate} job={job} onRun={run} runError={runError} /></Reveal>
+            <Reveal delay={160} className="min-w-0 lg:col-span-3">
+              <div className="lg:sticky lg:top-20">
+                <EscrowWidget mandate={mandate} cart={cart} payments={health?.payments} revealedApprovedCents={approvedSoFar} settling={settling} />
+                <MascotGuide mandate={mandate} job={job} layout="stack" className="mt-8 hidden px-2 lg:flex" />
+              </div>
+            </Reveal>
           </div>
 
           {cart && mandate && (
@@ -230,8 +235,8 @@ export default function App() {
 
         <section className="mt-16 grid grid-cols-1 gap-14">
           <RecentMandates refreshKey={refreshKey} currentId={mandateId} />
-          <div id="trail" className="min-w-0 scroll-mt-20"><EventGrid mandateId={mandateId} refreshKey={refreshKey} live={running} theme={theme} /></div>
-          <div id="isolation" className="min-w-0 scroll-mt-20"><IsolationPanel /></div>
+          <Reveal className="min-w-0"><div id="trail" className="min-w-0 scroll-mt-20"><EventGrid mandateId={mandateId} refreshKey={refreshKey} live={running} theme={theme} /></div></Reveal>
+          <Reveal className="min-w-0"><div id="isolation" className="min-w-0 scroll-mt-20"><IsolationPanel /></div></Reveal>
         </section>
 
         <p className="mt-12 text-center text-xs text-ink-3">Sandbox only. No real money moves. Built for the PayPal AI Hackathon.</p>

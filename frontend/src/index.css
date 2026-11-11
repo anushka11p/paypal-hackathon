@@ -10,6 +10,10 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 160ms;
+  --t-med: 260ms;
+  --t-slow: 500ms;
   --canvas: #f6f7f9;
   --surface: #ffffff;
   --surface-2: #f1f2f5;
@@ -74,7 +78,7 @@
   --color-warn: var(--warn);
   --color-warn-soft: var(--warn-soft);
   --color-term: var(--term);
-  --animate-rise: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-rise: rise var(--t-slow) var(--ease-out) both;
 }
 
 @keyframes rise {
@@ -98,6 +102,13 @@
 
 @utility card {
   @apply rounded-xl border border-line bg-surface;
+  transition: border-color var(--t-med) var(--ease-out), background-color var(--t-med) var(--ease-out);
+  &:hover { border-color: var(--line-strong); }
+}
+/* Small interactive cards lift a little; panels never move. */
+@utility lift {
+  transition: transform var(--t-med) var(--ease-out), border-color var(--t-med) var(--ease-out), background-color var(--t-med) var(--ease-out);
+  &:hover { transform: translateY(-2px); }
 }
 @utility num {
   @apply font-mono tabular-nums tracking-tight;
@@ -153,7 +164,7 @@
   --cdc-accent: var(--ink-3);
   display: flex; flex-direction: column; min-width: 0;
   border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden;
-  transition: border-color .2s ease, transform .2s cubic-bezier(.16, 1, .3, 1);
+  transition: border-color var(--t-med) var(--ease-out), transform var(--t-med) var(--ease-out);
 }
 .cdc-card:hover { border-color: var(--line-strong); transform: translateY(-2px); }
 .cdc-green { --cdc-accent: var(--ok); }
@@ -194,6 +205,75 @@
 .cdc-btn-add:hover { color: var(--ink); border-color: var(--ink-3); }
 .cdc-btn-countdown { font-size: 12px; color: var(--ink-2); font-weight: 500; white-space: nowrap; }
 
+
+/* Reveal (components/Reveal.jsx): one gentle entrance, staggered by --reveal-delay */
+.reveal { opacity: 0; transform: translateY(10px); }
+.reveal.is-in {
+  opacity: 1; transform: none;
+  transition: opacity var(--t-slow) var(--ease-out) var(--reveal-delay, 0ms), transform var(--t-slow) var(--ease-out) var(--reveal-delay, 0ms);
+}
+
+/* Leash mascot (components/Mascot.jsx). Every part transforms around its own box. */
+.lm * { transform-box: fill-box; transform-origin: center; }
+.lm-fill { fill: var(--ink); }
+.lm-collar { fill: none; stroke: var(--accent); stroke-width: 2.6; stroke-linecap: round; }
+.lm-tag { fill: var(--accent); }
+.lm-eye { fill: var(--canvas); }
+.lm-eyes-happy path, .lm-mouth { fill: none; stroke: var(--canvas); stroke-width: 2.2; stroke-linecap: round; }
+.lm-mouth-o { fill: var(--canvas); }
+.lm-leg { fill: var(--ink); }
+.lm-shadow { fill: var(--line-strong); opacity: .7; }
+.lm-legs, .lm-eyes-happy, .lm-flat, .lm-mouth-o { opacity: 0; }
+.lm-legs, .lm-eyes, .lm-eyes-happy, .lm-smile, .lm-flat, .lm-mouth-o { transition: opacity var(--t-fast) ease; }
+
+/* idle: an occasional blink */
+.lm[data-state="idle"] .lm-eye, .lm[data-state="intro"] .lm-eye { animation: lm-blink 4.6s infinite; }
+/* intro: a small hop to say hello */
+.lm[data-state="intro"] .lm-body { animation: lm-hop 900ms var(--ease-out) 2; }
+/* working: running in place, eyes scanning the store */
+.lm[data-state="working"] .lm-legs, .lm[data-state="alert"] .lm-legs { opacity: 1; }
+.lm[data-state="working"] .lm-body { animation: lm-bob 420ms ease-in-out infinite; }
+.lm[data-state="working"] .lm-shadow { animation: lm-shadow 420ms ease-in-out infinite; }
+.lm[data-state="working"] .lm-leg-l, .lm[data-state="alert"] .lm-leg-l { animation: lm-step 420ms ease-in-out infinite; }
+.lm[data-state="working"] .lm-leg-r, .lm[data-state="alert"] .lm-leg-r { animation: lm-step 420ms ease-in-out -210ms infinite; }
+.lm[data-state="working"] .lm-eyes { animation: lm-scan 2.4s ease-in-out infinite; }
+/* alert: it just read a hidden instruction: eyes wide, a small "o" */
+.lm[data-state="alert"] .lm-body { animation: lm-bob 520ms ease-in-out infinite; }
+.lm[data-state="alert"] .lm-eye { transform: scale(1.18); }
+.lm[data-state="alert"] .lm-smile { opacity: 0; }
+.lm[data-state="alert"] .lm-mouth-o { opacity: 1; }
+/* checking: still, focused, eyes narrowed and moving line by line */
+.lm[data-state="checking"] .lm-eye { transform: scaleY(.55); }
+.lm[data-state="checking"] .lm-eyes { animation: lm-read 1.1s steps(1, end) infinite; }
+.lm[data-state="checking"] .lm-smile { opacity: 0; }
+.lm[data-state="checking"] .lm-flat { opacity: 1; }
+/* done: relaxed, happy eyes, a slow breath */
+.lm[data-state="done"] .lm-eyes { opacity: 0; }
+.lm[data-state="done"] .lm-eyes-happy { opacity: 1; }
+.lm[data-state="done"] .lm-body { animation: lm-breathe 3.2s ease-in-out infinite; }
+/* error: a flat mouth, no fuss */
+.lm[data-state="error"] .lm-smile { opacity: 0; }
+.lm[data-state="error"] .lm-flat { opacity: 1; }
+
+@keyframes lm-blink { 0%, 94%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+@keyframes lm-hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-5px); } 70% { transform: translateY(0); } 82% { transform: translateY(-1.5px); } }
+@keyframes lm-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes lm-shadow { 0%, 100% { transform: scaleX(1); opacity: .7; } 50% { transform: scaleX(.82); opacity: .45; } }
+@keyframes lm-step { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes lm-scan { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
+@keyframes lm-read { 0% { transform: translate(-1.5px, -1px); } 33% { transform: translate(0, -1px); } 66% { transform: translate(1.5px, 0); } }
+@keyframes lm-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.025); } }
+
+/* Speech bubble beside the mascot */
+.lm-bubble { position: relative; }
+.lm-bubble::before {
+  content: ""; position: absolute; left: -5px; top: 14px; width: 9px; height: 9px;
+  background: var(--surface); border-left: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  transform: rotate(45deg);
+}
+.lm-bubble-up::before { left: calc(50% - 4.5px); top: -5px; border-bottom: 0; border-top: 1px solid var(--line); }
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  .lm *, .animate-spin { animation: none !important; }
 }

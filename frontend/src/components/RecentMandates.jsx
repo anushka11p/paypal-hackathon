@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api, usd } from "../api";
 import Card from "@/components/ui/course-design-cards";
 import { PanelHead } from "./MandatePanel";
+import Reveal from "./Reveal";
 
 const COLOR = { settled: "green", active: "blue", pending_approval: "orange", revoked: "red", expired: "red" };
 const STATUS = { settled: "Settled", active: "Hold active", pending_approval: "Awaiting PayPal approval", revoked: "Revoked, hold released", expired: "Expired" };
@@ -25,10 +26,10 @@ export default function RecentMandates({ refreshKey, currentId }) {
     <section className="border-t border-line pt-6">
       <PanelHead title="Recent mandates">Each card is one session: how much of the hold was captured, and what came back to you.</PanelHead>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {rows.map((m) => {
+        {rows.map((m, i) => {
           const pct = m.hold_cents ? Math.round((m.captured_cents / m.hold_cents) * 100) : 0;
           return (
-            <Card key={m.mandate_id} data={{
+            <Reveal key={m.mandate_id} delay={(i % 4) * 70} className="min-w-0 [&>*]:h-full"><Card data={{
               id: m.mandate_id,
               colorClass: COLOR[m.status] || "blue",
               date: new Date(m.created_at + "Z").toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + (m.mandate_id === currentId ? " · this session" : ""),
@@ -41,7 +42,7 @@ export default function RecentMandates({ refreshKey, currentId }) {
               href: `/?mandate=${m.mandate_id}`,
               addHref: "#demo",
               addLabel: "Start a new mandate",
-            }} />
+            }} /></Reveal>
           );
         })}
       </div>

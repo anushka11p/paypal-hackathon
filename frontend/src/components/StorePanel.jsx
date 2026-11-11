@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { api, titleCase, usd } from "../api";
 import { PanelHead } from "./MandatePanel";
+import MascotGuide from "./MascotGuide";
 
 const DEFAULT_TASK = "Restock Bramble's usual dog food, and pick up some treats and dental chews.";
 
@@ -99,6 +100,8 @@ export default function StorePanel({ mandate, job, onRun, runError }) {
       </PanelHead>
 
       <ul>{(catalog?.products || []).map((p) => <ProductRow key={p.sku} p={p} poisoned={poisoned} />)}</ul>
+
+      <MascotGuide mandate={mandate} job={job} className="mt-5 lg:hidden" />
 
       <div className="mt-5 grid gap-2">
         <label className="label" htmlFor="task">Task for the agent</label>
