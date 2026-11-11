@@ -42,7 +42,7 @@ export default function EscrowWidget({ mandate, cart, payments, revealedApproved
       </PanelHead>
       <div>
         <Line label="Authorized" value={usd(hold)} tone="text-accent" strong
-          hint={mandate && !done ? "Held, not charged" : null} />
+          hint={mandate?.status === "active" && !done ? "Held, not charged" : null} />
         <Line label="Still on hold" value={usd(remaining)} tone={remaining ? "text-ink" : "text-ink-3"} />
         <Line label="Captured" value={usd(captured)} tone={captured ? "text-ok" : "text-ink-3"} />
         <Line label="Released to you" value={usd(released)} tone={released ? "text-accent" : "text-ink-3"} />

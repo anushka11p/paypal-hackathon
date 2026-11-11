@@ -42,7 +42,7 @@ const STEPS = ["Mandate", "PayPal hold", "Agent shops", "Leash checks", "Settled
 function currentStep(mandate, job, cart) {
   if (!mandate) return 0;
   if (mandate.status === "pending_approval") return 1;
-  if (cart) return 5;
+  if (cart || mandate.status === "revoked") return 5;
   if (job?.state === "running") return job.phase === "leash_checking" ? 3 : 2;
   return 2;
 }
