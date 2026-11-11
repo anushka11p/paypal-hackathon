@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Code2, FileJson, Moon, RotateCcw, Sun } from "lucide-react";
+import { ArrowDown, Check, Code2, FileJson, Moon, RotateCcw, Sun } from "lucide-react";
 import { api } from "./api";
 import { useTheme } from "./theme";
 import MandatePanel from "./components/MandatePanel";
@@ -23,28 +23,39 @@ const FOOTER_COLUMNS = [
   { title: "Team", links: [{ label: "Anushka" }, { label: "Anika" }, { label: "Source on GitHub", href: REPO }] },
 ];
 const FOOTER_PALETTE = {
-  light: { background: "#eceef2", ink: "#0e1014", warm: "#3d49d6" },
-  dark: { background: "#07080a", ink: "#d9dce2", warm: "#8f98ff" },
+  light: { background: "#e9e6dc", ink: "#0b2048", warm: "#6f9a12" },
+  dark: { background: "#08193b", ink: "#f2f0e9", warm: "#b9f13f" },
 };
 
 function Mark() {
   return (
     <svg viewBox="0 0 32 32" className="size-7" aria-hidden="true">
       <rect width="32" height="32" rx="9" className="fill-ink" />
-      <circle cx="16" cy="16" r="7.5" fill="none" className="stroke-accent" strokeWidth="2.4" />
+      <circle cx="16" cy="16" r="7.5" fill="none" className="stroke-lime" strokeWidth="2.4" />
       <circle cx="16" cy="16" r="2.6" className="fill-canvas" />
     </svg>
   );
 }
 
-const STEPS = ["Mandate", "PayPal hold", "Agent shops", "Leash checks", "Settled"];
+const STEPS = ["Set your rules", "Hold the money", "Your AI shops", "Leash checks"];
 
+/** 0-3 is the step in progress; 4 means the session is finished. */
 function currentStep(mandate, job, cart) {
   if (!mandate) return 0;
   if (mandate.status === "pending_approval") return 1;
-  if (cart || mandate.status === "revoked") return 5;
+  if (cart || mandate.status === "revoked") return 4;
   if (job?.state === "running") return job.phase === "leash_checking" ? 3 : 2;
   return 2;
+}
+
+/** One sentence: what to do right now. */
+function nextAction(step, mandate, job) {
+  if (step === 0) return "Pick an example or write your own, then press Turn into rules.";
+  if (step === 1) return "Approve the hold on the pretend PayPal page. No real money moves.";
+  if (step === 2 && job?.state === "running") return "Your AI is shopping. Watch what it reads.";
+  if (step === 2) return job?.state === "error" ? "That run failed and nothing was charged. Press Send your AI shopping to try again." : "Press Send your AI shopping. This store has two hidden traps.";
+  if (step === 3) return "Leash is checking every item before paying for anything.";
+  return mandate?.status === "revoked" ? "You cancelled the hold, so all of it went back. Start over to try again." : "Done. Below is what Leash paid for, and what it refused.";
 }
 
 function Stepper({ step }) {
@@ -54,7 +65,10 @@ function Stepper({ step }) {
         const done = i < step, now = i === step;
         return (
           <li key={s} aria-current={now ? "step" : undefined}
-            className={`border-b pb-1 transition-colors ${now ? "border-ink font-medium text-ink" : done ? "border-transparent text-ink-2" : "border-transparent text-ink-3"}`}>
+            className={`flex items-center gap-2 transition-colors duration-[var(--t-med)] ${now ? "font-medium text-ink" : done ? "text-ink-2" : "text-ink-3"}`}>
+            <span className={`grid size-5 place-items-center rounded-full text-[11px] transition-colors duration-[var(--t-med)] ${now ? "bg-lime text-on-lime" : done ? "bg-ink text-canvas" : "border border-line-strong"}`}>
+              {done ? <Check className="size-3" strokeWidth={3} /> : <span className="num">{i + 1}</span>}
+            </span>
             {s}
           </li>
         );
@@ -62,6 +76,14 @@ function Stepper({ step }) {
     </ol>
   );
 }
+
+/** The money in one real run of the demo, as a statement. */
+const STORY = [
+  ["You allow", "PayPal holds it. Nothing is charged yet.", "$80.00", "text-accent"],
+  ["Your AI tries to spend", "Two hidden notes on product pages tricked it.", "$116.00", "text-ink-3 line-through decoration-bad/60"],
+  ["Leash pays the store", "Only the items that follow your rules.", "$62.00", "text-ok"],
+  ["Back to you", "Released automatically.", "$18.00", "text-accent"],
+];
 
 function readUrl() {
   const q = new URLSearchParams(window.location.search);
@@ -136,6 +158,8 @@ export default function App() {
   const onProgress = useCallback((cents) => setApprovedSoFar(cents), []);
   const onDone = useCallback(() => { setSettling(false); setApprovedSoFar(null); }, []);
   const footerPalette = useMemo(() => FOOTER_PALETTE[theme], [theme]);
+  const step = currentStep(mandate, job, cart);
+  const next = nextAction(step, mandate, job);
 
   return (
     <>
@@ -173,51 +197,69 @@ export default function App() {
       <main id="top" className="mx-auto max-w-[1320px] px-4 sm:px-6">
         <AgentReads />
 
-        <section className="grid grid-cols-1 items-center gap-6 pb-10 pt-10 md:grid-cols-[1.05fr_1fr] md:gap-8 md:pb-16 md:pt-20">
-          <div className="min-w-0 max-w-xl">
-            <h1 className="text-[44px] font-medium leading-[1.0] tracking-[-0.04em] sm:text-[64px] lg:text-[84px]">
-              Let AI shop.<br /><span className="text-ink-3">Keep the leash.</span>
+        <section className="grid grid-cols-1 items-center gap-10 pb-14 pt-12 md:grid-cols-[1.1fr_1fr] md:gap-8 md:pb-20 md:pt-20">
+          <div className="min-w-0">
+            <h1 className="max-w-[12ch] text-[44px] font-medium leading-[1.02] tracking-[-0.04em] sm:text-[60px] lg:text-[76px]">
+              Your AI shopper can be tricked. Your money can’t.
             </h1>
-            <p className="mt-6 max-w-[34rem] text-[17px] leading-relaxed text-ink-2">
-              One line of text on a product page can hijack a shopping agent. With Leash, the agent only proposes a cart.
-              Your budget becomes a PayPal authorization, and a separate firewall captures only what your rules allow, then releases the rest.
+            <p className="mt-6 max-w-[40ch] text-[17px] leading-relaxed text-ink-2">
+              Leash sits between your AI and your PayPal. It only pays for what you said yes to.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <a href="#demo" className="btn-primary px-5 py-3">Run the live demo</a>
-              <a href="#trail" className="btn-secondary px-5 py-3">See the audit trail</a>
+
+            <div className="mt-9 max-w-[34rem]">
+              <p className="mb-1 text-[13px] text-ink-3">What happened in one real run of the demo below</p>
+              <dl>
+                {STORY.map(([label, note, amount, tone]) => (
+                  <div key={label} className="flex items-baseline justify-between gap-4 border-b border-line py-3 last:border-0">
+                    <dt className="min-w-0">
+                      <span className="text-[15px] text-ink">{label}</span>
+                      <span className="mt-0.5 block text-[13px] text-ink-3">{note}</span>
+                    </dt>
+                    <dd className={`num shrink-0 text-xl ${tone}`}>{amount}</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
-            <p className="mt-8 border-t border-line pt-5 text-sm leading-relaxed text-ink-2">
-              In <span className="num text-ink">20</span> of <span className="num text-ink">20</span> live runs the agent fell for both injected instructions.
-              Bad items approved: <span className="num text-ok">$0.00</span>.
-              Separately, one live PayPal sandbox run captured <span className="num text-ink">$80.00</span>: capture <span className="num text-ink">6LX40761XE0335641</span>.
+
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+              <a href="#demo" className="btn-primary px-6 py-3 text-[15px]">Try it yourself <ArrowDown className="size-4" /></a>
+              <a href="#isolation" className="text-sm text-ink-2 underline decoration-line-strong underline-offset-4 transition-colors hover:text-ink hover:decoration-ink">Why the AI can’t pay on its own</a>
+            </div>
+            <p className="mt-6 max-w-[34rem] text-[13px] leading-relaxed text-ink-3">
+              Tested <span className="num text-ink-2">20</span> times: the AI fell for the traps every time, and Leash paid <span className="num text-ok">$0.00</span> for trap items.
+              Also verified with a real PayPal sandbox payment <span className="num" title="PayPal sandbox capture ID">6LX40761XE0335641</span>.
             </p>
           </div>
-          <figure className="order-first min-w-0 md:order-none">
-            <HoldObject theme={theme} className="mx-auto aspect-square w-full max-w-[260px] md:mr-0 md:max-w-[540px]" />
-            <figcaption className="mx-auto mt-2 flex max-w-[540px] flex-wrap justify-center gap-x-5 gap-y-1 border-t border-line pt-3 text-xs text-ink-2 md:mr-0">
-              <span className="text-ink-3">Example run</span>
-              <span>Held <span className="num ml-1 text-accent">$80.00</span></span>
-              <span className="flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-ok" />Captured <span className="num text-ok">$62.00</span></span>
-              <span className="flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-accent" />Released <span className="num text-accent">$18.00</span></span>
-            </figcaption>
+          <figure className="min-w-0">
+            <HoldObject theme={theme} className="mx-auto aspect-square w-full max-w-[300px] md:mr-0 md:max-w-[540px]"
+              label="Your money as a stack of coins held by a lime strap: what Leash pays stays in the strap, the rest lifts out and comes back." />
           </figure>
         </section>
 
         <section id="demo" className="scroll-mt-20 border-t border-line pt-10">
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+          <div className="mb-6 grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <h2 className="text-2xl font-medium tracking-[-0.02em]">Live demo</h2>
-              <p className="mt-1 text-sm text-ink-2">A real agent, real checks, and a real authorization. The store and its two attack texts are simulated.</p>
+              <h2 className="text-[28px] font-medium tracking-[-0.025em]">Try it yourself</h2>
+              <p className="mt-1 max-w-[60ch] text-sm text-ink-2">A real AI and real checks. The store and PayPal are pretend, so no real money moves.</p>
             </div>
-            <Stepper step={currentStep(mandate, job, cart)} />
+            <Stepper step={step} />
+          </div>
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-3">
+            <p key={next} className="animate-rise text-[15px] text-ink" role="status" aria-live="polite">
+              {step < 4 && <span className="num mr-2 text-ink-3">Step {step + 1} of 4</span>}{next}
+            </p>
+            <div className="-my-1 flex items-center gap-1">
+              {cart && <a href="#results" className="btn-quiet">See the results <ArrowDown className="size-4" /></a>}
+              {mandate && <button className="btn-quiet" onClick={reset}><RotateCcw className="size-4" />Start over</button>}
+            </div>
           </div>
 
           {returnError && <p className="mb-4 rounded-xl bg-bad-soft px-4 py-3 text-sm text-bad">PayPal approval didn't complete: {returnError}</p>}
           {cancelled && <p className="mb-4 rounded-xl bg-warn-soft px-4 py-3 text-sm text-warn">The PayPal approval was cancelled or declined. Nothing was held.</p>}
 
           <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-12">
-            <Reveal className="min-w-0 lg:col-span-4"><MandatePanel mandate={mandate} onRevoke={revoke} /></Reveal>
-            <Reveal delay={80} className="min-w-0 lg:col-span-5"><StorePanel mandate={mandate} job={job} onRun={run} runError={runError} /></Reveal>
+            <Reveal className={`min-w-0 lg:col-span-4 ${step <= 1 ? "is-active" : ""}`}><MandatePanel mandate={mandate} onRevoke={revoke} /></Reveal>
+            <Reveal delay={80} className={`min-w-0 lg:col-span-5 ${step === 2 || step === 3 ? "is-active" : ""}`}><StorePanel mandate={mandate} job={job} onRun={run} runError={runError} /></Reveal>
             <Reveal delay={160} className="min-w-0 lg:col-span-3">
               <div className="lg:sticky lg:top-20">
                 <EscrowWidget mandate={mandate} cart={cart} payments={health?.payments} revealedApprovedCents={approvedSoFar} settling={settling} />
@@ -227,8 +269,8 @@ export default function App() {
           </div>
 
           {cart && mandate && (
-            <div className="mt-10">
-              <FirewallPanel key={cart.cart_id} cart={cart} policy={mandate.policy} theme={theme} payments={health?.payments} animate={animateCart} onProgress={onProgress} onDone={onDone} />
+            <div id="results" className="mt-10 scroll-mt-20">
+              <FirewallPanel key={cart.cart_id} cart={cart} policy={mandate.policy} theme={theme} payments={health?.payments} animate={animateCart} onProgress={onProgress} onDone={onDone} onStartOver={reset} />
             </div>
           )}
         </section>

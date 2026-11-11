@@ -19,7 +19,7 @@ function countdown(m) {
 /** History of mandates as cards: captured share of each hold, status, and what came back. */
 export default function RecentMandates({ refreshKey, currentId }) {
   const [rows, setRows] = useState([]);
-  useEffect(() => { api.mandates(8).then((r) => setRows(r.mandates)).catch(() => {}); }, [refreshKey]);
+  useEffect(() => { api.mandates(4).then((r) => setRows(r.mandates)).catch(() => {}); }, [refreshKey]);
   if (!rows.length) return null;
 
   return (
@@ -40,8 +40,6 @@ export default function RecentMandates({ refreshKey, currentId }) {
               progressValue: usd(m.captured_cents),
               countdownText: countdown(m),
               href: `/?mandate=${m.mandate_id}`,
-              addHref: "#demo",
-              addLabel: "Start a new mandate",
             }} /></Reveal>
           );
         })}

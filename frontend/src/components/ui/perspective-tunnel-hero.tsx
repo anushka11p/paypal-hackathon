@@ -6,6 +6,7 @@
 // - cards can be text listings (no image) with an optional flag, as well as images
 // - title/eyebrow/hint are props; colours use the app's tokens; no gradient text
 // - full-width container (w-full) instead of w-screen, which caused horizontal overflow
+// - the title sits above the flying cards on a soft canvas plate so it stays readable; optional skip link
 
 import {
   motion, useTransform, useReducedMotion, useMotionValue, useSpring, useScroll, MotionValue,
@@ -149,6 +150,8 @@ export interface PerspectiveTunnelHeroProps {
   /** Where the flight starts (0-1). Above 0, cards are already in flight and the title is sharp on load. */
   startAt?: number;
   className?: string;
+  /** A link that lets people jump past the flight. */
+  skip?: { href: string; label: string };
 }
 
 export default function PerspectiveTunnelHero({
@@ -160,6 +163,7 @@ export default function PerspectiveTunnelHero({
   length = 3,
   startAt = 0,
   className = "",
+  skip,
 }: PerspectiveTunnelHeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
@@ -188,14 +192,15 @@ export default function PerspectiveTunnelHero({
     <section ref={sectionRef} className={`relative w-full ${className}`} style={{ height: `${Math.max(1.5, length) * 100}svh` }}>
       <div
         className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden"
-        style={{ perspective: stage.isMobile ? "900px" : "1200px", transformStyle: "preserve-3d" }}
+        style={{ perspective: stage.isMobile ? "900px" : "1200px" }}
       >
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(var(--line-strong)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_70%_70%_at_50%_50%,#000_55%,transparent_100%)] opacity-70" />
         <div className="pointer-events-none absolute h-[48vmin] w-[48vmin] rounded-full border border-accent/20" />
         <div className="pointer-events-none absolute h-[76vmin] w-[76vmin] rounded-full border border-dashed border-line-strong" />
 
         <motion.div style={{ scale: titleScale, opacity: titleOpacity }}
-          className="pointer-events-none z-0 flex max-w-xl flex-col items-center px-6 text-center">
+          className="pointer-events-none relative z-30 flex max-w-xl flex-col items-center px-6 text-center">
+          <div aria-hidden="true" className="absolute -inset-x-16 -inset-y-14 -z-10 bg-[radial-gradient(closest-side,var(--canvas)_55%,transparent)]" />
           {eyebrow && <p className="mb-4 text-sm text-accent">{eyebrow}</p>}
           <h2 className="text-5xl font-medium leading-[0.95] tracking-[-0.04em] text-ink sm:text-7xl">{title}</h2>
           <p className="mt-5 max-w-[38ch] text-sm text-ink-2 sm:text-base">{hint}</p>
@@ -206,8 +211,13 @@ export default function PerspectiveTunnelHero({
           <span>{prompt}</span>
           <div className="h-6 w-px bg-line-strong" />
         </motion.div>
+        {skip && (
+          <a href={skip.href} className="absolute bottom-7 right-6 z-30 text-xs text-ink-2 underline decoration-line-strong underline-offset-4 hover:text-ink">
+            {skip.label}
+          </a>
+        )}
 
-        <div className="pointer-events-none absolute inset-0" style={{ transformStyle: "preserve-3d" }}>
+        <div className="pointer-events-none absolute inset-0 z-10" style={{ transformStyle: "preserve-3d" }}>
           {cards.map((card) => (
             <TunnelCard key={card.index} card={card} progress={smoothProgress} pointer={pointer} total={cards.length} stage={stage} />
           ))}

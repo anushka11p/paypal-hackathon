@@ -18,10 +18,10 @@ function DecisionCell({ value }) {
 
 const BASE = { fontFamily: "Geist, sans-serif", fontSize: 13, headerFontWeight: 500, borderRadius: 8, wrapperBorderRadius: 12, rowHeight: 40, headerHeight: 38, spacing: 7 };
 const THEMES = {
-  light: themeQuartz.withParams({ ...BASE, backgroundColor: "#ffffff", headerBackgroundColor: "#f6f7f9", borderColor: "#e3e5ea",
-    foregroundColor: "#0e1014", headerTextColor: "#4a505c", rowHoverColor: "#f6f7f9", accentColor: "#3d49d6" }),
-  dark: themeQuartz.withParams({ ...BASE, backgroundColor: "#111317", headerBackgroundColor: "#0d0f12", borderColor: "#22262d",
-    foregroundColor: "#eceef1", headerTextColor: "#a7adb9", rowHoverColor: "#181b20", accentColor: "#8f98ff", chromeBackgroundColor: "#0d0f12" }),
+  light: themeQuartz.withParams({ ...BASE, backgroundColor: "#faf9f5", headerBackgroundColor: "#f2f0e9", borderColor: "#dedad0",
+    foregroundColor: "#0b2048", headerTextColor: "#3b4763", rowHoverColor: "#f2f0e9", accentColor: "#4b6b00" }),
+  dark: themeQuartz.withParams({ ...BASE, backgroundColor: "#102857", headerBackgroundColor: "#08193b", borderColor: "#1d3a70",
+    foregroundColor: "#f2f0e9", headerTextColor: "#c4c9d6", rowHoverColor: "#163165", accentColor: "#b9f13f", chromeBackgroundColor: "#08193b" }),
 };
 
 export default function EventGrid({ mandateId, refreshKey, live, theme = "light" }) {

@@ -16,7 +16,7 @@ export default function AgentReads() {
       subtitle: `${titleCase(p.category)}, contains ${p.allergen_tags.contains?.join(", ") || "nothing listed"}`,
       body: attack || review || p.description,
       flagged: Boolean(attack),
-      flagLabel: "Simulated hidden instruction",
+      flagLabel: "Hidden trap (simulated)",
     };
   }), [catalog]);
 
@@ -25,11 +25,11 @@ export default function AgentReads() {
   return (
     <PerspectiveTunnelHero
       items={[...items, ...items.slice(0, 2)]}
-      eyebrow="What your agent reads"
       title={<>Every listing<br />can talk back.</>}
-      hint="Your agent reads all of this before it shops. Two listings carry text written to hijack it. Scroll to fly through the store."
+      hint="This is what your AI reads before it buys anything. Two of these listings hide notes written to trick it."
       prompt="Scroll"
-      length={2.6}
+      skip={{ href: "#demo", label: "Skip to the demo" }}
+      length={1.9}
       startAt={0.14}
       className="-mt-14"
     />

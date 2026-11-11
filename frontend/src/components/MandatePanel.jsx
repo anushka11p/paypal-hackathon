@@ -16,11 +16,16 @@ const MANUAL_POLICY = {
   allowed_categories: ["pet_food", "pet_treats"], excluded_allergens: ["chicken"], purpose: "Dog food and treats",
 };
 
-export function PanelHead({ title, aside, children }) {
+export function StepNum({ n }) {
+  return <span className="num grid size-6 shrink-0 place-items-center rounded-full border border-line-strong text-xs font-normal text-ink-2">{n}</span>;
+}
+
+export function PanelHead({ title, step, aside, children }) {
   return (
     <header className="mb-5 flex items-start justify-between gap-3">
       <div className="min-w-0">
-        <h3 className="flex items-center gap-2 text-[15px] font-semibold tracking-[-0.01em]">
+        <h3 className="flex items-center gap-2.5 text-[16px] font-semibold tracking-[-0.01em]">
+          {step && <StepNum n={step} />}
           {title}
         </h3>
         {children && <p className="mt-1 text-[13px] leading-relaxed text-ink-3">{children}</p>}
@@ -42,14 +47,14 @@ function RuleRow({ label, children }) {
 function RuleSet({ policy }) {
   return (
     <dl className="animate-rise">
-      <RuleRow label="PayPal hold"><span className="num text-base text-accent">{usd(policy.budget_cents)}</span></RuleRow>
-      <RuleRow label="Max per item"><span className="num">{usd(policy.max_unit_price_cents)}</span></RuleRow>
-      <RuleRow label="Max quantity"><span className="num">{policy.max_qty_per_sku}</span></RuleRow>
-      <RuleRow label="Allowed">{policy.allowed_categories.map(titleCase).join(", ")}</RuleRow>
-      <RuleRow label="Never contains">
+      <RuleRow label="Budget"><span className="num text-base text-accent">{usd(policy.budget_cents)}</span></RuleRow>
+      <RuleRow label="Most for one item"><span className="num">{usd(policy.max_unit_price_cents)}</span></RuleRow>
+      <RuleRow label="Most of each item"><span className="num">{policy.max_qty_per_sku}</span></RuleRow>
+      <RuleRow label="Can buy">{policy.allowed_categories.map(titleCase).join(", ")}</RuleRow>
+      <RuleRow label="Never anything with">
         {policy.excluded_allergens.length ? <span className="text-warn">{policy.excluded_allergens.join(", ")}</span> : <span className="text-ink-3">Nothing</span>}
       </RuleRow>
-      <RuleRow label="Anything else"><span className="text-ink-2">Rejected</span></RuleRow>
+      <RuleRow label="Anything else"><span className="text-ink-2">Refused</span></RuleRow>
     </dl>
   );
 }
@@ -62,7 +67,7 @@ function Chip({ on, onClick, tone = "ink", children }) {
   const active = tone === "warn" ? "border-warn text-warn" : "border-ink text-ink";
   return (
     <button type="button" onClick={onClick}
-      className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${on ? active : "border-line text-ink-3 hover:text-ink-2"}`}>
+      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${on ? active : "border-line text-ink-3 hover:text-ink-2"}`}>
       {children}
     </button>
   );
@@ -77,19 +82,19 @@ function PolicyEditor({ policy, onChange }) {
   return (
     <div className="grid gap-4 animate-rise">
       <div className="grid grid-cols-3 gap-2.5">
-        <label className="grid gap-1.5 label">Hold{money("budget_cents")}</label>
+        <label className="grid gap-1.5 label">Budget{money("budget_cents")}</label>
         <label className="grid gap-1.5 label">Per item{money("max_unit_price_cents")}</label>
-        <label className="grid gap-1.5 label">Max qty
+        <label className="grid gap-1.5 label">Of each
           <input type="number" min="1" max="50" className="field num" value={policy.max_qty_per_sku}
             onChange={(e) => set("max_qty_per_sku", parseInt(e.target.value || "1", 10))} />
         </label>
       </div>
-      <div className="grid gap-2"><span className="label">Allowed categories</span>
+      <div className="grid gap-2"><span className="label">Can buy</span>
         <div className="flex flex-wrap gap-1.5">{CATEGORIES.map((c) => (
           <Chip key={c} on={policy.allowed_categories.includes(c)} onClick={() => set("allowed_categories", toggle(policy.allowed_categories, c))}>{titleCase(c)}</Chip>
         ))}</div>
       </div>
-      <div className="grid gap-2"><span className="label">Never contains</span>
+      <div className="grid gap-2"><span className="label">Never anything with</span>
         <div className="flex flex-wrap gap-1.5">{ALLERGENS.map((a) => (
           <Chip key={a} tone="warn" on={policy.excluded_allergens.includes(a)} onClick={() => set("excluded_allergens", toggle(policy.excluded_allergens, a))}>{a}</Chip>
         ))}</div>
@@ -128,13 +133,16 @@ export default function MandatePanel({ mandate, onRevoke }) {
   if (mandate) {
     return (
       <section className="card p-5 sm:p-6">
-        <PanelHead title="Your mandate" aside={<span className="badge-ok">Signed</span>}>
+        <PanelHead step={1} title="Your rules" aside={<span className="badge-ok">Locked in</span>}>
           “{mandate.instruction_text}”
         </PanelHead>
         <RuleSet policy={mandate.policy} />
-        <p className="num mt-4 truncate text-[11px] text-ink-3" title={mandate.signature}>{mandate.signature}</p>
+        <details className="group mt-4 text-[11px] text-ink-3">
+          <summary className="cursor-pointer list-none hover:text-ink-2">Tamper-proof signature</summary>
+          <p className="num mt-1.5 break-all">{mandate.signature}</p>
+        </details>
         {["pending_approval", "active"].includes(mandate.status) && (
-          <button className="btn-secondary mt-4 w-full" onClick={onRevoke}>Revoke and release the hold</button>
+          <button className="btn-secondary mt-4 w-full" onClick={onRevoke}>Cancel and give the money back</button>
         )}
       </section>
     );
@@ -142,17 +150,18 @@ export default function MandatePanel({ mandate, onRevoke }) {
 
   return (
     <section className="card p-5 sm:p-6">
-      <PanelHead title="Write the mandate">Plain English in. Strict rules out. The agent never sees them.</PanelHead>
+      <PanelHead step={1} title="Set your rules">Say what your AI may buy, in your own words. Leash turns it into strict rules your AI can’t see or change.</PanelHead>
+      <p className="mb-2 text-xs text-ink-3">Start from an example</p>
       <div className="mb-2.5 flex flex-wrap gap-1.5">
         {PRESETS.map((p) => (
           <Chip key={p.label} on={text === p.text} onClick={() => { setText(p.text); setPolicy(null); setQuestion(null); }}>{p.label}</Chip>
         ))}
       </div>
-      <textarea className="field min-h-24 resize-y leading-relaxed" value={text} onChange={(e) => setText(e.target.value)} aria-label="Mandate" />
+      <textarea className="field min-h-24 resize-y leading-relaxed" value={text} onChange={(e) => setText(e.target.value)} aria-label="Your rules, in plain English" />
       <div className="mt-3 flex flex-wrap gap-2">
         <button className={policy ? "btn-secondary" : "btn-primary"} onClick={compile} disabled={busy || !text.trim()}>
           {busy === "compile" && <Loader2 className="size-4 animate-spin" />}
-          {busy === "compile" ? "Compiling" : policy ? "Recompile" : "Compile into rules"}
+          {busy === "compile" ? "Reading your rules" : policy ? "Update the rules" : "Turn into rules"}
         </button>
         {compilerDown && <button className="btn-secondary" onClick={() => { setPolicy(MANUAL_POLICY); setError(null); }}>Fill rules by hand</button>}
       </div>
@@ -163,17 +172,18 @@ export default function MandatePanel({ mandate, onRevoke }) {
       {policy && (
         <div className="mt-6 border-t border-line pt-4">
           <div className="mb-1 flex items-center justify-between">
-            <span className="text-[13px] font-medium text-ink-2">Compiled rules</span>
+            <span className="text-[13px] font-medium text-ink-2">Rules Leash will enforce</span>
             <button className="btn-quiet !px-2 !py-1 text-xs" onClick={() => setEditing((v) => !v)}>
               {editing ? "Done" : "Edit"}
             </button>
           </div>
           {editing ? <PolicyEditor policy={policy} onChange={setPolicy} /> : <RuleSet policy={policy} />}
-          <button className="btn-primary mt-5 w-full py-3" onClick={approve} disabled={busy}>
+          <h4 className="mt-6 flex items-center gap-2.5 text-[16px] font-semibold tracking-[-0.01em]"><StepNum n={2} />Hold the money</h4>
+          <button className="btn-primary mt-3 w-full py-3" onClick={approve} disabled={busy}>
             {busy === "approve" && <Loader2 className="size-4 animate-spin" />}
-            Authorize <span className="num">{usd(policy.budget_cents)}</span> hold with PayPal
+            Hold <span className="num">{usd(policy.budget_cents)}</span> with PayPal
           </button>
-          <p className="mt-2 text-center text-xs text-ink-3">A hold, not a charge. Nothing is captured until Leash approves items.</p>
+          <p className="mt-2.5 text-center text-[13px] text-ink-2">Like a hotel deposit: the money is set aside, not spent.</p>
         </div>
       )}
     </section>

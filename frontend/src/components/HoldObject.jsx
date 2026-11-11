@@ -11,8 +11,8 @@ import { useEffect, useRef, useState } from "react";
  */
 
 const PALETTE = {
-  light: { coin: 0x9ea4ae, released: 0x3d49d6, strap: 0x3d49d6, shadow: "rgba(14,16,20,0.22)", key: 2.1, exposure: 1.0 },
-  dark: { coin: 0x9298a3, released: 0x8f98ff, strap: 0x5b66e6, shadow: "rgba(0,0,0,0.6)", key: 1.6, exposure: 1.1 },
+  light: { coin: 0xa7a9ae, released: 0x9fd62c, strap: 0xa6dd2f, shadow: "rgba(11,32,72,0.22)", key: 2.1, exposure: 1.0 },
+  dark: { coin: 0x9aa0ab, released: 0xb9f13f, strap: 0xa6dd2f, shadow: "rgba(0,0,0,0.55)", key: 1.6, exposure: 1.1 },
 };
 
 const COINS = 8;

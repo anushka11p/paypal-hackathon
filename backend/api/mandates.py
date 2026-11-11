@@ -148,19 +148,34 @@ def mock_checkout_page(order_id: str):
         raise HTTPException(status_code=404, detail="order not found")
     amount = f"${order['amount_cents'] / 100:.2f}"
     oid = html.escape(order_id)
-    return f"""<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Simulated approval</title><style>
-body{{font-family:system-ui,sans-serif;background:#f4f4f2;margin:0;display:grid;place-items:center;min-height:100vh}}
-main{{background:#fff;padding:32px;border-radius:12px;max-width:420px;width:calc(100% - 32px);box-shadow:0 2px 12px #0001}}
-.tag{{display:inline-block;background:#fff3cd;color:#7a5b00;padding:4px 10px;border-radius:999px;font-size:13px}}
-button{{font-size:16px;padding:12px 18px;border-radius:8px;border:0;cursor:pointer;margin-right:8px}}
-.ok{{background:#111;color:#fff}} .no{{background:#e9e9e6}}</style></head><body><main>
-<span class="tag">Simulation: no PayPal sandbox keys configured</span>
-<h1>Approve a {amount} hold?</h1>
-<p>This stands in for PayPal's buyer approval. Approving places a hold for exactly {amount}.
-Nothing is charged until Leash captures the items your mandate allows.</p>
-<form method="post" action="/mock-checkout/{oid}/approve" style="display:inline"><button class="ok">Approve hold</button></form>
-<a href="{html.escape(order['cancel_url'])}"><button class="no" type="button">Cancel</button></a>
+    cancel = html.escape(order['cancel_url'])
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Approve the hold</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono&display=swap" rel="stylesheet">
+<style>
+:root{{--canvas:#f2f0e9;--surface:#faf9f5;--ink:#0b2048;--ink2:#3b4763;--ink3:#5a6479;--line:#dedad0;--accent:#4b6b00}}
+@media (prefers-color-scheme:dark){{:root{{--canvas:#0b2048;--surface:#102857;--ink:#f2f0e9;--ink2:#c4c9d6;--ink3:#9ba4bc;--line:#1d3a70;--accent:#b9f13f}}}}
+*{{box-sizing:border-box}}
+body{{font-family:Geist,ui-sans-serif,system-ui,sans-serif;background:var(--canvas);color:var(--ink);margin:0;display:grid;place-items:center;min-height:100vh;padding:16px}}
+main{{background:var(--surface);border:1px solid var(--line);padding:28px;border-radius:16px;max-width:420px;width:100%}}
+.who{{font-size:13px;color:var(--ink3);margin:0 0 18px}}
+h1{{font-size:24px;font-weight:500;letter-spacing:-.02em;margin:0 0 6px}}
+.amt{{font-family:"Geist Mono",ui-monospace,monospace;color:var(--accent);font-size:40px;letter-spacing:-.03em;margin:8px 0 18px}}
+p{{color:var(--ink2);font-size:15px;line-height:1.55;margin:0 0 22px}}
+.row{{display:flex;gap:10px;flex-wrap:wrap}}
+button{{font:inherit;font-size:15px;font-weight:500;padding:12px 20px;border-radius:999px;cursor:pointer;border:1px solid transparent}}
+.ok{{background:#b9f13f;color:#0b2048}} .no{{background:transparent;color:var(--ink2);border-color:var(--line)}}
+.note{{margin:22px 0 0;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--ink3)}}
+</style></head><body><main>
+<p class="who">Pretend PayPal · practice mode</p>
+<h1>Hold this amount for your AI shopper?</h1>
+<div class="amt">{amount}</div>
+<p>The money is set aside, like a hotel deposit. Nothing is charged now. Later, Leash pays only for items that follow your rules and gives the rest back.</p>
+<div class="row">
+<form method="post" action="/mock-checkout/{oid}/approve"><button class="ok">Approve the hold</button></form>
+<a href="{cancel}"><button class="no" type="button">Cancel</button></a>
+</div>
+<p class="note">This page stands in for PayPal's approval screen because this demo runs without PayPal keys. No real money is involved.</p>
 </main></body></html>"""
 
 

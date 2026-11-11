@@ -2,11 +2,11 @@ import { usd } from "../api";
 import { PanelHead } from "./MandatePanel";
 
 function status(mandate, settling) {
-  if (!mandate) return ["badge-muted", "No hold"];
-  if (mandate.status === "pending_approval") return ["badge-warn", "Awaiting approval"];
-  if (mandate.status === "revoked") return ["badge-muted", "Released"];
-  if (mandate.status === "settled" && !settling) return ["badge-ok", "Settled"];
-  return ["badge-hold", "Active hold"];
+  if (!mandate) return ["badge-muted", "Nothing held"];
+  if (mandate.status === "pending_approval") return ["badge-warn", "Waiting for you"];
+  if (mandate.status === "revoked") return ["badge-muted", "All returned"];
+  if (mandate.status === "settled" && !settling) return ["badge-ok", "Paid and settled"];
+  return ["badge-hold", "Held"];
 }
 
 function Line({ label, value, tone = "text-ink", hint, strong }) {
@@ -37,33 +37,35 @@ export default function EscrowWidget({ mandate, cart, payments, revealedApproved
 
   return (
     <section className="card p-5 sm:p-6">
-      <PanelHead title="PayPal hold" aside={<span key={label} className={`${tone} animate-rise`}>{label}</span>}>
-        {payments === "sandbox" ? "PayPal sandbox" : "Payment simulator, same rules as the sandbox"}
+      <PanelHead title="Your money" aside={<span key={label} className={`${tone} animate-rise`}>{label}</span>}>
+        {payments === "sandbox" ? "On the PayPal sandbox" : "On a pretend PayPal that follows the same rules"}
       </PanelHead>
       <div>
-        <Line label="Authorized" value={usd(hold)} tone="text-accent" strong
+        <Line label="Set aside" value={usd(hold)} tone={hold ? "text-accent" : "text-ink-3"} strong
           hint={mandate?.status === "active" && !done ? "Held, not charged" : null} />
-        <Line label="Still on hold" value={usd(remaining)} tone={remaining ? "text-ink" : "text-ink-3"} />
-        <Line label="Captured" value={usd(captured)} tone={captured ? "text-ok" : "text-ink-3"} />
-        <Line label="Released to you" value={usd(released)} tone={released ? "text-accent" : "text-ink-3"} />
+        <Line label="Still set aside" value={usd(remaining)} tone={remaining ? "text-ink" : "text-ink-3"} />
+        <Line label="Paid to the store" value={usd(captured)} tone={captured ? "text-ok" : "text-ink-3"} />
+        <Line label="Back to you" value={usd(released)} tone={released ? "text-accent" : "text-ink-3"} />
       </div>
 
       {done && cart.status === "blocked" && (
-        <p className="mt-3 text-[13px] text-ink-2 animate-rise">Nothing passed. The full hold was voided.</p>
+        <p className="mt-3 text-[13px] text-ink-2 animate-rise">Nothing followed your rules, so nothing was paid. All of it came back.</p>
       )}
 
       {mandate?.paypal?.authorization_id && (
-        <dl className="mt-5 space-y-1.5 border-t border-line pt-4 text-[11px]">
-          {payments !== "sandbox" && <div className="pb-1 text-ink-3">Simulated references</div>}
+        <details className="mt-5 border-t border-line pt-3 text-[11px]">
+          <summary className="cursor-pointer list-none text-ink-3 hover:text-ink-2">{payments === "sandbox" ? "PayPal references" : "Payment references (simulated)"}</summary>
+          <dl className="mt-2 space-y-1.5">
           {[["Order", mandate.paypal.order_id], ["Authorization", mandate.paypal.authorization_id],
             ...(done && cart.paypal.capture_id ? [["Capture", cart.paypal.capture_id]] : []),
             ["Status", mandate.paypal.authorization_status]].map(([k, v]) => (
             <div key={k} className="flex justify-between gap-3"><dt className="text-ink-3">{k}</dt><dd className="num truncate text-ink-2">{v}</dd></div>
           ))}
-        </dl>
+          </dl>
+        </details>
       )}
       {mandate?.status === "pending_approval" && (
-        <a className="btn-primary mt-5 w-full" href={mandate.paypal.approve_url}>Finish PayPal approval</a>
+        <a className="btn-primary mt-5 w-full" href={mandate.paypal.approve_url}>Approve on PayPal</a>
       )}
     </section>
   );

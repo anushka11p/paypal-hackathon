@@ -2,38 +2,39 @@
 name: Leash
 description: A spending firewall between an AI shopping agent and PayPal, styled like a bank.
 colors:
-  canvas: "#f6f7f9"
-  surface: "#ffffff"
-  surface-2: "#f1f2f5"
-  sunken: "#eef0f3"
-  ink: "#0e1014"
-  ink-2: "#4a505c"
-  ink-3: "#656b77"
-  line: "#e3e5ea"
-  line-strong: "#d0d4db"
-  hold-indigo: "#3d49d6"
-  hold-indigo-soft: "#eceefc"
-  ok: "#0c7a51"
-  ok-soft: "#e6f3ed"
-  bad: "#b5312a"
-  bad-soft: "#fbebe9"
-  warn: "#855600"
-  warn-soft: "#faf1dc"
-  term: "#0e1014"
-  canvas-dark: "#0a0b0d"
-  surface-dark: "#111317"
-  surface-2-dark: "#181b20"
-  sunken-dark: "#0d0f12"
-  ink-dark: "#eceef1"
-  ink-2-dark: "#a7adb9"
-  ink-3-dark: "#8b919d"
-  line-dark: "#22262d"
-  line-strong-dark: "#30353e"
-  hold-indigo-dark: "#8f98ff"
-  ok-dark: "#4fc89b"
-  bad-dark: "#f2806f"
-  warn-dark: "#e9b64c"
-  term-dark: "#07080a"
+  canvas: "#f2f0e9"
+  surface: "#faf9f5"
+  surface-2: "#e9e6dc"
+  sunken: "#ebe8df"
+  ink: "#0b2048"
+  ink-2: "#3b4763"
+  ink-3: "#5a6479"
+  line: "#dedad0"
+  line-strong: "#c9c4b5"
+  hold-lime: "#b9f13f"
+  hold-lime-text: "#4b6b00"
+  hold-lime-soft: "rgba(185,241,63,0.35)"
+  ok: "#096b60"
+  ok-soft: "#dcefe9"
+  bad: "#b0302a"
+  bad-soft: "#f8e6e2"
+  warn: "#875800"
+  warn-soft: "#f6ead0"
+  term: "#0b2048"
+  canvas-dark: "#0b2048"
+  surface-dark: "#102857"
+  surface-2-dark: "#163165"
+  sunken-dark: "#08193b"
+  ink-dark: "#f2f0e9"
+  ink-2-dark: "#c4c9d6"
+  ink-3-dark: "#9ba4bc"
+  line-dark: "#1d3a70"
+  line-strong-dark: "#2a4a86"
+  hold-lime-dark: "#b9f13f"
+  ok-dark: "#5ad6c3"
+  bad-dark: "#ff9385"
+  warn-dark: "#f2c25c"
+  term-dark: "#08193b"
 typography:
   display:
     fontFamily: "Geist, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
@@ -99,8 +100,8 @@ spacing:
   "16": "64px"
 components:
   button-primary:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.canvas}"
+    backgroundColor: "{colors.hold-lime}"
+    textColor: "{colors.ink}"
     typography: "{typography.body-sm}"
     rounded: "{rounded.full}"
     padding: "10px 16px"
@@ -131,8 +132,8 @@ components:
     rounded: "{rounded.full}"
     padding: "2px 8px"
   badge-hold:
-    backgroundColor: "{colors.hold-indigo-soft}"
-    textColor: "{colors.hold-indigo}"
+    backgroundColor: "{colors.hold-lime-soft}"
+    textColor: "{colors.hold-lime-text}"
     rounded: "{rounded.full}"
     padding: "2px 8px"
   badge-warn:
@@ -186,15 +187,15 @@ components:
 
 **Creative North Star: "The Quiet Ledger"**
 
-Leash looks like a bank statement that happens to be live. Cool neutral paper, Geist set tight and dark, money in tabular mono, and every line of the story separated by a single hairline rule. The system is calm on purpose: the product's whole claim is that nothing surprising happens to your money, so the interface never raises its voice. Density is moderate; panels hold ledgers, not decoration.
+Leash looks like a bank statement that happens to be live. Soft pearl paper (midnight in dark mode), Geist set tight and dark, money in tabular mono, and every line of the story separated by a single hairline rule. The system is calm on purpose: the product's whole claim is that nothing surprising happens to your money, so the interface never raises its voice. Density is moderate; panels hold ledgers, not decoration.
 
-Color is spent like money. One indigo marks the hold (the authorized but uncharged budget, and what is released back). Green and red appear only where money is decided: captured or blocked. Amber is the warning voice for injected text, allergens, and pending states. Everything else is ink on neutrals. The one expressive object is the hold itself, rendered as a slow, real-time 3D stack of coins cinched by an indigo bank strap, with released coins lifting out.
+Color is spent like money. One neon lime marks the hold (the authorized but uncharged budget, and what is released back). Green and red appear only where money is decided: captured or blocked. Amber is the warning voice for injected text, allergens, and pending states. Everything else is ink on neutrals. The one expressive object is the hold itself, rendered as a slow, real-time 3D stack of coins cinched by an lime bank strap, with released coins lifting out.
 
-The system explicitly refuses the neon "AI startup" look: no gradients, glows, or glassy purple fields. Light and dark themes are both first-class and swap through the same token names.
+The palette is user-set: deep midnight #0b2048, soft pearl #f2f0e9 and neon lime #b9f13f. Lime is used as a flat fill (primary buttons, the coin strap, step markers, progress) and as text only on midnight; on pearl, lime-coloured text uses the olive #4b6b00 so it stays readable. The neon never glows: no gradients, glows, or glassy fields. Light and dark themes are both first-class and swap through the same token names.
 
 **Key Characteristics:**
-- Cool neutral canvas with white cards; dark theme is near-black, not navy.
-- One accent (indigo) bound to the hold; status colors bound to money decisions.
+- Cool neutral canvas with white cards; dark theme is deep midnight #0b2048.
+- One accent (lime) bound to the hold; status colors bound to money decisions.
 - Hairline ledgers: label left, mono figure right, a 1px rule between rows.
 - Pill buttons and outline chips; status is a dot and a word, never a filled pill; 12px rounding on containers, no shadows.
 - Geist for words, Geist Mono with tabular numerals for every figure and identifier.
@@ -202,10 +203,10 @@ The system explicitly refuses the neon "AI startup" look: no gradients, glows, o
 
 ## Colors
 
-A restrained neutral palette with a single indigo and three semantic status voices. Soft tints back only error and warning notices; status itself is colored text with a dot.
+A restrained neutral palette with a single lime and three semantic status voices. Soft tints back only error and warning notices; status itself is colored text with a dot.
 
 ### Primary
-- **Hold Indigo** (`hold-indigo` #3d49d6 light / `hold-indigo-dark` #8f98ff dark): the PayPal hold and only the hold. Authorized amount, "Active hold" badge, released-to-you figures, the bank strap and released coins on the 3D object, the ring in the logo mark, focus rings, text selection (soft tint), and the AG Grid accent. Its soft tint (`hold-indigo-soft`, 12% alpha of the dark value in dark mode) backs hold badges and the field focus ring.
+- **Hold Lime** (`hold-lime` #3d49d6 light / `hold-lime-dark` #8f98ff dark): the PayPal hold and only the hold. Authorized amount, "Active hold" badge, released-to-you figures, the bank strap and released coins on the 3D object, the ring in the logo mark, focus rings, text selection (soft tint), and the AG Grid accent. Its soft tint (`hold-lime-soft`, 12% alpha of the dark value in dark mode) backs hold badges and the field focus ring.
 
 ### Secondary
 - **Captured Green** (`ok` #0c7a51 / #4fc89b): money approved and captured; passed checks; healthy connection dots; completed stepper steps.
@@ -227,7 +228,7 @@ A restrained neutral palette with a single indigo and three semantic status voic
 - **Terminal** (`term` #0e1014 / #07080a): retained token; the agent log now renders as a Sunken Well in the active theme.
 
 ### Named Rules
-**The Hold Owns Indigo Rule.** Indigo means "held or released back to you." If an element is not about the hold (or is not a focus ring), it is not indigo.
+**The Hold Owns Lime Rule.** Lime means "held or released back to you." If an element is not about the hold (or is not a focus ring), it is not lime.
 
 **The Money Decides Color Rule.** Green and red are reserved for outcomes on money and checks: captured/passed, blocked/vetoed. Warnings, pending states, and attack text use amber; neutral status uses the muted badge.
 
@@ -274,7 +275,7 @@ Flat. Depth comes from tonal layering (canvas, white card, sunken well) and 1px 
 
 ## Shapes
 
-Two shape families. Buttons, chips and modal tabs are full pills; status is a 6px dot beside its word; toggles and the stepper are underlined text. Containers are softly rounded rectangles: 12px for cards, the modal, fields, notices, code wells, and the agent log, 8px/12px for AG Grid cells and wrapper, 6px for the focus outline. Borders are always 1px hairlines. The logo mark is a 9/32-rounded ink square holding an indigo ring, echoing the strap around the coins.
+Two shape families. Buttons, chips and modal tabs are full pills; status is a 6px dot beside its word; toggles and the stepper are underlined text. Containers are softly rounded rectangles: 12px for cards, the modal, fields, notices, code wells, and the agent log, 8px/12px for AG Grid cells and wrapper, 6px for the focus outline. Borders are always 1px hairlines. The logo mark is a 9/32-rounded ink square holding an lime ring, echoing the strap around the coins.
 
 ## Components
 
@@ -284,7 +285,7 @@ Quiet, confident pills that press rather than glow.
 - **Primary:** Ink fill with Canvas text (inverts in dark mode); 10px 16px, enlarged to 12px 20px for hero actions.
 - **Secondary:** Card White with a Strong Hairline border and Ink text; hover to Hover Grey.
 - **Quiet:** borderless Ink 2 text, 6px 12px; hover fills Hover Grey and darkens to Ink. Used for header actions and the modal close; icon-only on mobile with text from 640px.
-- **Hover / Focus / Active:** primary hover drops to 90% opacity; all buttons translate down 1px on press; 150ms transitions; disabled at 40% opacity with a not-allowed cursor; focus is a 2px indigo outline at 2px offset.
+- **Hover / Focus / Active:** primary hover drops to 90% opacity; all buttons translate down 1px on press; 150ms transitions; disabled at 40% opacity with a not-allowed cursor; focus is a 2px lime outline at 2px offset.
 
 ### Chips
 - **Style:** 12px medium pill, 4px 10px, Hairline border, Ink 3 text, hover to Ink 2.
@@ -303,7 +304,7 @@ Quiet, confident pills that press rather than glow.
 
 ### Inputs / Fields
 - **Style:** 1px Strong Hairline, Card White, 12px radius, 10px 14px padding, 14px Ink text, Ink 3 placeholder. Money inputs use Figure type.
-- **Focus:** border shifts to Hold Indigo with a 4px Hold Indigo soft ring.
+- **Focus:** border shifts to Hold Lime with a 4px Hold Lime soft ring.
 - **Disabled:** inherits disabled controls while the agent runs.
 
 ### Navigation
@@ -316,10 +317,10 @@ The system's core pattern. A label left (13px, Ink 2 or Ink 3) and a mono figure
 Five words in a row, 20px apart. The current step is Ink, medium weight, with a 1px Ink underline; completed steps are Ink 2; future steps are Ink 3. No numbers, dots, or checks.
 
 ### Hold Object (signature)
-A Three.js stack of brushed grey coins cinched by an indigo bank strap. Released coins lift out and tint toward indigo. `loop` mode (hero) plays a 6s rest-release-settle cycle with slow auto-rotation and slight pointer parallax; `settle` mode (112px settlement receipt) plays once and holds the final captured/released split. Respects reduced motion (static pose) and pauses offscreen.
+A Three.js stack of brushed grey coins cinched by an lime bank strap. Released coins lift out and tint toward lime. `loop` mode (hero) plays a 6s rest-release-settle cycle with slow auto-rotation and slight pointer parallax; `settle` mode (112px settlement receipt) plays once and holds the final captured/released split. Respects reduced motion (static pose) and pauses offscreen.
 
 ### Footer (user-pinned)
-The HalftoneWordmarkFooter renders a dot-halftone "leash" wordmark (Geist 700) with link columns, fed the theme palette: light background #eceef2 with Ink and Hold Indigo dots, dark background #07080a with #d9dce2 ink and #8f98ff. It keeps its own internal type styling; treat it as a fixed asset, not a source of new rules.
+The HalftoneWordmarkFooter renders a dot-halftone "leash" wordmark (Geist 700) with link columns, fed the theme palette: light background #eceef2 with Ink and Hold Lime dots, dark background #07080a with #d9dce2 ink and #8f98ff. It keeps its own internal type styling; treat it as a fixed asset, not a source of new rules.
 
 ### Code Well and Terminal
 JSON excerpts sit in Sunken Well boxes (12px radius, hairline border, 11.5-12px mono, Ink 2). Injected page text is a quote: 1px Amber rule on the left, mono Ink 2 text, an Ink 3 'Simulated …' attribution. The agent log is a Sunken Well with a hairline header rule and 12px mono lines (see the Quiet Log Rule).
@@ -327,7 +328,7 @@ JSON excerpts sit in Sunken Well boxes (12px radius, hairline border, 11.5-12px 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** reserve Hold Indigo for the hold, released money, and focus.
+- **Do** reserve Hold Lime for the hold, released money, and focus.
 - **Do** set every figure, ID, and hash in Geist Mono with tabular numerals.
 - **Do** separate rows with 1px hairlines and introduce sections with a hairline top border instead of a new card.
 - **Do** use pills only for buttons and chips; show status as a dot and a word; round containers 12px.
@@ -336,7 +337,7 @@ JSON excerpts sit in Sunken Well boxes (12px radius, hairline border, 11.5-12px 
 - **Do** label simulated data as simulated, in the same quiet caption voice as real data.
 
 ### Don't:
-- **Don't** use gradients, glows, neon, or glassy purple fields; this is the "AI startup" look the product refuses.
+- **Don't** use gradients, glows, or glassy fields, and never set lime text on pearl (use the olive text token).
 - **Don't** use green or red for anything that is not a money or check outcome; warnings are amber.
 - **Don't** add a second accent hue, any shadow, filled status pills, or icons inside data rows.
 - **Don't** add uppercase, letter-spaced eyebrow or kicker labels above headings; hierarchy is size, weight, and ink. (The user-pinned halftone footer's own mono caps column labels stay inside that component and are not a pattern to copy.)

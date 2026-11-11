@@ -9,26 +9,26 @@ function read({ mandate, job, introduced }) {
   const pages = events.filter((e) => e.name === "view_product").length;
 
   if (job?.state === "running" && job.phase === "leash_checking") {
-    return ["checking", "Your agent handed me its cart. Checking every line against your rules before a cent moves."];
+    return ["checking", "Your AI handed me its cart. I'm checking every item against your rules before a cent moves."];
   }
   if (job?.state === "running") {
     const last = events.at(-1);
-    if (last?.injection?.length) return ["alert", "That listing just slipped your agent a hidden instruction. Noted. Your rules still decide."];
-    if (injected) return ["working", `Still shopping. ${pages} product page${pages === 1 ? "" : "s"} read, one hidden instruction spotted so far. I'm watching every step.`];
-    return ["working", pages ? `Your agent is shopping. ${pages} product page${pages === 1 ? "" : "s"} read so far. I'm watching every step.` : "Your agent is on its way into the store. I'm watching every step it takes."];
+    if (last?.injection?.length) return ["alert", "That page just slipped your AI a hidden trap. I saw it. Your rules still decide."];
+    if (injected) return ["working", `Still shopping. ${pages} page${pages === 1 ? "" : "s"} read, and I've spotted a trap. I'm watching every step.`];
+    return ["working", pages ? `Your AI is shopping. ${pages} page${pages === 1 ? "" : "s"} read so far. I'm watching every step.` : "Your AI is walking into the store. I'm watching every step it takes."];
   }
   if (job?.state === "done" && job.cart) {
     const c = job.cart;
     const blocked = c.proposed_total_cents - c.approved_total_cents;
     if (c.status === "failed" || c.status === "denied") return ["error", "The payment step didn't go through, so nothing was charged. Your hold is untouched."];
-    if (c.status === "blocked") return ["done", `Nothing your agent picked fit your rules, so nothing was charged. The full ${usd(mandate?.hold_cents)} hold went back to you.`];
-    return ["done", `All settled. ${usd(c.captured_cents)} captured, ${usd(c.released_cents)} back to you, and ${usd(blocked)} I didn't let through.`];
+    if (c.status === "blocked") return ["done", `Nothing your AI picked fit your rules, so nothing was paid. All ${usd(mandate?.hold_cents)} went back to you.`];
+    return ["done", `All done. I paid ${usd(c.captured_cents)}, refused ${usd(blocked)}, and gave ${usd(c.released_cents)} back to you.`];
   }
   if (job?.state === "error") return ["error", "Something went wrong, and no money moved. Give it another go when you're ready."];
-  if (mandate?.status === "pending_approval") return ["idle", "Approve the hold in PayPal and I'm ready when you are."];
-  if (mandate?.status === "active") return [introduced ? "idle" : "intro", `Your ${usd(mandate.hold_cents)} hold is in place. Send your agent shopping and I'll check every line before anything is charged.`];
+  if (mandate?.status === "pending_approval") return ["idle", "Approve the hold on the PayPal page. It's pretend, so no real money moves."];
+  if (mandate?.status === "active") return [introduced ? "idle" : "intro", `${usd(mandate.hold_cents)} is set aside. Send your AI shopping and I'll check every item before anything is paid.`];
   if (mandate?.status === "settled" || mandate?.status === "revoked") return ["done", "This session is closed. Start a new mandate whenever you like."];
-  return [introduced ? "idle" : "intro", "Hey! I'm Leash. Your agent can shop for you; I make sure it only spends what your rules allow."];
+  return [introduced ? "idle" : "intro", "Hey! I'm Leash. Your AI can shop for you, and I make sure it only spends what your rules allow."];
 }
 
 export default function MascotGuide({ mandate, job, layout = "inline", className = "" }) {

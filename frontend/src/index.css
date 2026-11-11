@@ -2,8 +2,8 @@
 @import "tw-animate-css";
 
 /*
- * Leash — banking-grade calm (bar: Mercury). Restrained: neutrals, one indigo
- * accent for the hold/brand, green/red reserved for approved/blocked money.
+ * Leash — banking-grade calm in midnight, pearl and one neon lime. Lime is the
+ * hold and your money; teal/red are reserved for paid/blocked money.
  * Tokens are CSS variables so the light/dark toggle swaps them in one place.
  */
 
@@ -14,46 +14,50 @@
   --t-fast: 160ms;
   --t-med: 260ms;
   --t-slow: 500ms;
-  --canvas: #f6f7f9;
-  --surface: #ffffff;
-  --surface-2: #f1f2f5;
-  --sunken: #eef0f3;
-  --ink: #0e1014;
-  --ink-2: #4a505c;
-  --ink-3: #656b77;
-  --line: #e3e5ea;
-  --line-strong: #d0d4db;
-  --accent: #3d49d6;
-  --accent-soft: #eceefc;
-  --ok: #0c7a51;
-  --ok-soft: #e6f3ed;
-  --bad: #b5312a;
-  --bad-soft: #fbebe9;
-  --warn: #855600;
-  --warn-soft: #faf1dc;
-  --term: #0e1014;
+  /* Palette: midnight #0b2048, pearl #f2f0e9, neon lime #b9f13f.
+     Lime is a fill (buttons, strap, bars); lime-coloured text on pearl uses the olive --accent. */
+  --lime: #b9f13f;
+  --on-lime: #0b2048;
+  --canvas: #f2f0e9;
+  --surface: #faf9f5;
+  --surface-2: #e9e6dc;
+  --sunken: #ebe8df;
+  --ink: #0b2048;
+  --ink-2: #3b4763;
+  --ink-3: #5a6479;
+  --line: #dedad0;
+  --line-strong: #c9c4b5;
+  --accent: #4b6b00;
+  --accent-soft: rgb(185 241 63 / 0.35);
+  --ok: #096b60;
+  --ok-soft: #dcefe9;
+  --bad: #b0302a;
+  --bad-soft: #f8e6e2;
+  --warn: #875800;
+  --warn-soft: #f6ead0;
+  --term: #0b2048;
   --shadow: 0 1px 2px rgb(14 16 20 / 0.04), 0 8px 24px -12px rgb(14 16 20 / 0.08);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --canvas: #0a0b0d; --surface: #111317; --surface-2: #181b20; --sunken: #0d0f12;
-    --ink: #eceef1; --ink-2: #a7adb9; --ink-3: #8b919d; --line: #22262d; --line-strong: #30353e;
-    --accent: #8f98ff; --accent-soft: rgb(143 152 255 / 0.12);
-    --ok: #4fc89b; --ok-soft: rgb(79 200 155 / 0.12); --bad: #f2806f; --bad-soft: rgb(242 128 111 / 0.12);
-    --warn: #e9b64c; --warn-soft: rgb(233 182 76 / 0.12); --term: #07080a;
+    --canvas: #0b2048; --surface: #102857; --surface-2: #163165; --sunken: #08193b;
+    --ink: #f2f0e9; --ink-2: #c4c9d6; --ink-3: #9ba4bc; --line: #1d3a70; --line-strong: #2a4a86;
+    --accent: #b9f13f; --accent-soft: rgb(185 241 63 / 0.14);
+    --ok: #5ad6c3; --ok-soft: rgb(90 214 195 / 0.12); --bad: #ff9385; --bad-soft: rgb(255 147 133 / 0.12);
+    --warn: #f2c25c; --warn-soft: rgb(242 194 92 / 0.12); --term: #08193b;
     --shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.6);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --canvas: #0a0b0d; --surface: #111317; --surface-2: #181b20; --sunken: #0d0f12;
-  --ink: #eceef1; --ink-2: #a7adb9; --ink-3: #8b919d; --line: #22262d; --line-strong: #30353e;
-  --accent: #8f98ff; --accent-soft: rgb(143 152 255 / 0.12);
-  --ok: #4fc89b; --ok-soft: rgb(79 200 155 / 0.12); --bad: #f2806f; --bad-soft: rgb(242 128 111 / 0.12);
-  --warn: #e9b64c; --warn-soft: rgb(233 182 76 / 0.12); --term: #07080a;
-  --shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.6);
+  --canvas: #0b2048; --surface: #102857; --surface-2: #163165; --sunken: #08193b;
+    --ink: #f2f0e9; --ink-2: #c4c9d6; --ink-3: #9ba4bc; --line: #1d3a70; --line-strong: #2a4a86;
+    --accent: #b9f13f; --accent-soft: rgb(185 241 63 / 0.14);
+    --ok: #5ad6c3; --ok-soft: rgb(90 214 195 / 0.12); --bad: #ff9385; --bad-soft: rgb(255 147 133 / 0.12);
+    --warn: #f2c25c; --warn-soft: rgb(242 194 92 / 0.12); --term: #08193b;
+    --shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.6);
   color-scheme: dark;
 }
 
@@ -70,6 +74,8 @@
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-accent: var(--accent);
+  --color-lime: var(--lime);
+  --color-on-lime: var(--on-lime);
   --color-accent-soft: var(--accent-soft);
   --color-ok: var(--ok);
   --color-ok-soft: var(--ok-soft);
@@ -117,7 +123,7 @@
   @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-[background-color,opacity,transform] duration-150 active:translate-y-px disabled:opacity-40;
 }
 @utility btn-primary {
-  @apply btn bg-ink text-canvas hover:opacity-90;
+  @apply btn bg-lime text-on-lime hover:opacity-90;
 }
 @utility btn-secondary {
   @apply btn border border-line-strong bg-surface text-ink hover:bg-surface-2;
@@ -206,6 +212,9 @@
 .cdc-btn-countdown { font-size: 12px; color: var(--ink-2); font-weight: 500; white-space: nowrap; }
 
 
+/* The panel holding the current step is outlined, so the eye knows where to go next. */
+.is-active .card { border-color: var(--ink-3); }
+
 /* Reveal (components/Reveal.jsx): one gentle entrance, staggered by --reveal-delay */
 .reveal { opacity: 0; transform: translateY(10px); }
 .reveal.is-in {
@@ -216,8 +225,8 @@
 /* Leash mascot (components/Mascot.jsx). Every part transforms around its own box. */
 .lm * { transform-box: fill-box; transform-origin: center; }
 .lm-fill { fill: var(--ink); }
-.lm-collar { fill: none; stroke: var(--accent); stroke-width: 2.6; stroke-linecap: round; }
-.lm-tag { fill: var(--accent); }
+.lm-collar { fill: none; stroke: var(--lime); stroke-width: 2.6; stroke-linecap: round; }
+.lm-tag { fill: var(--lime); }
 .lm-eye { fill: var(--canvas); }
 .lm-eyes-happy path, .lm-mouth { fill: none; stroke: var(--canvas); stroke-width: 2.2; stroke-linecap: round; }
 .lm-mouth-o { fill: var(--canvas); }
