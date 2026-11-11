@@ -169,6 +169,8 @@ export default function App() {
       </header>
 
       <main id="top" className="mx-auto max-w-[1320px] px-4 sm:px-6">
+        <AgentReads />
+
         <section className="grid grid-cols-1 items-center gap-6 pb-10 pt-10 md:grid-cols-[1.05fr_1fr] md:gap-8 md:pb-16 md:pt-20">
           <div className="min-w-0 max-w-xl">
             <h1 className="text-[44px] font-medium leading-[1.0] tracking-[-0.04em] sm:text-[64px] lg:text-[84px]">
@@ -198,8 +200,6 @@ export default function App() {
             </figcaption>
           </figure>
         </section>
-
-        <AgentReads />
 
         <section id="demo" className="scroll-mt-20 border-t border-line pt-10">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">

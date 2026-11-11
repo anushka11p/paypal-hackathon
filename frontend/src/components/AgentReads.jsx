@@ -20,7 +20,8 @@ export default function AgentReads() {
     };
   }), [catalog]);
 
-  if (!items.length) return null;
+  // Hold the space while the catalog loads so the page does not jump.
+  if (!items.length) return <div className="-mt-14 h-[100svh]" aria-hidden="true" />;
   return (
     <PerspectiveTunnelHero
       items={[...items, ...items.slice(0, 2)]}
@@ -29,7 +30,8 @@ export default function AgentReads() {
       hint="Your agent reads all of this before it shops. Two listings carry text written to hijack it. Scroll to fly through the store."
       prompt="Scroll"
       length={2.6}
-      className="border-t border-line"
+      startAt={0.14}
+      className="-mt-14"
     />
   );
 }

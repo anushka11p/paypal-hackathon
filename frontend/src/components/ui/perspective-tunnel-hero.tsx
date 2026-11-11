@@ -146,6 +146,8 @@ export interface PerspectiveTunnelHeroProps {
   prompt?: string;
   /** Scroll length of the pinned section, in viewport heights. */
   length?: number;
+  /** Where the flight starts (0-1). Above 0, cards are already in flight and the title is sharp on load. */
+  startAt?: number;
   className?: string;
 }
 
@@ -156,6 +158,7 @@ export default function PerspectiveTunnelHero({
   hint = "Scroll to fly through the corridor.",
   prompt = "Scroll",
   length = 3,
+  startAt = 0,
   className = "",
 }: PerspectiveTunnelHeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -171,14 +174,15 @@ export default function PerspectiveTunnelHero({
 
   // Progress is the page's own scroll through this tall section; nothing is hijacked.
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 30, restDelta: 0.0001 });
+  const offsetProgress = useTransform(scrollYProgress, [0, 1], [startAt, 1]);
+  const smoothProgress = useSpring(offsetProgress, { stiffness: 80, damping: 30, restDelta: 0.0001 });
 
   const pointer = useCameraParallax(!reduce);
   const cards = layout(items);
 
-  const titleScale = useTransform(smoothProgress, [0, 0.5, 1], [0.85, 1, 1.15]);
-  const titleOpacity = useTransform(smoothProgress, [0, 0.1, 0.85, 1], [0.35, 1, 1, 0]);
-  const promptOpacity = useTransform(smoothProgress, [0, 0.1], [1, 0]);
+  const titleScale = useTransform(smoothProgress, [0, 0.5, 1], [startAt ? 1 : 0.85, 1, 1.15]);
+  const titleOpacity = useTransform(smoothProgress, [0, 0.1, 0.85, 1], [startAt ? 1 : 0.35, 1, 1, 0]);
+  const promptOpacity = useTransform(smoothProgress, [startAt, startAt + 0.08], [1, 0]);
 
   return (
     <section ref={sectionRef} className={`relative w-full ${className}`} style={{ height: `${Math.max(1.5, length) * 100}svh` }}>
