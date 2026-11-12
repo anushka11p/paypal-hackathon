@@ -25,15 +25,15 @@ const FOOTER_COLUMNS = [
   { title: "Team", links: [{ label: "Anushka" }, { label: "Anika" }, { label: "Source on GitHub", href: REPO }] },
 ];
 const FOOTER_PALETTE = {
-  light: { background: "#e9e6dc", ink: "#0b2048", warm: "#6f9a12" },
-  dark: { background: "#08193b", ink: "#f2f0e9", warm: "#b9f13f" },
+  light: { background: "#e8edf3", ink: "#001c64", warm: "#0070e0" },
+  dark: { background: "#001650", ink: "#ffffff", warm: "#6cc3ff" },
 };
 
 function Mark() {
   return (
     <svg viewBox="0 0 32 32" className="size-8" aria-hidden="true">
       <rect width="32" height="32" rx="9" className="fill-ink" />
-      <circle cx="16" cy="16" r="7.5" fill="none" className="stroke-lime" strokeWidth="2.4" />
+      <circle cx="16" cy="16" r="7.5" fill="none" className="stroke-brand" strokeWidth="2.4" />
       <circle cx="16" cy="16" r="2.6" className="fill-canvas" />
     </svg>
   );
@@ -68,7 +68,7 @@ function Stepper({ step }) {
         return (
           <li key={s} aria-current={now ? "step" : undefined}
             className={`flex items-center gap-2 transition-colors duration-[var(--t-med)] ${now ? "font-medium text-ink" : done ? "text-ink-2" : "text-ink-3"}`}>
-            <span className={`grid size-7 place-items-center rounded-full text-sm transition-colors duration-[var(--t-med)] ${now ? "bg-lime text-on-lime" : done ? "bg-ink text-canvas" : "border border-line-strong"}`}>
+            <span className={`grid size-7 place-items-center rounded-full text-sm transition-colors duration-[var(--t-med)] ${now ? "bg-cta text-on-cta" : done ? "bg-brand text-on-brand" : "border border-line-strong"}`}>
               {done ? <Check className="size-4" strokeWidth={3} /> : <span className="num">{i + 1}</span>}
             </span>
             {s}
@@ -233,7 +233,7 @@ export default function App() {
             </Tilt>
             <figure className="min-w-0">
               <HoldObject theme={theme} className="mx-auto aspect-square w-full max-w-[320px] md:max-w-[560px]"
-                label="Your money as a stack of coins held by a lime strap: what Leash pays stays in the strap, the rest lifts out and comes back." />
+                label="Your money as a stack of coins held by a blue strap: what Leash pays stays in the strap, the rest lifts out and comes back." />
             </figure>
           </div>
           <p className="mx-auto mt-10 max-w-[60ch] text-base leading-relaxed text-ink-2">

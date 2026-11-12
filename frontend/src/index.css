@@ -2,8 +2,8 @@
 @import "tw-animate-css";
 
 /*
- * Leash — banking-grade calm in midnight, pearl and one neon lime. Lime is the
- * hold and your money; teal/red are reserved for paid/blocked money.
+ * Leash — banking-grade calm in PayPal colours. Blue is the hold and your money, gold is
+ * the main action; green/red are reserved for paid/refused money.
  * Tokens are CSS variables so the light/dark toggle swaps them in one place.
  */
 
@@ -14,58 +14,62 @@
   --t-fast: 160ms;
   --t-med: 260ms;
   --t-slow: 500ms;
-  /* Palette: midnight #0b2048, pearl #f2f0e9, neon lime #b9f13f.
-     Lime is a fill (buttons, strap, bars); lime-coloured text on pearl uses the olive --accent. */
+  /* Palette: PayPal. Navy #001c64, blue #0070e0, sky #6cc3ff, gold #ffc439 on white.
+     --brand is the blue fill (strap, step markers, icon tiles); --accent is blue text; --cta is the gold button. */
   /* Glass: a translucent plane, a bright edge, and a soft drop so it floats above the 3D world. */
-  --glass: rgb(255 255 255 / 0.68);
+  --glass: rgb(255 255 255 / 0.7);
   --glass-strong: rgb(255 255 255 / 0.78);
   --glass-edge: rgb(255 255 255 / 0.85);
-  --glass-shadow: 0 1px 0 rgb(255 255 255 / 0.9) inset, 0 30px 60px -30px rgb(11 32 72 / 0.28), 0 2px 6px rgb(11 32 72 / 0.05);
-  --lime: #b9f13f;
-  --on-lime: #0b2048;
-  --canvas: #f2f0e9;
-  --surface: #faf9f5;
-  --surface-2: #e9e6dc;
-  --sunken: #ebe8df;
-  --ink: #0b2048;
-  --ink-2: #3b4763;
-  --ink-3: #5a6479;
-  --line: #dedad0;
-  --line-strong: #c9c4b5;
-  --accent: #4b6b00;
-  --accent-soft: rgb(185 241 63 / 0.35);
-  --ok: #096b60;
-  --ok-soft: #dcefe9;
-  --bad: #b0302a;
-  --bad-soft: #f8e6e2;
-  --warn: #875800;
-  --warn-soft: #f6ead0;
-  --term: #0b2048;
+  --glass-shadow: 0 1px 0 rgb(255 255 255 / 0.9) inset, 0 30px 60px -30px rgb(0 28 100 / 0.3), 0 2px 6px rgb(0 28 100 / 0.06);
+  --brand: #0070e0;
+  --cta: #ffc439;
+  --on-cta: #001435;
+  --on-brand: #ffffff;
+  --canvas: #f5f7fa;
+  --surface: #ffffff;
+  --surface-2: #e8edf3;
+  --sunken: #eef2f6;
+  --ink: #001435;
+  --ink-2: #36455e;
+  --ink-3: #56647c;
+  --line: #dbe2ea;
+  --line-strong: #c3ccd8;
+  --accent: #0064d2;
+  --accent-soft: rgb(0 112 224 / 0.14);
+  --ok: #0a7a45;
+  --ok-soft: #e0f1e8;
+  --bad: #c0261d;
+  --bad-soft: #fae7e5;
+  --warn: #9a4b00;
+  --warn-soft: #fbecdc;
+  --term: #001435;
   --shadow: 0 1px 2px rgb(14 16 20 / 0.04), 0 8px 24px -12px rgb(14 16 20 / 0.08);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --glass: rgb(16 40 87 / 0.62); --glass-strong: rgb(16 40 87 / 0.72); --glass-edge: rgb(255 255 255 / 0.14);
+    --glass: rgb(4 36 116 / 0.62); --glass-strong: rgb(6 40 122 / 0.78); --glass-edge: rgb(255 255 255 / 0.14);
     --glass-shadow: 0 1px 0 rgb(255 255 255 / 0.1) inset, 0 30px 60px -30px rgb(0 0 0 / 0.6), 0 2px 6px rgb(0 0 0 / 0.2);
-    --canvas: #0b2048; --surface: #102857; --surface-2: #163165; --sunken: #08193b;
-    --ink: #f2f0e9; --ink-2: #c4c9d6; --ink-3: #9ba4bc; --line: #1d3a70; --line-strong: #2a4a86;
-    --accent: #b9f13f; --accent-soft: rgb(185 241 63 / 0.14);
-    --ok: #5ad6c3; --ok-soft: rgb(90 214 195 / 0.12); --bad: #ff9385; --bad-soft: rgb(255 147 133 / 0.12);
-    --warn: #f2c25c; --warn-soft: rgb(242 194 92 / 0.12); --term: #08193b;
+    --brand: #6cc3ff; --on-brand: #001c64;
+    --canvas: #001c64; --surface: #06287a; --surface-2: #0c3594; --sunken: #001650;
+    --ink: #ffffff; --ink-2: #c5d3ee; --ink-3: #9bb0d8; --line: #173c8f; --line-strong: #2650ad;
+    --accent: #6cc3ff; --accent-soft: rgb(108 195 255 / 0.16);
+    --ok: #5fdc9e; --ok-soft: rgb(95 220 158 / 0.12); --bad: #ff9a8f; --bad-soft: rgb(255 154 143 / 0.12);
+    --warn: #ffb37a; --warn-soft: rgb(255 179 122 / 0.12); --term: #001650;
     --shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.6);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --glass: rgb(16 40 87 / 0.62); --glass-strong: rgb(16 40 87 / 0.72); --glass-edge: rgb(255 255 255 / 0.14);
+  --glass: rgb(4 36 116 / 0.62); --glass-strong: rgb(6 40 122 / 0.78); --glass-edge: rgb(255 255 255 / 0.14);
     --glass-shadow: 0 1px 0 rgb(255 255 255 / 0.1) inset, 0 30px 60px -30px rgb(0 0 0 / 0.6), 0 2px 6px rgb(0 0 0 / 0.2);
-    --canvas: #0b2048; --surface: #102857; --surface-2: #163165; --sunken: #08193b;
-    --ink: #f2f0e9; --ink-2: #c4c9d6; --ink-3: #9ba4bc; --line: #1d3a70; --line-strong: #2a4a86;
-    --accent: #b9f13f; --accent-soft: rgb(185 241 63 / 0.14);
-    --ok: #5ad6c3; --ok-soft: rgb(90 214 195 / 0.12); --bad: #ff9385; --bad-soft: rgb(255 147 133 / 0.12);
-    --warn: #f2c25c; --warn-soft: rgb(242 194 92 / 0.12); --term: #08193b;
+    --brand: #6cc3ff; --on-brand: #001c64;
+    --canvas: #001c64; --surface: #06287a; --surface-2: #0c3594; --sunken: #001650;
+    --ink: #ffffff; --ink-2: #c5d3ee; --ink-3: #9bb0d8; --line: #173c8f; --line-strong: #2650ad;
+    --accent: #6cc3ff; --accent-soft: rgb(108 195 255 / 0.16);
+    --ok: #5fdc9e; --ok-soft: rgb(95 220 158 / 0.12); --bad: #ff9a8f; --bad-soft: rgb(255 154 143 / 0.12);
+    --warn: #ffb37a; --warn-soft: rgb(255 179 122 / 0.12); --term: #001650;
     --shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.6);
   color-scheme: dark;
 }
@@ -83,8 +87,10 @@
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-accent: var(--accent);
-  --color-lime: var(--lime);
-  --color-on-lime: var(--on-lime);
+  --color-brand: var(--brand);
+  --color-on-brand: var(--on-brand);
+  --color-cta: var(--cta);
+  --color-on-cta: var(--on-cta);
   --color-accent-soft: var(--accent-soft);
   --color-ok: var(--ok);
   --color-ok-soft: var(--ok-soft);
@@ -144,7 +150,7 @@
   @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold transition-[background-color,opacity,transform] duration-150 active:translate-y-px disabled:opacity-40;
 }
 @utility btn-primary {
-  @apply btn bg-lime text-on-lime hover:opacity-90;
+  @apply btn bg-cta text-on-cta hover:brightness-95;
 }
 @utility btn-secondary {
   @apply btn border border-line-strong bg-surface text-ink hover:bg-surface-2;
@@ -234,7 +240,7 @@
 
 
 /* The panel holding the current step is outlined, so the eye knows where to go next. */
-.is-active .card { border-color: var(--lime); box-shadow: var(--glass-shadow), 0 0 0 1px var(--lime); }
+.is-active .card { border-color: var(--brand); box-shadow: var(--glass-shadow), 0 0 0 1px var(--brand); }
 
 /* World3D spans the full viewport width even though the page column is narrower. */
 .world { left: calc(50% - 50vw); width: 100vw; }
@@ -267,8 +273,8 @@
 /* Leash mascot (components/Mascot.jsx). Every part transforms around its own box. */
 .lm * { transform-box: fill-box; transform-origin: center; }
 .lm-fill { fill: var(--ink); }
-.lm-collar { fill: none; stroke: var(--lime); stroke-width: 2.6; stroke-linecap: round; }
-.lm-tag { fill: var(--lime); }
+.lm-collar { fill: none; stroke: var(--brand); stroke-width: 2.6; stroke-linecap: round; }
+.lm-tag { fill: var(--brand); }
 .lm-eye { fill: var(--canvas); }
 .lm-eyes-happy path, .lm-mouth { fill: none; stroke: var(--canvas); stroke-width: 2.2; stroke-linecap: round; }
 .lm-mouth-o { fill: var(--canvas); }
