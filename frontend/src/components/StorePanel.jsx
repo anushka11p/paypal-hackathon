@@ -19,8 +19,8 @@ function ProductRow({ p, poisoned }) {
     <li className="border-b border-line last:border-0">
       <div className="flex items-baseline justify-between gap-3 py-3">
         <div className="min-w-0">
-          <div className="truncate text-sm">{p.name}</div>
-          <div className="mt-0.5 text-xs text-ink-3">
+          <div className="truncate text-base">{p.name}</div>
+          <div className="mt-0.5 text-sm text-ink-3">
             {titleCase(p.category)}, contains {p.allergen_tags.contains?.join(", ") || "nothing listed"}
             {attacks.length > 0 && (
               <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open}
@@ -30,12 +30,12 @@ function ProductRow({ p, poisoned }) {
             )}
           </div>
         </div>
-        <div className="num shrink-0 text-sm">{usd(p.price_cents)}</div>
+        <div className="num shrink-0 text-base">{usd(p.price_cents)}</div>
       </div>
       {open && attacks.map((a) => (
         <blockquote key={a.where} className="mb-3 border-l border-warn/50 pl-3 animate-rise">
-          <p className="font-mono text-[12px] leading-relaxed text-ink-2">{a.text}</p>
-          <footer className="mt-1 text-[11px] text-ink-3">Hidden in a {a.where} (simulated)</footer>
+          <p className="font-mono text-[14px] leading-relaxed text-ink-2">{a.text}</p>
+          <footer className="mt-1 text-[13px] text-ink-3">Hidden in a {a.where} (simulated)</footer>
         </blockquote>
       ))}
     </li>
@@ -84,10 +84,10 @@ export default function StorePanel({ mandate, job, onRun, runError }) {
   const poisoned = scenario === "attack";
 
   return (
-    <section className="card p-5 sm:p-6">
+    <section className="card p-6 sm:p-8">
       <PanelHead step={3} title="Send your AI shopping"
         aside={
-          <div className="flex shrink-0 gap-3 text-xs" role="group" aria-label="Store">
+          <div className="flex shrink-0 gap-3 text-sm" role="group" aria-label="Store">
             {[["attack", "With traps"], ["clean", "No traps"]].map(([key, text]) => (
               <button key={key} onClick={() => setScenario(key)} disabled={running} aria-pressed={scenario === key}
                 className={`border-b py-1 transition-colors ${scenario === key ? "border-ink font-medium text-ink" : "border-transparent text-ink-3 hover:text-ink-2"}`}>{text}</button>
@@ -110,19 +110,19 @@ export default function StorePanel({ mandate, job, onRun, runError }) {
           {running && <Loader2 className="size-4 animate-spin" />}
           {running ? "Your AI is shopping" : "Send your AI shopping"}
         </button>
-        {!mandate && <p className="text-center text-[13px] text-ink-3">First set your rules and hold the money (step 1).</p>}
-        {mandate?.status === "pending_approval" && <p className="text-center text-[13px] text-ink-3">First approve the hold on the PayPal page.</p>}
-        {(mandate?.status === "settled" || mandate?.status === "revoked") && !running && <p className="text-center text-[13px] text-ink-3">This session is finished. Press Start over above to go again.</p>}
-        {runError && <p className="rounded-xl bg-bad-soft px-3.5 py-2.5 text-sm text-bad">{runError}</p>}
+        {!mandate && <p className="text-center text-[15px] text-ink-3">First set your rules and hold the money (step 1).</p>}
+        {mandate?.status === "pending_approval" && <p className="text-center text-[15px] text-ink-3">First approve the hold on the PayPal page.</p>}
+        {(mandate?.status === "settled" || mandate?.status === "revoked") && !running && <p className="text-center text-[15px] text-ink-3">This session is finished. Press Start over above to go again.</p>}
+        {runError && <p className="rounded-xl bg-bad-soft px-3.5 py-2.5 text-base text-bad">{runError}</p>}
       </div>
 
       {job && job.state !== "idle" && (
         <div className="mt-5 overflow-hidden rounded-xl border border-line bg-sunken animate-rise">
-          <div className="flex items-center justify-between border-b border-line px-3.5 py-2 text-[11px] text-ink-3">
+          <div className="flex items-center justify-between border-b border-line px-3.5 py-2 text-[13px] text-ink-3">
             <span>What your AI is doing · it has no access to your money</span>
             <span className="hidden sm:inline">{job.scenario === "attack" ? "store with traps" : "store without traps"}</span>
           </div>
-          <div ref={termRef} className="max-h-80 space-y-1.5 overflow-y-auto p-3.5 font-mono text-[12px] leading-relaxed" aria-live="polite">
+          <div ref={termRef} className="max-h-80 space-y-1.5 overflow-y-auto p-3.5 font-mono text-[14px] leading-relaxed" aria-live="polite">
             {events.map((e, i) => <TerminalLine key={i} e={e} names={names} />)}
             {job.phase === "agent_shopping" && <div className="pl-12 text-ink-3">Thinking…</div>}
             {job.phase === "leash_checking" && <div className="pl-12 text-ink-2">Leash took the cart and is checking every item…</div>}

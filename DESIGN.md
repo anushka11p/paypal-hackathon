@@ -343,3 +343,13 @@ JSON excerpts sit in Sunken Well boxes (12px radius, hairline border, 11.5-12px 
 - **Don't** add uppercase, letter-spaced eyebrow or kicker labels above headings; hierarchy is size, weight, and ink. (The user-pinned halftone footer's own mono caps column labels stay inside that component and are not a pattern to copy.)
 - **Don't** add another 3D or illustrative hero object; the hold is the one expressive object.
 - **Don't** set prose or in-app labels in mono.
+
+## 2026-11 revision: PayPal-scale type, glass, and a 3D world (user-set)
+
+This revision is the owner's brief and overrides the older flat rules above where they conflict.
+
+- **Scale.** Body is 17px. Headlines are bold (700) and centred: hero up to 96px, section heads 40-60px, panel heads 22px. Buttons are large pills (16px semibold; the hero action is 18px).
+- **Glass.** Panels are glass planes: `--glass` fill, a bright 1px `--glass-edge`, `backdrop-filter: blur(30px) saturate(1.2)`, 28px radius, and `--glass-shadow` (inner top highlight plus a soft drop). The No Shadow Rule no longer applies to cards. Glass is kept dense enough (62-68%) that text stays AA over the 3D world.
+- **3D world.** `World3D` pins one canvas behind the page between the tunnel and the footer: coins, a lime leash ring, a payment card, a padlock, a glass shield and a shopping bag drift and slide past on scroll. It never sits behind the tunnel or the footer, pauses off screen, and holds still under reduced motion.
+- **3D cards.** `Tilt` leans a card toward the pointer (6-9 degrees) with a soft glare; children with `.pop` sit proud of the surface. Used for the hero statement, recent sessions and the three walls. Form panels do not tilt.
+- **Fixed assets.** The perspective tunnel, the halftone footer and the mascot are user-pinned and unchanged.

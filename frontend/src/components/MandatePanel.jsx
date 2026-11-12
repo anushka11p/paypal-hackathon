@@ -17,18 +17,19 @@ const MANUAL_POLICY = {
 };
 
 export function StepNum({ n }) {
-  return <span className="num grid size-6 shrink-0 place-items-center rounded-full border border-line-strong text-xs font-normal text-ink-2">{n}</span>;
+  return <span className="num grid size-8 shrink-0 place-items-center rounded-full bg-ink text-base font-normal tracking-normal text-canvas">{n}</span>;
 }
 
-export function PanelHead({ title, step, aside, children }) {
+/** `big` is for page sections (large, bold); panels inside the demo use the default. */
+export function PanelHead({ title, step, aside, big, children }) {
   return (
-    <header className="mb-5 flex items-start justify-between gap-3">
+    <header className={`flex items-start justify-between gap-4 ${big ? "mb-8" : "mb-5"}`}>
       <div className="min-w-0">
-        <h3 className="flex items-center gap-2.5 text-[16px] font-semibold tracking-[-0.01em]">
+        <h3 className={`flex items-center gap-3 ${big ? "text-[32px] font-bold leading-tight tracking-[-0.03em] sm:text-[44px]" : "text-[22px] font-semibold tracking-[-0.015em]"}`}>
           {step && <StepNum n={step} />}
           {title}
         </h3>
-        {children && <p className="mt-1 text-[13px] leading-relaxed text-ink-3">{children}</p>}
+        {children && <p className={big ? "mt-3 max-w-[58ch] text-xl leading-relaxed text-ink-2" : "mt-1.5 text-[15px] leading-relaxed text-ink-2"}>{children}</p>}
       </div>
       {aside}
     </header>
@@ -38,8 +39,8 @@ export function PanelHead({ title, step, aside, children }) {
 function RuleRow({ label, children }) {
   return (
     <div className="flex items-baseline justify-between gap-4 border-b border-line py-2.5 last:border-0">
-      <dt className="text-[13px] text-ink-3">{label}</dt>
-      <dd className="flex flex-wrap justify-end gap-1.5 text-right text-sm font-medium">{children}</dd>
+      <dt className="text-[15px] text-ink-3">{label}</dt>
+      <dd className="flex flex-wrap justify-end gap-1.5 text-right text-base font-medium">{children}</dd>
     </div>
   );
 }
@@ -67,7 +68,7 @@ function Chip({ on, onClick, tone = "ink", children }) {
   const active = tone === "warn" ? "border-warn text-warn" : "border-ink text-ink";
   return (
     <button type="button" onClick={onClick}
-      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${on ? active : "border-line text-ink-3 hover:text-ink-2"}`}>
+      className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${on ? active : "border-line text-ink-3 hover:text-ink-2"}`}>
       {children}
     </button>
   );
@@ -132,12 +133,12 @@ export default function MandatePanel({ mandate, onRevoke }) {
 
   if (mandate) {
     return (
-      <section className="card p-5 sm:p-6">
+      <section className="card p-6 sm:p-8">
         <PanelHead step={1} title="Your rules" aside={<span className="badge-ok">Locked in</span>}>
           “{mandate.instruction_text}”
         </PanelHead>
         <RuleSet policy={mandate.policy} />
-        <details className="group mt-4 text-[11px] text-ink-3">
+        <details className="group mt-4 text-[13px] text-ink-3">
           <summary className="cursor-pointer list-none hover:text-ink-2">Tamper-proof signature</summary>
           <p className="num mt-1.5 break-all">{mandate.signature}</p>
         </details>
@@ -149,9 +150,9 @@ export default function MandatePanel({ mandate, onRevoke }) {
   }
 
   return (
-    <section className="card p-5 sm:p-6">
+    <section className="card p-6 sm:p-8">
       <PanelHead step={1} title="Set your rules">Say what your AI may buy, in your own words. Leash turns it into strict rules your AI can’t see or change.</PanelHead>
-      <p className="mb-2 text-xs text-ink-3">Start from an example</p>
+      <p className="mb-2 text-sm text-ink-3">Start from an example</p>
       <div className="mb-2.5 flex flex-wrap gap-1.5">
         {PRESETS.map((p) => (
           <Chip key={p.label} on={text === p.text} onClick={() => { setText(p.text); setPolicy(null); setQuestion(null); }}>{p.label}</Chip>
@@ -166,24 +167,24 @@ export default function MandatePanel({ mandate, onRevoke }) {
         {compilerDown && <button className="btn-secondary" onClick={() => { setPolicy(MANUAL_POLICY); setError(null); }}>Fill rules by hand</button>}
       </div>
 
-      {question && <p className="mt-4 rounded-xl bg-warn-soft px-3.5 py-3 text-sm text-warn">One thing first: {question}</p>}
-      {error && <p className="mt-4 rounded-xl bg-bad-soft px-3.5 py-3 text-sm text-bad">{error}</p>}
+      {question && <p className="mt-4 rounded-xl bg-warn-soft px-3.5 py-3 text-base text-warn">One thing first: {question}</p>}
+      {error && <p className="mt-4 rounded-xl bg-bad-soft px-3.5 py-3 text-base text-bad">{error}</p>}
 
       {policy && (
         <div className="mt-6 border-t border-line pt-4">
           <div className="mb-1 flex items-center justify-between">
-            <span className="text-[13px] font-medium text-ink-2">Rules Leash will enforce</span>
-            <button className="btn-quiet !px-2 !py-1 text-xs" onClick={() => setEditing((v) => !v)}>
+            <span className="text-[15px] font-medium text-ink-2">Rules Leash will enforce</span>
+            <button className="btn-quiet !px-2 !py-1 text-sm" onClick={() => setEditing((v) => !v)}>
               {editing ? "Done" : "Edit"}
             </button>
           </div>
           {editing ? <PolicyEditor policy={policy} onChange={setPolicy} /> : <RuleSet policy={policy} />}
-          <h4 className="mt-6 flex items-center gap-2.5 text-[16px] font-semibold tracking-[-0.01em]"><StepNum n={2} />Hold the money</h4>
+          <h4 className="mt-7 flex items-center gap-3 text-[22px] font-semibold tracking-[-0.015em]"><StepNum n={2} />Hold the money</h4>
           <button className="btn-primary mt-3 w-full py-3" onClick={approve} disabled={busy}>
             {busy === "approve" && <Loader2 className="size-4 animate-spin" />}
             Hold <span className="num">{usd(policy.budget_cents)}</span> with PayPal
           </button>
-          <p className="mt-2.5 text-center text-[13px] text-ink-2">Like a hotel deposit: the money is set aside, not spent.</p>
+          <p className="mt-2.5 text-center text-[15px] text-ink-2">Like a hotel deposit: the money is set aside, not spent.</p>
         </div>
       )}
     </section>

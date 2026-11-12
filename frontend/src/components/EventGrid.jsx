@@ -16,7 +16,7 @@ function DecisionCell({ value }) {
   return value ? <span className={TONE[value] || "badge-muted"}>{value.replace(/_/g, " ")}</span> : null;
 }
 
-const BASE = { fontFamily: "Geist, sans-serif", fontSize: 13, headerFontWeight: 500, borderRadius: 8, wrapperBorderRadius: 12, rowHeight: 40, headerHeight: 38, spacing: 7 };
+const BASE = { fontFamily: "Geist, sans-serif", fontSize: 15, headerFontWeight: 600, borderRadius: 10, wrapperBorderRadius: 20, rowHeight: 48, headerHeight: 46, spacing: 8 };
 const THEMES = {
   light: themeQuartz.withParams({ ...BASE, backgroundColor: "#faf9f5", headerBackgroundColor: "#f2f0e9", borderColor: "#dedad0",
     foregroundColor: "#0b2048", headerTextColor: "#3b4763", rowHoverColor: "#f2f0e9", accentColor: "#4b6b00" }),
@@ -52,17 +52,17 @@ export default function EventGrid({ mandateId, refreshKey, live, theme = "light"
   ], []);
 
   return (
-    <section className="border-t border-line pt-6">
-      <PanelHead title="Audit trail"
+    <section>
+      <PanelHead big title="The full record"
         aside={chain && (chain.ok
-          ? <span className="badge-ok">Chain intact, <span className="num">{chain.checked}</span> entries</span>
-          : <span className="badge-bad">Chain broken at entry {chain.first_bad_id}</span>)}>
-        Every proposal, check, verdict and PayPal call. Each entry stores the hash of the one before it, so any edit to history shows.
+          ? <span className="badge-ok">Record intact, <span className="num">{chain.checked}</span> entries</span>
+          : <span className="badge-bad">Record broken at entry {chain.first_bad_id}</span>)}>
+        Everything that happened, in order. Each entry is locked to the one before it, so nobody can quietly change history.
       </PanelHead>
-      <div className="h-[440px] w-full">
+      <div className="h-[520px] w-full">
         <AgGridReact theme={THEMES[theme] || THEMES.light} rowData={rows} columnDefs={columnDefs} getRowId={(p) => String(p.data.id)}
           animateRows defaultColDef={{ sortable: true, resizable: true }} tooltipShowDelay={300}
-          overlayNoRowsTemplate="<span style='opacity:.6'>No events yet. Write a mandate to start.</span>" />
+          overlayNoRowsTemplate="<span style='opacity:.6'>Nothing yet. Set your rules above to start.</span>" />
       </div>
     </section>
   );

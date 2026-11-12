@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Hammer, KeyRound, Loader2, ShieldCheck } from "lucide-react";
 import { api } from "../api";
 import { PanelHead } from "./MandatePanel";
+import Tilt from "./Tilt";
 
 const WALLS = [
-  [null, "At build time", "The agent's code can't import the payment client. An import-linter contract fails the build."],
-  [null, "On every call", "The payment client checks its real caller and refuses anything but the policy engine."],
-  [null, "In the process", "The agent runs as its own process with no PayPal credentials in its environment."],
+  [Hammer, "It isn’t built to", "The AI’s code can’t even load the payment code. If someone tries to connect them, the build fails."],
+  [ShieldCheck, "It gets refused", "Every payment request is checked for who is really asking. Anything but Leash’s rule engine is turned away."],
+  [KeyRound, "It has no keys", "The AI runs as its own separate program, with no PayPal keys anywhere in it."],
 ];
 
 export default function IsolationPanel() {
@@ -23,34 +24,37 @@ export default function IsolationPanel() {
 
   const agent = result?.proof.agent;
   return (
-    <section className="border-t border-line pt-6">
-      <PanelHead title="Can the agent pay directly?"
-        aside={<button className="btn-secondary shrink-0" onClick={attack} disabled={busy}>
+    <section>
+      <PanelHead big title="Could the AI just pay by itself?"
+        aside={<button className="btn-primary shrink-0 px-6 py-3.5" onClick={attack} disabled={busy}>
           {busy && <Loader2 className="size-4 animate-spin" />} Make it try
         </button>}>
-        Three independent walls stand between the agent and the money.
+        No. Three separate walls stand between the AI and your money. Press the button to watch it try.
       </PanelHead>
-      <div className="grid divide-y divide-line border-y border-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-        {WALLS.map(([, title, text]) => (
-          <div key={title} className="py-4 sm:px-5 sm:first:pl-0 sm:last:pr-0">
-            <div className="text-sm font-medium">{title}</div>
-            <p className="mt-1.5 text-[13px] leading-relaxed text-ink-2">{text}</p>
-          </div>
+      <div className="grid gap-5 sm:grid-cols-3">
+        {WALLS.map(([Icon, title, text]) => (
+          <Tilt key={title} max={8} className="h-full">
+            <div className="card h-full p-7">
+              <span className="pop grid size-14 place-items-center rounded-2xl bg-lime text-on-lime"><Icon className="size-7" strokeWidth={1.8} /></span>
+              <div className="mt-6 text-2xl font-semibold tracking-[-0.02em]">{title}</div>
+              <p className="mt-2 text-[17px] leading-relaxed text-ink-2">{text}</p>
+            </div>
+          </Tilt>
         ))}
       </div>
       {result && (
         <div className="mt-5 grid gap-4 sm:grid-cols-2 animate-rise">
           <div>
             <span className={result.hack.status === 403 ? "badge-ok" : "badge-bad"}>
-              {result.hack.status === 403 ? "Refused: 403 from the runtime guard" : `Unexpected ${result.hack.status}`}
+              {result.hack.status === 403 ? "It tried to pay. Refused." : `Unexpected ${result.hack.status}`}
             </span>
-            <pre className="mt-2 whitespace-pre-wrap rounded-xl border border-line bg-sunken p-3 font-mono text-[11.5px] leading-relaxed text-ink-2">{result.hack.body.detail}</pre>
+            <pre className="mt-2 whitespace-pre-wrap rounded-xl border border-line bg-sunken p-3 font-mono text-[13px] leading-relaxed text-ink-2">{result.hack.body.detail}</pre>
           </div>
           <div>
             <span className={agent?.isolated ? "badge-ok" : "badge-warn"}>
-              {agent?.isolated ? "Agent process holds no payment secrets" : "Agent runs in-process (dev mode)"}
+              {agent?.isolated ? "And it holds no payment keys" : "AI runs in-process (dev mode)"}
             </span>
-            <pre className="mt-2 whitespace-pre-wrap rounded-xl border border-line bg-sunken p-3 font-mono text-[11.5px] leading-relaxed text-ink-2">{JSON.stringify(agent, null, 2)}</pre>
+            <pre className="mt-2 whitespace-pre-wrap rounded-xl border border-line bg-sunken p-3 font-mono text-[13px] leading-relaxed text-ink-2">{JSON.stringify(agent, null, 2)}</pre>
           </div>
         </div>
       )}

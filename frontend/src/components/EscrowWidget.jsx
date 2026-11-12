@@ -13,10 +13,10 @@ function Line({ label, value, tone = "text-ink", hint, strong }) {
   return (
     <div className="flex items-baseline justify-between gap-3 border-b border-line py-3 last:border-0">
       <div>
-        <div className="text-[13px] text-ink-2">{label}</div>
-        {hint && <div className="mt-0.5 text-[11px] text-ink-3">{hint}</div>}
+        <div className="text-[15px] text-ink-2">{label}</div>
+        {hint && <div className="mt-0.5 text-[13px] text-ink-3">{hint}</div>}
       </div>
-      <div className={`num transition-colors duration-300 ${strong ? "text-xl" : "text-[15px]"} ${tone}`}>{value}</div>
+      <div className={`num transition-colors duration-300 ${strong ? "text-xl" : "text-[17px]"} ${tone}`}>{value}</div>
     </div>
   );
 }
@@ -36,7 +36,7 @@ export default function EscrowWidget({ mandate, cart, payments, revealedApproved
   const remaining = mandate && mandate.status !== "revoked" && !done ? Math.max(hold - approvedSoFar, 0) : 0;
 
   return (
-    <section className="card p-5 sm:p-6">
+    <section className="card p-6 sm:p-7">
       <PanelHead title="Your money" aside={<span key={label} className={`${tone} animate-rise`}>{label}</span>}>
         {payments === "sandbox" ? "On the PayPal sandbox" : "On a pretend PayPal that follows the same rules"}
       </PanelHead>
@@ -49,11 +49,11 @@ export default function EscrowWidget({ mandate, cart, payments, revealedApproved
       </div>
 
       {done && cart.status === "blocked" && (
-        <p className="mt-3 text-[13px] text-ink-2 animate-rise">Nothing followed your rules, so nothing was paid. All of it came back.</p>
+        <p className="mt-3 text-[15px] text-ink-2 animate-rise">Nothing followed your rules, so nothing was paid. All of it came back.</p>
       )}
 
       {mandate?.paypal?.authorization_id && (
-        <details className="mt-5 border-t border-line pt-3 text-[11px]">
+        <details className="mt-5 border-t border-line pt-3 text-[13px]">
           <summary className="cursor-pointer list-none text-ink-3 hover:text-ink-2">{payments === "sandbox" ? "PayPal references" : "Payment references (simulated)"}</summary>
           <dl className="mt-2 space-y-1.5">
           {[["Order", mandate.paypal.order_id], ["Authorization", mandate.paypal.authorization_id],

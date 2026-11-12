@@ -53,7 +53,7 @@ export default function MascotGuide({ mandate, job, layout = "inline", className
   // The agent's real state always shows; only the hello waits until the section is on screen.
   const [mood, message] = read({ mandate, job, introduced });
   const state = mood === "intro" && !seen ? "idle" : mood;
-  const bubble = "animate-rise rounded-xl border border-line bg-surface px-3.5 py-2.5 text-[13px] leading-relaxed text-ink-2";
+  const bubble = "animate-rise rounded-xl border border-line bg-surface px-3.5 py-2.5 text-[15px] leading-relaxed text-ink-2";
   if (layout === "stack") {
     return (
       <div ref={ref} className={`flex flex-col items-center ${className}`}>

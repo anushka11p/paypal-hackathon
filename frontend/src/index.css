@@ -16,6 +16,11 @@
   --t-slow: 500ms;
   /* Palette: midnight #0b2048, pearl #f2f0e9, neon lime #b9f13f.
      Lime is a fill (buttons, strap, bars); lime-coloured text on pearl uses the olive --accent. */
+  /* Glass: a translucent plane, a bright edge, and a soft drop so it floats above the 3D world. */
+  --glass: rgb(255 255 255 / 0.68);
+  --glass-strong: rgb(255 255 255 / 0.78);
+  --glass-edge: rgb(255 255 255 / 0.85);
+  --glass-shadow: 0 1px 0 rgb(255 255 255 / 0.9) inset, 0 30px 60px -30px rgb(11 32 72 / 0.28), 0 2px 6px rgb(11 32 72 / 0.05);
   --lime: #b9f13f;
   --on-lime: #0b2048;
   --canvas: #f2f0e9;
@@ -42,6 +47,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    --glass: rgb(16 40 87 / 0.62); --glass-strong: rgb(16 40 87 / 0.72); --glass-edge: rgb(255 255 255 / 0.14);
+    --glass-shadow: 0 1px 0 rgb(255 255 255 / 0.1) inset, 0 30px 60px -30px rgb(0 0 0 / 0.6), 0 2px 6px rgb(0 0 0 / 0.2);
     --canvas: #0b2048; --surface: #102857; --surface-2: #163165; --sunken: #08193b;
     --ink: #f2f0e9; --ink-2: #c4c9d6; --ink-3: #9ba4bc; --line: #1d3a70; --line-strong: #2a4a86;
     --accent: #b9f13f; --accent-soft: rgb(185 241 63 / 0.14);
@@ -52,7 +59,9 @@
   }
 }
 :root[data-theme="dark"] {
-  --canvas: #0b2048; --surface: #102857; --surface-2: #163165; --sunken: #08193b;
+  --glass: rgb(16 40 87 / 0.62); --glass-strong: rgb(16 40 87 / 0.72); --glass-edge: rgb(255 255 255 / 0.14);
+    --glass-shadow: 0 1px 0 rgb(255 255 255 / 0.1) inset, 0 30px 60px -30px rgb(0 0 0 / 0.6), 0 2px 6px rgb(0 0 0 / 0.2);
+    --canvas: #0b2048; --surface: #102857; --surface-2: #163165; --sunken: #08193b;
     --ink: #f2f0e9; --ink-2: #c4c9d6; --ink-3: #9ba4bc; --line: #1d3a70; --line-strong: #2a4a86;
     --accent: #b9f13f; --accent-soft: rgb(185 241 63 / 0.14);
     --ok: #5ad6c3; --ok-soft: rgb(90 214 195 / 0.12); --bad: #ff9385; --bad-soft: rgb(255 147 133 / 0.12);
@@ -93,10 +102,10 @@
 }
 
 @layer base {
-  html { background: var(--canvas); }
+  html { background: var(--canvas); overflow-x: clip; }
   body {
     @apply bg-canvas text-ink font-sans antialiased;
-    font-size: 15px;
+    font-size: 17px;
     transition: background-color 0.25s ease, color 0.25s ease;
   }
   ::selection { background: var(--accent-soft); }
@@ -107,9 +116,21 @@
 }
 
 @utility card {
-  @apply rounded-xl border border-line bg-surface;
-  transition: border-color var(--t-med) var(--ease-out), background-color var(--t-med) var(--ease-out);
-  &:hover { border-color: var(--line-strong); }
+  border-radius: 28px;
+  border: 1px solid var(--glass-edge);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(30px) saturate(1.2);
+  backdrop-filter: blur(30px) saturate(1.2);
+  box-shadow: var(--glass-shadow);
+  transition: border-color var(--t-med) var(--ease-out), background-color var(--t-med) var(--ease-out), box-shadow var(--t-med) var(--ease-out);
+}
+/* A glass plane for anything that is not a full panel: the status bar, bubbles, the header. */
+@utility glass {
+  border: 1px solid var(--glass-edge);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(30px) saturate(1.2);
+  backdrop-filter: blur(30px) saturate(1.2);
+  box-shadow: var(--glass-shadow);
 }
 /* Small interactive cards lift a little; panels never move. */
 @utility lift {
@@ -120,7 +141,7 @@
   @apply font-mono tabular-nums tracking-tight;
 }
 @utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-[background-color,opacity,transform] duration-150 active:translate-y-px disabled:opacity-40;
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold transition-[background-color,opacity,transform] duration-150 active:translate-y-px disabled:opacity-40;
 }
 @utility btn-primary {
   @apply btn bg-lime text-on-lime hover:opacity-90;
@@ -129,11 +150,11 @@
   @apply btn border border-line-strong bg-surface text-ink hover:bg-surface-2;
 }
 @utility btn-quiet {
-  @apply btn px-3 py-1.5 text-ink-2 hover:bg-surface-2 hover:text-ink;
+  @apply btn px-3.5 py-2 font-medium text-ink-2 hover:bg-surface-2 hover:text-ink;
 }
 /* Status is a dot and a word, never a filled pill. */
 @utility badge {
-  @apply inline-flex items-center gap-1.5 text-xs font-medium whitespace-nowrap;
+  @apply inline-flex items-center gap-2 text-sm font-medium whitespace-nowrap;
   &::before { content: ""; width: 6px; height: 6px; border-radius: 9999px; background: currentColor; flex: none; }
 }
 @utility badge-ok { @apply badge text-ok; }
@@ -142,10 +163,10 @@
 @utility badge-warn { @apply badge text-warn; }
 @utility badge-muted { @apply badge text-ink-3; }
 @utility field {
-  @apply w-full rounded-xl border border-line-strong bg-surface px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-3 outline-none transition focus:border-accent focus:ring-4 focus:ring-accent-soft;
+  @apply w-full rounded-2xl border border-line-strong bg-surface px-4 py-3 text-base text-ink placeholder:text-ink-3 outline-none transition focus:border-accent focus:ring-4 focus:ring-accent-soft;
 }
 @utility label {
-  @apply text-[13px] font-medium text-ink-2;
+  @apply text-[15px] font-medium text-ink-2;
 }
 
 
@@ -169,37 +190,37 @@
 .cdc-card {
   --cdc-accent: var(--ink-3);
   display: flex; flex-direction: column; min-width: 0;
-  border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden;
-  transition: border-color var(--t-med) var(--ease-out), transform var(--t-med) var(--ease-out);
+  border: 1px solid var(--glass-edge); border-radius: 28px; background: var(--glass); overflow: hidden;
+  -webkit-backdrop-filter: blur(30px) saturate(1.2); backdrop-filter: blur(30px) saturate(1.2);
+  box-shadow: var(--glass-shadow);
 }
-.cdc-card:hover { border-color: var(--line-strong); transform: translateY(-2px); }
 .cdc-green { --cdc-accent: var(--ok); }
 .cdc-blue { --cdc-accent: var(--accent); }
 .cdc-orange { --cdc-accent: var(--warn); }
 .cdc-red { --cdc-accent: var(--bad); }
 .cdc-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 16px 0; color: var(--ink-3); font-size: 12px;
+  padding: 18px 20px 0; color: var(--ink-3); font-size: 14px;
 }
 .cdc-date::before {
   content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 9999px;
   background: var(--cdc-accent); margin-right: 8px; vertical-align: 1px;
 }
-.cdc-body { padding: 10px 16px 16px; }
-.cdc-body h3 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+.cdc-body { padding: 12px 20px 20px; }
+.cdc-body h3 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
 .cdc-body h3 a { color: inherit; text-decoration: none; }
 .cdc-body h3 a:hover { text-decoration: underline; text-underline-offset: 3px; }
-.cdc-body p { margin: 4px 0 0; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
-.cdc-progress { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; margin-top: 16px; font-size: 12px; color: var(--ink-3); }
+.cdc-body p { margin: 6px 0 0; font-size: 15px; color: var(--ink-2); line-height: 1.5; }
+.cdc-progress { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; margin-top: 18px; font-size: 14px; color: var(--ink-3); }
 .cdc-progress .num { color: var(--ink); }
-.cdc-progress-bar { position: relative; height: 4px; border-radius: 9999px; background: var(--surface-2); overflow: hidden; }
+.cdc-progress-bar { position: relative; height: 6px; border-radius: 9999px; background: var(--surface-2); overflow: hidden; }
 .cdc-progress-bar::after {
   content: ""; position: absolute; inset: 0 auto 0 0; width: var(--cdc-progress, 0%);
   background: var(--cdc-accent); border-radius: inherit;
 }
 .cdc-footer {
   display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto;
-  padding: 10px 16px; border-top: 1px solid var(--line); background: var(--sunken);
+  padding: 14px 20px; border-top: 1px solid var(--line); background: transparent;
 }
 .cdc-footer ul { display: flex; align-items: center; list-style: none; margin: 0; padding: 0; }
 .cdc-footer li + li { margin-left: -6px; }
@@ -209,11 +230,32 @@
   border-radius: 9999px; border: 1px dashed var(--line-strong); color: var(--ink-3); background: var(--surface);
 }
 .cdc-btn-add:hover { color: var(--ink); border-color: var(--ink-3); }
-.cdc-btn-countdown { font-size: 12px; color: var(--ink-2); font-weight: 500; white-space: nowrap; }
+.cdc-btn-countdown { font-size: 14px; color: var(--ink-2); font-weight: 500; white-space: nowrap; }
 
 
 /* The panel holding the current step is outlined, so the eye knows where to go next. */
-.is-active .card { border-color: var(--ink-3); }
+.is-active .card { border-color: var(--lime); box-shadow: var(--glass-shadow), 0 0 0 1px var(--lime); }
+
+/* World3D spans the full viewport width even though the page column is narrower. */
+.world { left: calc(50% - 50vw); width: 100vw; }
+
+/* Tilt (components/Tilt.jsx): the card leans toward the pointer and a soft glare follows it. */
+.tilt { perspective: 1100px; }
+.tilt-inner {
+  position: relative; height: 100%; transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+  transition: transform 500ms var(--ease-out);
+  will-change: transform;
+}
+.tilt.is-live .tilt-inner { transition: transform 90ms linear; }
+.tilt-glare {
+  pointer-events: none; position: absolute; inset: 0; border-radius: inherit; opacity: 0;
+  background: radial-gradient(420px circle at var(--gx, 50%) var(--gy, 0%), rgb(255 255 255 / 0.28), transparent 60%);
+  transition: opacity var(--t-med) var(--ease-out);
+}
+.tilt.is-live .tilt-glare { opacity: 1; }
+/* content inside a tilting card can sit a little proud of the surface */
+.tilt .pop { transform: translateZ(28px); }
 
 /* Reveal (components/Reveal.jsx): one gentle entrance, staggered by --reveal-delay */
 .reveal { opacity: 0; transform: translateY(10px); }
