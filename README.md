@@ -8,6 +8,33 @@
 
 ---
 
+<table>
+  <tr>
+    <td width="33%">
+      <img src="screenshots/2.jpeg" width="100%" alt="Leash Homepage">
+    </td>
+    <td width="33%">
+      <img src="screenshots/1.jpeg" width="100%" alt="Listing Protection">
+    </td>
+    <td width="33%">
+      <img src="screenshots/3.jpeg" width="100%" alt="Interactive Demo">
+    </td>
+  </tr>
+  <tr>
+    <td width="33%">
+      <img src="screenshots/4.jpeg" width="100%" alt="Payment Results">
+    </td>
+    <td width="33%">
+      <img src="screenshots/5.jpeg" width="100%" alt="Audit Log">
+    </td>
+    <td width="33%">
+      <img src="screenshots/6.jpeg" width="100%" alt="Security Features">
+    </td>
+  </tr>
+</table>
+
+---
+
 ## The one-sentence version
 
 An AI agent shops for you and can be tricked by a single line of text on a product page. Leash makes that irrelevant. The agent can only **propose** purchases. A separate, deterministic service holds the only PayPal credentials. It checks every item against your mandate and captures only what passes from a PayPal authorization sized to your exact budget.
