@@ -248,7 +248,7 @@ export default function App() {
             <p className="mx-auto mt-4 max-w-[46ch] text-xl text-ink-2">A real AI and real checks. The store and PayPal are pretend, so no real money moves.</p>
             <div className="mt-8 flex justify-center"><Stepper step={step} /></div>
           </div>
-          <div className="glass mb-6 flex flex-wrap items-center justify-between gap-3 rounded-[24px] px-6 py-4">
+          <div className="clay mb-6 flex flex-wrap items-center justify-between gap-3 rounded-[28px] px-6 py-4">
             <p key={next} className="animate-rise text-xl font-medium text-ink" role="status" aria-live="polite">
               {step < 4 && <span className="num mr-3 text-base font-normal text-ink-3">Step {step + 1} of 4</span>}{next}
             </p>

@@ -365,3 +365,12 @@ The midnight/pearl/lime palette above is replaced by PayPal's colours. Token nam
 - **Gold (`--cta`):** #ffc439 with #001435 text. Primary buttons and the current step marker only, like PayPal's own checkout button.
 - **Money outcomes:** paid green #0a7a45 / #5fdc9e, refused red #c0261d / #ff9a8f. Warnings and traps are orange #9a4b00 / #ffb37a so they never read as the gold button.
 - All text pairs pass WCAG AA in both themes.
+
+## 2026-11 revision 3: clay cards
+
+Cards moved from glass to clay at the user's request. The palette, type and layout are unchanged.
+
+- **Material:** every panel is a solid slab (`--clay`: white in light, `#0a2f8a` in dark) with no blur or transparency. Depth comes from three shadows in `--clay-shadow`: a highlight inside the top edge, a blue-tinted shade inside the bottom edge, and a deep soft drop underneath.
+- **Shape:** `--card-radius` is 36px (was 28px) for the `card` utility, the recent-session cards and the tilt glare. The status bar uses the `clay` utility with its own 28px radius.
+- **Recent sessions:** each card's clay is tinted 8% toward its money-state colour (green settled, blue held, orange waiting, red revoked).
+- **Unchanged:** the tunnel's listing cards, the footer and the mascot. The 3D world now shows around and between cards instead of through them.

@@ -4,7 +4,7 @@ import { useRef } from "react";
  * A card that leans toward the pointer in 3D with a soft glare.
  * `max` is the lean in degrees. Touch devices and reduced motion get a flat card.
  */
-export default function Tilt({ children, max = 7, className = "", radius = 28 }) {
+export default function Tilt({ children, max = 7, className = "", radius = "var(--card-radius)" }) {
   const ref = useRef(null);
   const frame = useRef(0);
 

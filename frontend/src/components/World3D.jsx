@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 /*
  * The world behind the page: the things Leash is about, floating in 3D.
  * Coins (your money), a blue ring (the leash), a payment card, a padlock, a shield and a shopping bag
- * drift slowly and slide past as you scroll, so the glass panels in front have something real to blur.
+ * drift slowly and slide past as you scroll, so the page has real objects behind and between the clay cards.
  *
  * It fills its nearest positioned ancestor and pins one viewport-tall canvas inside it (CSS sticky),
  * so it never sits behind the tunnel or the footer. Pauses when off screen; holds still under reduced motion.
