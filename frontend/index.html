@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>try{var t=localStorage.getItem("leash-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+    <script>var t="light";try{if(localStorage.getItem("leash-theme")==="dark")t="dark"}catch(e){}document.documentElement.dataset.theme=t</script>
     <title>Leash — Let AI shop. Keep the leash.</title>
     <meta name="description" content="Leash is a spending firewall between an AI shopping agent and PayPal. The agent proposes; only Leash can capture, and only what your mandate allows." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />

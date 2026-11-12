@@ -2,10 +2,6 @@ import { useEffect, useState } from "react";
 
 const KEY = "leash-theme";
 
-function systemDark() {
-  return typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches;
-}
-
 function stored() {
   try {
     const v = localStorage.getItem(KEY);
@@ -15,29 +11,15 @@ function stored() {
   }
 }
 
-/** Resolved theme ("light" | "dark") plus a toggle; explicit choice persists, otherwise follows the OS. */
+/** Resolved theme ("light" | "dark") plus a toggle. Light is the default; a visitor's own choice persists. */
 export function useTheme() {
-  const [choice, setChoice] = useState(stored);
-  const [system, setSystem] = useState(systemDark() ? "dark" : "light");
+  const [theme, setTheme] = useState(() => stored() || "light");
 
-  useEffect(() => {
-    const mq = window.matchMedia?.("(prefers-color-scheme: dark)");
-    if (!mq) return;
-    const on = (e) => setSystem(e.matches ? "dark" : "light");
-    mq.addEventListener("change", on);
-    return () => mq.removeEventListener("change", on);
-  }, []);
-
-  const theme = choice || system;
-
-  useEffect(() => {
-    if (choice) document.documentElement.dataset.theme = choice;
-    else delete document.documentElement.dataset.theme;
-  }, [choice]);
+  useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
 
   const toggle = () => {
     const next = theme === "dark" ? "light" : "dark";
-    setChoice(next);
+    setTheme(next);
     try { localStorage.setItem(KEY, next); } catch { /* private mode: theme just won't persist */ }
   };
 
