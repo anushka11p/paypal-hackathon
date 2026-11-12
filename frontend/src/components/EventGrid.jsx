@@ -16,12 +16,12 @@ function DecisionCell({ value }) {
   return value ? <span className={TONE[value] || "badge-muted"}>{value.replace(/_/g, " ")}</span> : null;
 }
 
-const BASE = { fontFamily: "Geist, sans-serif", fontSize: 15, headerFontWeight: 600, borderRadius: 10, wrapperBorderRadius: 20, rowHeight: 48, headerHeight: 46, spacing: 8 };
+const BASE = { fontFamily: "Geist, sans-serif", fontSize: 15, headerFontWeight: 600, borderRadius: 10, wrapperBorderRadius: 22, wrapperBorder: false, rowHeight: 48, headerHeight: 46, spacing: 8 };
 const THEMES = {
   light: themeQuartz.withParams({ ...BASE, backgroundColor: "#ffffff", headerBackgroundColor: "#f5f7fa", borderColor: "#dbe2ea",
     foregroundColor: "#001435", headerTextColor: "#36455e", rowHoverColor: "#f5f7fa", accentColor: "#0064d2" }),
-  dark: themeQuartz.withParams({ ...BASE, backgroundColor: "#06287a", headerBackgroundColor: "#001650", borderColor: "#173c8f",
-    foregroundColor: "#ffffff", headerTextColor: "#c5d3ee", rowHoverColor: "#0c3594", accentColor: "#6cc3ff", chromeBackgroundColor: "#001650" }),
+  dark: themeQuartz.withParams({ ...BASE, backgroundColor: "#0a2f8a", headerBackgroundColor: "#07246f", borderColor: "#1c459f",
+    foregroundColor: "#ffffff", headerTextColor: "#c5d3ee", rowHoverColor: "#10399d", accentColor: "#6cc3ff", chromeBackgroundColor: "#07246f" }),
 };
 
 export default function EventGrid({ mandateId, refreshKey, live, theme = "light" }) {
@@ -59,7 +59,7 @@ export default function EventGrid({ mandateId, refreshKey, live, theme = "light"
           : <span className="badge-bad">Record broken at entry {chain.first_bad_id}</span>)}>
         Everything that happened, in order. Each entry is locked to the one before it, so nobody can quietly change history.
       </PanelHead>
-      <div className="h-[520px] w-full">
+      <div className="card h-[552px] w-full p-4">
         <AgGridReact theme={THEMES[theme] || THEMES.light} rowData={rows} columnDefs={columnDefs} getRowId={(p) => String(p.data.id)}
           animateRows defaultColDef={{ sortable: true, resizable: true }} tooltipShowDelay={300}
           overlayNoRowsTemplate="<span style='opacity:.6'>Nothing yet. Set your rules above to start.</span>" />
