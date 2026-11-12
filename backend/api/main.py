@@ -66,7 +66,9 @@ if os.path.isdir(os.path.join(STATIC_DIR, "assets")):
 
     @app.get("/{full_path:path}")
     def serve_frontend(full_path: str):
-        candidate = os.path.join(STATIC_DIR, full_path)
-        if full_path and os.path.isfile(candidate):
+        # Only ever serve files that really live inside the built frontend folder.
+        root = os.path.realpath(STATIC_DIR)
+        candidate = os.path.realpath(os.path.join(root, full_path))
+        if full_path and candidate.startswith(root + os.sep) and os.path.isfile(candidate):
             return FileResponse(candidate)
         return FileResponse(os.path.join(STATIC_DIR, "index.html"))

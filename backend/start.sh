@@ -13,7 +13,7 @@ fi
 AGENT_PORT="${AGENT_PORT:-8001}"
 PORT="${PORT:-8000}"
 
-# The agent gets the Claude and Channel3 keys, and nothing that can move money.
+# The agent gets the Groq and Channel3 keys, and nothing that can move money.
 env -u PAYPAL_CLIENT_ID -u PAYPAL_CLIENT_SECRET -u PAYPAL_BASE_URL -u MANDATE_SIGNING_SECRET \
   python -m uvicorn agents.service:app --host 127.0.0.1 --port "$AGENT_PORT" &
 AGENT_PID=$!

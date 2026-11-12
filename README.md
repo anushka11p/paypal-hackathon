@@ -190,7 +190,7 @@ PYTHONPATH=. python3 trials/run_trials.py --runs 20
 
 ### Deploying on Render
 
-`render.yaml` defines one web service. `backend/build.sh` installs Python dependencies and builds the frontend into `backend/static`, and `backend/start.sh` runs both processes. Set the secret env vars in the Render dashboard, with `PUBLIC_BASE_URL` set to the service's `https://….onrender.com` URL.
+`render.yaml` defines one web service. `backend/build.sh` installs Python dependencies and builds the frontend into `backend/static`, and `backend/start.sh` runs both processes. Render asks for `GROQ_API_KEY` and `CHANNEL3_API_KEY` when you create the Blueprint. The public address is picked up from Render's own `RENDER_EXTERNAL_URL`, so `PUBLIC_BASE_URL` is only needed for a custom domain.
 
 ### Trying the hosted demo
 
