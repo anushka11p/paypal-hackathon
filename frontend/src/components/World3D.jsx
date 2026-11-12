@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 /*
  * The world behind the page: the things Leash is about, floating in 3D.
- * Coins (your money), a lime ring (the leash), a payment card, a padlock, a shield and a shopping bag
+ * Coins (your money), a blue ring (the leash), a payment card, a padlock, a shield and a shopping bag
  * drift slowly and slide past as you scroll, so the glass panels in front have something real to blur.
  *
  * It fills its nearest positioned ancestor and pins one viewport-tall canvas inside it (CSS sticky),
@@ -10,8 +10,8 @@ import { useEffect, useRef } from "react";
  */
 
 const THEME = {
-  light: { silver: 0xb9bcc4, lime: 0xa9e02c, body: 0x0b2048, paper: 0xffffff, glass: 0x9fd62c, key: 2.2, exposure: 1.0, opacity: 0.95 },
-  dark: { silver: 0xaab0bd, lime: 0xb9f13f, body: 0x24468f, paper: 0xe9e7e0, glass: 0xb9f13f, key: 1.7, exposure: 1.1, opacity: 0.9 },
+  light: { silver: 0xbcc2cc, brand: 0x0070e0, gold: 0xffc439, body: 0x001c64, paper: 0xffffff, glass: 0x6cc3ff, key: 2.2, exposure: 1.0, opacity: 0.95 },
+  dark: { silver: 0xb4bccb, brand: 0x6cc3ff, gold: 0xffc439, body: 0x1249b8, paper: 0xf2f5fa, glass: 0x6cc3ff, key: 1.7, exposure: 1.1, opacity: 0.9 },
 };
 
 // Small deterministic random, so the layout is the same on every load.
@@ -61,28 +61,28 @@ export default function World3D({ theme = "light" }) {
       // Shared materials, recoloured by theme.
       const M = {
         silver: new THREE.MeshPhysicalMaterial({ metalness: 1, roughness: 0.28, clearcoat: 0.5 }),
-        limeMetal: new THREE.MeshPhysicalMaterial({ metalness: 0.85, roughness: 0.3, clearcoat: 0.6 }),
-        lime: new THREE.MeshPhysicalMaterial({ roughness: 0.35, clearcoat: 1, clearcoatRoughness: 0.2 }),
+        goldMetal: new THREE.MeshPhysicalMaterial({ metalness: 0.85, roughness: 0.3, clearcoat: 0.6 }),
+        brand: new THREE.MeshPhysicalMaterial({ roughness: 0.35, clearcoat: 1, clearcoatRoughness: 0.2 }),
         body: new THREE.MeshPhysicalMaterial({ roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.15 }),
         paper: new THREE.MeshPhysicalMaterial({ roughness: 0.6, sheen: 0.4 }),
         glass: new THREE.MeshPhysicalMaterial({ roughness: 0.08, transparent: true, opacity: 0.42, clearcoat: 1, side: THREE.DoubleSide }),
       };
 
       const makers = {
-        coin(lime) {
+        coin(tinted) {
           const g = new THREE.Group();
-          const m = lime ? M.limeMetal : M.silver;
+          const m = tinted ? M.goldMetal : M.silver;
           g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.1, 64), m));
           const ringGeo = new THREE.TorusGeometry(0.5, 0.025, 8, 64);
           for (const y of [0.052, -0.052]) { const r = new THREE.Mesh(ringGeo, m); r.rotation.x = Math.PI / 2; r.position.y = y; g.add(r); }
           g.rotation.x = Math.PI / 2;
           const wrap = new THREE.Group(); wrap.add(g); return wrap;
         },
-        ring() { return new THREE.Mesh(new THREE.TorusGeometry(0.85, 0.13, 24, 96), M.lime); },
+        ring() { return new THREE.Mesh(new THREE.TorusGeometry(0.85, 0.13, 24, 96), M.brand); },
         card() {
           const g = new THREE.Group();
           g.add(new THREE.Mesh(new RoundedBoxGeometry(1.9, 1.2, 0.07, 6, 0.09), M.body));
-          const stripe = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.2, 0.075), M.lime); stripe.position.y = 0.28; g.add(stripe);
+          const stripe = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.2, 0.075), M.brand); stripe.position.y = 0.28; g.add(stripe);
           const chip = new THREE.Mesh(new RoundedBoxGeometry(0.3, 0.24, 0.085, 3, 0.04), M.silver); chip.position.set(-0.6, -0.12, 0); g.add(chip);
           return g;
         },
@@ -91,7 +91,7 @@ export default function World3D({ theme = "light" }) {
           g.add(new THREE.Mesh(new RoundedBoxGeometry(1.1, 0.9, 0.42, 6, 0.14), M.body));
           const shackle = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.085, 16, 48, Math.PI), M.silver); shackle.position.y = 0.45; g.add(shackle);
           for (const x of [-0.34, 0.34]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.22, 16), M.silver); leg.position.set(x, 0.4, 0); g.add(leg); }
-          const hole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.44, 24), M.lime); hole.rotation.x = Math.PI / 2; hole.position.y = 0.02; g.add(hole);
+          const hole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.44, 24), M.brand); hole.rotation.x = Math.PI / 2; hole.position.y = 0.02; g.add(hole);
           return g;
         },
         shield() {
@@ -107,20 +107,20 @@ export default function World3D({ theme = "light" }) {
         bag() {
           const g = new THREE.Group();
           g.add(new THREE.Mesh(new RoundedBoxGeometry(1.05, 1.15, 0.5, 4, 0.06), M.paper));
-          for (const z of [0.14, -0.14]) { const h = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.035, 10, 32, Math.PI), M.lime); h.position.set(0, 0.57, z); g.add(h); }
+          for (const z of [0.14, -0.14]) { const h = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.035, 10, 32, Math.PI), M.brand); h.position.set(0, 0.57, z); g.add(h); }
           return g;
         },
       };
 
       // Lay the objects down a tall column; the camera slides down it as the page scrolls.
-      const ORDER = ["coin", "ring", "card", "coinLime", "lock", "shield", "bag", "coin"];
+      const ORDER = ["coin", "ring", "card", "coinGold", "lock", "shield", "bag", "coin"];
       const SPACING = 2.6;
       const count = small ? 9 : 16;
       const rand = rng(20261112);
       const items = [];
       for (let i = 0; i < count; i++) {
         const kind = ORDER[i % ORDER.length];
-        const obj = kind === "coinLime" ? makers.coin(true) : makers[kind]();
+        const obj = kind === "coinGold" ? makers.coin(true) : makers[kind]();
         const side = i % 2 === 0 ? -1 : 1;
         const z = -5 + rand() * 6.5;                         // some near, some far
         const reach = small ? 1.6 + rand() * 1.4 : 3.6 + rand() * 3.2;
@@ -137,7 +137,7 @@ export default function World3D({ theme = "light" }) {
 
       const applyTheme = (name) => {
         const p = THEME[name] || THEME.light;
-        M.silver.color.setHex(p.silver); M.limeMetal.color.setHex(p.lime); M.lime.color.setHex(p.lime);
+        M.silver.color.setHex(p.silver); M.goldMetal.color.setHex(p.gold); M.brand.color.setHex(p.brand);
         M.body.color.setHex(p.body); M.paper.color.setHex(p.paper); M.glass.color.setHex(p.glass);
         key.intensity = p.key; renderer.toneMappingExposure = p.exposure;
         renderer.domElement.style.opacity = String(p.opacity);

@@ -153,8 +153,8 @@ def mock_checkout_page(order_id: str):
 <title>Approve the hold</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono&display=swap" rel="stylesheet">
 <style>
-:root{{--canvas:#f2f0e9;--surface:#faf9f5;--ink:#0b2048;--ink2:#3b4763;--ink3:#5a6479;--line:#dedad0;--accent:#4b6b00}}
-@media (prefers-color-scheme:dark){{:root{{--canvas:#0b2048;--surface:#102857;--ink:#f2f0e9;--ink2:#c4c9d6;--ink3:#9ba4bc;--line:#1d3a70;--accent:#b9f13f}}}}
+:root{{--canvas:#f5f7fa;--surface:#fff;--ink:#001435;--ink2:#36455e;--ink3:#56647c;--line:#dbe2ea;--accent:#0064d2}}
+@media (prefers-color-scheme:dark){{:root{{--canvas:#001c64;--surface:#06287a;--ink:#fff;--ink2:#c5d3ee;--ink3:#9bb0d8;--line:#173c8f;--accent:#6cc3ff}}}}
 *{{box-sizing:border-box}}
 body{{font-family:Geist,ui-sans-serif,system-ui,sans-serif;background:var(--canvas);color:var(--ink);margin:0;display:grid;place-items:center;min-height:100vh;padding:16px}}
 main{{background:var(--surface);border:1px solid var(--line);padding:28px;border-radius:16px;max-width:420px;width:100%}}
@@ -164,7 +164,7 @@ h1{{font-size:24px;font-weight:500;letter-spacing:-.02em;margin:0 0 6px}}
 p{{color:var(--ink2);font-size:15px;line-height:1.55;margin:0 0 22px}}
 .row{{display:flex;gap:10px;flex-wrap:wrap}}
 button{{font:inherit;font-size:15px;font-weight:500;padding:12px 20px;border-radius:999px;cursor:pointer;border:1px solid transparent}}
-.ok{{background:#b9f13f;color:#0b2048}} .no{{background:transparent;color:var(--ink2);border-color:var(--line)}}
+.ok{{background:#ffc439;color:#001435}} .no{{background:transparent;color:var(--ink2);border-color:var(--line)}}
 .note{{margin:22px 0 0;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--ink3)}}
 </style></head><body><main>
 <p class="who">Pretend PayPal · practice mode</p>

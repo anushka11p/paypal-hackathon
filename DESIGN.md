@@ -353,3 +353,15 @@ This revision is the owner's brief and overrides the older flat rules above wher
 - **3D world.** `World3D` pins one canvas behind the page between the tunnel and the footer: coins, a lime leash ring, a payment card, a padlock, a glass shield and a shopping bag drift and slide past on scroll. It never sits behind the tunnel or the footer, pauses off screen, and holds still under reduced motion.
 - **3D cards.** `Tilt` leans a card toward the pointer (6-9 degrees) with a soft glare; children with `.pop` sit proud of the surface. Used for the hero statement, recent sessions and the three walls. Form panels do not tilt.
 - **Fixed assets.** The perspective tunnel, the halftone footer and the mascot are user-pinned and unchanged.
+
+## 2026-11 revision 2: PayPal colour scheme (user-set)
+
+The midnight/pearl/lime palette above is replaced by PayPal's colours. Token names in `frontend/src/index.css` are the source of truth.
+
+- **Light:** canvas #f5f7fa, cards white, ink #001435, lines #dbe2ea.
+- **Dark:** canvas PayPal navy #001c64, surfaces #06287a / #0c3594, ink white.
+- **Brand blue (`--brand`, fill):** #0070e0 in light, sky #6cc3ff in dark. The hold strap, leash ring, finished step markers, icon tiles, the active-panel outline.
+- **Blue text (`--accent`):** #0064d2 in light, #6cc3ff in dark. Held and returned money.
+- **Gold (`--cta`):** #ffc439 with #001435 text. Primary buttons and the current step marker only, like PayPal's own checkout button.
+- **Money outcomes:** paid green #0a7a45 / #5fdc9e, refused red #c0261d / #ff9a8f. Warnings and traps are orange #9a4b00 / #ffb37a so they never read as the gold button.
+- All text pairs pass WCAG AA in both themes.

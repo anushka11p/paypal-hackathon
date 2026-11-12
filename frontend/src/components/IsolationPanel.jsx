@@ -35,7 +35,7 @@ export default function IsolationPanel() {
         {WALLS.map(([Icon, title, text]) => (
           <Tilt key={title} max={8} className="h-full">
             <div className="card h-full p-7">
-              <span className="pop grid size-14 place-items-center rounded-2xl bg-lime text-on-lime"><Icon className="size-7" strokeWidth={1.8} /></span>
+              <span className="pop grid size-14 place-items-center rounded-2xl bg-brand text-on-brand"><Icon className="size-7" strokeWidth={1.8} /></span>
               <div className="mt-6 text-2xl font-semibold tracking-[-0.02em]">{title}</div>
               <p className="mt-2 text-[17px] leading-relaxed text-ink-2">{text}</p>
             </div>
