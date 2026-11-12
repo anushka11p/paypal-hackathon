@@ -5,7 +5,15 @@ import PerspectiveTunnelHero from "@/components/ui/perspective-tunnel-hero";
 /** The store as the agent sees it: every listing flies past; the two carrying injected text are flagged. */
 export default function AgentReads() {
   const [catalog, setCatalog] = useState(null);
-  useEffect(() => { api.catalog("attack").then(setCatalog).catch(() => {}); }, []);
+  // The backend can come up after the page does, so keep asking until the catalog arrives.
+  useEffect(() => {
+    let alive = true, timer;
+    const load = (wait) => api.catalog("attack")
+      .then((c) => { if (alive) setCatalog(c); })
+      .catch(() => { if (alive) timer = setTimeout(() => load(Math.min(wait * 2, 8000)), wait); });
+    load(1000);
+    return () => { alive = false; clearTimeout(timer); };
+  }, []);
 
   const items = useMemo(() => (catalog?.products || []).map((p) => {
     const attack = p.reviews.find((r) => r.simulated_attack)?.text || (p.note_is_simulated_attack ? p.merchandising_note : null);
